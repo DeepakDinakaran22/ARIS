@@ -1,0 +1,267 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp3.0</TargetFramework>
+    <StartupObject>ArisWorkforceManagementTool.Program</StartupObject>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Remove="Assets\**" />
+    <Compile Remove="wwwroot\plugins\bootstrap-colorpicker\**" />
+    <Compile Remove="wwwroot\plugins\bootstrap-slider\**" />
+    <Compile Remove="wwwroot\plugins\bootstrap-switch\**" />
+    <Compile Remove="wwwroot\plugins\bootstrap4-duallistbox\**" />
+    <Compile Remove="wwwroot\plugins\bs-custom-file-input\**" />
+    <Compile Remove="wwwroot\plugins\chart.js\**" />
+    <Compile Remove="wwwroot\plugins\datatables-autofill\**" />
+    <Compile Remove="wwwroot\plugins\datatables-buttons\**" />
+    <Compile Remove="wwwroot\plugins\datatables-colreorder\**" />
+    <Compile Remove="wwwroot\plugins\datatables-fixedcolumns\**" />
+    <Compile Remove="wwwroot\plugins\datatables-fixedheader\**" />
+    <Compile Remove="wwwroot\plugins\datatables-keytable\**" />
+    <Compile Remove="wwwroot\plugins\datatables-rowgroup\**" />
+    <Compile Remove="wwwroot\plugins\datatables-rowreorder\**" />
+    <Compile Remove="wwwroot\plugins\datatables-scroller\**" />
+    <Compile Remove="wwwroot\plugins\datatables-select\**" />
+    <Compile Remove="wwwroot\plugins\daterangepicker\**" />
+    <Compile Remove="wwwroot\plugins\ekko-lightbox\**" />
+    <Compile Remove="wwwroot\plugins\fastclick\**" />
+    <Compile Remove="wwwroot\plugins\flag-icon-css\**" />
+    <Compile Remove="wwwroot\plugins\flot-old\**" />
+    <Compile Remove="wwwroot\plugins\flot\**" />
+    <Compile Remove="wwwroot\plugins\ion-rangeslider\**" />
+    <Compile Remove="wwwroot\plugins\jquery-knob\**" />
+    <Compile Remove="wwwroot\plugins\jquery-mapael\**" />
+    <Compile Remove="wwwroot\plugins\jquery-mousewheel\**" />
+    <Compile Remove="wwwroot\plugins\jquery-ui\**" />
+    <Compile Remove="wwwroot\plugins\jquery-validation\**" />
+    <Compile Remove="wwwroot\plugins\jqvmap\**" />
+    <Compile Remove="wwwroot\plugins\jsgrid\**" />
+    <Compile Remove="wwwroot\plugins\jszip\**" />
+    <Compile Remove="wwwroot\plugins\overlayScrollbars\**" />
+    <Compile Remove="wwwroot\plugins\pace-progress\**" />
+    <Compile Remove="wwwroot\plugins\pdfmake\**" />
+    <Compile Remove="wwwroot\plugins\popper\**" />
+    <Compile Remove="wwwroot\plugins\raphael\**" />
+    <Compile Remove="wwwroot\plugins\sparklines\**" />
+    <Compile Remove="wwwroot\plugins\summernote\**" />
+    <Compile Remove="wwwroot\plugins\sweetalert2-theme-bootstrap-4\**" />
+    <Compile Remove="wwwroot\plugins\sweetalert2\**" />
+    <Compile Remove="wwwroot\plugins\tempusdominus-bootstrap-4\**" />
+    <Compile Remove="wwwroot\plugins\toastr\**" />
+    <Content Remove="Assets\**" />
+    <Content Remove="wwwroot\plugins\bootstrap-colorpicker\**" />
+    <Content Remove="wwwroot\plugins\bootstrap-slider\**" />
+    <Content Remove="wwwroot\plugins\bootstrap-switch\**" />
+    <Content Remove="wwwroot\plugins\bootstrap4-duallistbox\**" />
+    <Content Remove="wwwroot\plugins\bs-custom-file-input\**" />
+    <Content Remove="wwwroot\plugins\chart.js\**" />
+    <Content Remove="wwwroot\plugins\datatables-autofill\**" />
+    <Content Remove="wwwroot\plugins\datatables-buttons\**" />
+    <Content Remove="wwwroot\plugins\datatables-colreorder\**" />
+    <Content Remove="wwwroot\plugins\datatables-fixedcolumns\**" />
+    <Content Remove="wwwroot\plugins\datatables-fixedheader\**" />
+    <Content Remove="wwwroot\plugins\datatables-keytable\**" />
+    <Content Remove="wwwroot\plugins\datatables-rowgroup\**" />
+    <Content Remove="wwwroot\plugins\datatables-rowreorder\**" />
+    <Content Remove="wwwroot\plugins\datatables-scroller\**" />
+    <Content Remove="wwwroot\plugins\datatables-select\**" />
+    <Content Remove="wwwroot\plugins\daterangepicker\**" />
+    <Content Remove="wwwroot\plugins\ekko-lightbox\**" />
+    <Content Remove="wwwroot\plugins\fastclick\**" />
+    <Content Remove="wwwroot\plugins\flag-icon-css\**" />
+    <Content Remove="wwwroot\plugins\flot-old\**" />
+    <Content Remove="wwwroot\plugins\flot\**" />
+    <Content Remove="wwwroot\plugins\ion-rangeslider\**" />
+    <Content Remove="wwwroot\plugins\jquery-knob\**" />
+    <Content Remove="wwwroot\plugins\jquery-mapael\**" />
+    <Content Remove="wwwroot\plugins\jquery-mousewheel\**" />
+    <Content Remove="wwwroot\plugins\jquery-ui\**" />
+    <Content Remove="wwwroot\plugins\jquery-validation\**" />
+    <Content Remove="wwwroot\plugins\jqvmap\**" />
+    <Content Remove="wwwroot\plugins\jsgrid\**" />
+    <Content Remove="wwwroot\plugins\jszip\**" />
+    <Content Remove="wwwroot\plugins\overlayScrollbars\**" />
+    <Content Remove="wwwroot\plugins\pace-progress\**" />
+    <Content Remove="wwwroot\plugins\pdfmake\**" />
+    <Content Remove="wwwroot\plugins\popper\**" />
+    <Content Remove="wwwroot\plugins\raphael\**" />
+    <Content Remove="wwwroot\plugins\sparklines\**" />
+    <Content Remove="wwwroot\plugins\summernote\**" />
+    <Content Remove="wwwroot\plugins\sweetalert2-theme-bootstrap-4\**" />
+    <Content Remove="wwwroot\plugins\sweetalert2\**" />
+    <Content Remove="wwwroot\plugins\tempusdominus-bootstrap-4\**" />
+    <Content Remove="wwwroot\plugins\toastr\**" />
+    <EmbeddedResource Remove="Assets\**" />
+    <EmbeddedResource Remove="wwwroot\plugins\bootstrap-colorpicker\**" />
+    <EmbeddedResource Remove="wwwroot\plugins\bootstrap-slider\**" />
+    <EmbeddedResource Remove="wwwroot\plugins\bootstrap-switch\**" />
+    <EmbeddedResource Remove="wwwroot\plugins\bootstrap4-duallistbox\**" />
+    <EmbeddedResource Remove="wwwroot\plugins\bs-custom-file-input\**" />
+    <EmbeddedResource Remove="wwwroot\plugins\chart.js\**" />
+    <EmbeddedResource Remove="wwwroot\plugins\datatables-autofill\**" />
+    <EmbeddedResource Remove="wwwroot\plugins\datatables-buttons\**" />
+    <EmbeddedResource Remove="wwwroot\plugins\datatables-colreorder\**" />
+    <EmbeddedResource Remove="wwwroot\plugins\datatables-fixedcolumns\**" />
+    <EmbeddedResource Remove="wwwroot\plugins\datatables-fixedheader\**" />
+    <EmbeddedResource Remove="wwwroot\plugins\datatables-keytable\**" />
+    <EmbeddedResource Remove="wwwroot\plugins\datatables-rowgroup\**" />
+    <EmbeddedResource Remove="wwwroot\plugins\datatables-rowreorder\**" />
+    <EmbeddedResource Remove="wwwroot\plugins\datatables-scroller\**" />
+    <EmbeddedResource Remove="wwwroot\plugins\datatables-select\**" />
+    <EmbeddedResource Remove="wwwroot\plugins\daterangepicker\**" />
+    <EmbeddedResource Remove="wwwroot\plugins\ekko-lightbox\**" />
+    <EmbeddedResource Remove="wwwroot\plugins\fastclick\**" />
+    <EmbeddedResource Remove="wwwroot\plugins\flag-icon-css\**" />
+    <EmbeddedResource Remove="wwwroot\plugins\flot-old\**" />
+    <EmbeddedResource Remove="wwwroot\plugins\flot\**" />
+    <EmbeddedResource Remove="wwwroot\plugins\ion-rangeslider\**" />
+    <EmbeddedResource Remove="wwwroot\plugins\jquery-knob\**" />
+    <EmbeddedResource Remove="wwwroot\plugins\jquery-mapael\**" />
+    <EmbeddedResource Remove="wwwroot\plugins\jquery-mousewheel\**" />
+    <EmbeddedResource Remove="wwwroot\plugins\jquery-ui\**" />
+    <EmbeddedResource Remove="wwwroot\plugins\jquery-validation\**" />
+    <EmbeddedResource Remove="wwwroot\plugins\jqvmap\**" />
+    <EmbeddedResource Remove="wwwroot\plugins\jsgrid\**" />
+    <EmbeddedResource Remove="wwwroot\plugins\jszip\**" />
+    <EmbeddedResource Remove="wwwroot\plugins\overlayScrollbars\**" />
+    <EmbeddedResource Remove="wwwroot\plugins\pace-progress\**" />
+    <EmbeddedResource Remove="wwwroot\plugins\pdfmake\**" />
+    <EmbeddedResource Remove="wwwroot\plugins\popper\**" />
+    <EmbeddedResource Remove="wwwroot\plugins\raphael\**" />
+    <EmbeddedResource Remove="wwwroot\plugins\sparklines\**" />
+    <EmbeddedResource Remove="wwwroot\plugins\summernote\**" />
+    <EmbeddedResource Remove="wwwroot\plugins\sweetalert2-theme-bootstrap-4\**" />
+    <EmbeddedResource Remove="wwwroot\plugins\sweetalert2\**" />
+    <EmbeddedResource Remove="wwwroot\plugins\tempusdominus-bootstrap-4\**" />
+    <EmbeddedResource Remove="wwwroot\plugins\toastr\**" />
+    <None Remove="Assets\**" />
+    <None Remove="wwwroot\plugins\bootstrap-colorpicker\**" />
+    <None Remove="wwwroot\plugins\bootstrap-slider\**" />
+    <None Remove="wwwroot\plugins\bootstrap-switch\**" />
+    <None Remove="wwwroot\plugins\bootstrap4-duallistbox\**" />
+    <None Remove="wwwroot\plugins\bs-custom-file-input\**" />
+    <None Remove="wwwroot\plugins\chart.js\**" />
+    <None Remove="wwwroot\plugins\datatables-autofill\**" />
+    <None Remove="wwwroot\plugins\datatables-buttons\**" />
+    <None Remove="wwwroot\plugins\datatables-colreorder\**" />
+    <None Remove="wwwroot\plugins\datatables-fixedcolumns\**" />
+    <None Remove="wwwroot\plugins\datatables-fixedheader\**" />
+    <None Remove="wwwroot\plugins\datatables-keytable\**" />
+    <None Remove="wwwroot\plugins\datatables-rowgroup\**" />
+    <None Remove="wwwroot\plugins\datatables-rowreorder\**" />
+    <None Remove="wwwroot\plugins\datatables-scroller\**" />
+    <None Remove="wwwroot\plugins\datatables-select\**" />
+    <None Remove="wwwroot\plugins\daterangepicker\**" />
+    <None Remove="wwwroot\plugins\ekko-lightbox\**" />
+    <None Remove="wwwroot\plugins\fastclick\**" />
+    <None Remove="wwwroot\plugins\flag-icon-css\**" />
+    <None Remove="wwwroot\plugins\flot-old\**" />
+    <None Remove="wwwroot\plugins\flot\**" />
+    <None Remove="wwwroot\plugins\ion-rangeslider\**" />
+    <None Remove="wwwroot\plugins\jquery-knob\**" />
+    <None Remove="wwwroot\plugins\jquery-mapael\**" />
+    <None Remove="wwwroot\plugins\jquery-mousewheel\**" />
+    <None Remove="wwwroot\plugins\jquery-ui\**" />
+    <None Remove="wwwroot\plugins\jquery-validation\**" />
+    <None Remove="wwwroot\plugins\jqvmap\**" />
+    <None Remove="wwwroot\plugins\jsgrid\**" />
+    <None Remove="wwwroot\plugins\jszip\**" />
+    <None Remove="wwwroot\plugins\overlayScrollbars\**" />
+    <None Remove="wwwroot\plugins\pace-progress\**" />
+    <None Remove="wwwroot\plugins\pdfmake\**" />
+    <None Remove="wwwroot\plugins\popper\**" />
+    <None Remove="wwwroot\plugins\raphael\**" />
+    <None Remove="wwwroot\plugins\sparklines\**" />
+    <None Remove="wwwroot\plugins\summernote\**" />
+    <None Remove="wwwroot\plugins\sweetalert2-theme-bootstrap-4\**" />
+    <None Remove="wwwroot\plugins\sweetalert2\**" />
+    <None Remove="wwwroot\plugins\tempusdominus-bootstrap-4\**" />
+    <None Remove="wwwroot\plugins\toastr\**" />
+    <TypeScriptCompile Remove="Assets\**" />
+    <TypeScriptCompile Remove="wwwroot\plugins\bootstrap-colorpicker\**" />
+    <TypeScriptCompile Remove="wwwroot\plugins\bootstrap-slider\**" />
+    <TypeScriptCompile Remove="wwwroot\plugins\bootstrap-switch\**" />
+    <TypeScriptCompile Remove="wwwroot\plugins\bootstrap4-duallistbox\**" />
+    <TypeScriptCompile Remove="wwwroot\plugins\bs-custom-file-input\**" />
+    <TypeScriptCompile Remove="wwwroot\plugins\chart.js\**" />
+    <TypeScriptCompile Remove="wwwroot\plugins\datatables-autofill\**" />
+    <TypeScriptCompile Remove="wwwroot\plugins\datatables-buttons\**" />
+    <TypeScriptCompile Remove="wwwroot\plugins\datatables-colreorder\**" />
+    <TypeScriptCompile Remove="wwwroot\plugins\datatables-fixedcolumns\**" />
+    <TypeScriptCompile Remove="wwwroot\plugins\datatables-fixedheader\**" />
+    <TypeScriptCompile Remove="wwwroot\plugins\datatables-keytable\**" />
+    <TypeScriptCompile Remove="wwwroot\plugins\datatables-rowgroup\**" />
+    <TypeScriptCompile Remove="wwwroot\plugins\datatables-rowreorder\**" />
+    <TypeScriptCompile Remove="wwwroot\plugins\datatables-scroller\**" />
+    <TypeScriptCompile Remove="wwwroot\plugins\datatables-select\**" />
+    <TypeScriptCompile Remove="wwwroot\plugins\daterangepicker\**" />
+    <TypeScriptCompile Remove="wwwroot\plugins\ekko-lightbox\**" />
+    <TypeScriptCompile Remove="wwwroot\plugins\fastclick\**" />
+    <TypeScriptCompile Remove="wwwroot\plugins\flag-icon-css\**" />
+    <TypeScriptCompile Remove="wwwroot\plugins\flot-old\**" />
+    <TypeScriptCompile Remove="wwwroot\plugins\flot\**" />
+    <TypeScriptCompile Remove="wwwroot\plugins\ion-rangeslider\**" />
+    <TypeScriptCompile Remove="wwwroot\plugins\jquery-knob\**" />
+    <TypeScriptCompile Remove="wwwroot\plugins\jquery-mapael\**" />
+    <TypeScriptCompile Remove="wwwroot\plugins\jquery-mousewheel\**" />
+    <TypeScriptCompile Remove="wwwroot\plugins\jquery-ui\**" />
+    <TypeScriptCompile Remove="wwwroot\plugins\jquery-validation\**" />
+    <TypeScriptCompile Remove="wwwroot\plugins\jqvmap\**" />
+    <TypeScriptCompile Remove="wwwroot\plugins\jsgrid\**" />
+    <TypeScriptCompile Remove="wwwroot\plugins\jszip\**" />
+    <TypeScriptCompile Remove="wwwroot\plugins\overlayScrollbars\**" />
+    <TypeScriptCompile Remove="wwwroot\plugins\pace-progress\**" />
+    <TypeScriptCompile Remove="wwwroot\plugins\pdfmake\**" />
+    <TypeScriptCompile Remove="wwwroot\plugins\popper\**" />
+    <TypeScriptCompile Remove="wwwroot\plugins\raphael\**" />
+    <TypeScriptCompile Remove="wwwroot\plugins\sparklines\**" />
+    <TypeScriptCompile Remove="wwwroot\plugins\summernote\**" />
+    <TypeScriptCompile Remove="wwwroot\plugins\sweetalert2-theme-bootstrap-4\**" />
+    <TypeScriptCompile Remove="wwwroot\plugins\sweetalert2\**" />
+    <TypeScriptCompile Remove="wwwroot\plugins\tempusdominus-bootstrap-4\**" />
+    <TypeScriptCompile Remove="wwwroot\plugins\toastr\**" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Remove="wwwroot\plugins\.npmignore" />
+  </ItemGroup>
+
+
+  <ItemGroup>
+    <PackageReference Include="jQuery" Version="3.5.1" />
+    <PackageReference Include="Microsoft.AspNet.Web.Optimization" Version="1.1.3" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="3.0.0" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="3.0.0">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="Microsoft.Extensions.Logging.Debug" Version="3.0.0" />
+    <PackageReference Include="Microsoft.TypeScript.MSBuild" Version="4.2.3">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="3.0.0" />
+  </ItemGroup>
+
+
+  <ItemGroup>
+    <Folder Include="Areas\MasterPages\Data\" />
+    <Folder Include="Areas\MasterPages\Models\" />
+    <Folder Include="wwwroot\dist\" />
+    <Folder Include="wwwroot\lib\" />
+  </ItemGroup>
+
+
+  <ItemGroup>
+    <None Include="wwwroot\plugins\datatables-bs4\js\dataTables.bootstrap4.js" />
+    <None Include="wwwroot\plugins\datatables-bs4\js\dataTables.bootstrap4.min.js" />
+    <None Include="wwwroot\plugins\datatables-responsive\js\dataTables.responsive.js" />
+    <None Include="wwwroot\plugins\datatables-responsive\js\dataTables.responsive.min.js" />
+    <None Include="wwwroot\plugins\datatables-responsive\js\responsive.bootstrap4.js" />
+    <None Include="wwwroot\plugins\datatables-responsive\js\responsive.bootstrap4.min.js" />
+    <None Include="wwwroot\plugins\datatables\jquery.dataTables.js" />
+    <None Include="wwwroot\plugins\datatables\jquery.dataTables.min.js" />
+  </ItemGroup>
+
+</Project>

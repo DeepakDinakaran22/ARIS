@@ -1,0 +1,426 @@
+﻿
+@{
+    ViewData["Title"] = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+
+
+
+    <div class="content-header">
+        <div class="container-fluid">
+            <div class="row mb-2">
+                <div class="col-sm-6">
+                    <h1 class="m-0 text-dark">Manage Employees</h1>
+                </div>
+                <div class="col-sm-6">
+                    <ol class="breadcrumb float-sm-right">
+                        <li class="breadcrumb-item"><a href="#">Home</a></li>
+                        <li class="breadcrumb-item active">ManageEmployees</li>
+                    </ol>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Main content -->
+    <section class="content">
+        <div class="container-fluid">
+            <div class="row">
+                <!-- left column -->
+                <div class="col-md-8">
+                    <!-- general form elements -->
+                    <div class="card card-primary">
+                        <div class="card-header">
+                            <h3 class="card-title">Employee Details	</h3>
+                        </div>
+                        <!-- /.card-header -->
+                        <!-- form start -->
+
+                        <form role="form">
+
+                            <div class="card-body">
+                                <div class="row">
+                                    <div class="col-md-6">
+
+
+                                        <div class="col-md-12">
+                                            <div class="form-group">
+                                                <label for="exampleInputEmail1">Employee Number</label>
+                                                <input type="text" class="form-control" id="empNo" placeholder="Employee Number" readonly>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-12">
+                                            <div class="form-group">
+                                                <label for="exampleInputEmail1">Employee Name </label>
+                                                <input type="text" class="form-control" id="empName" placeholder="Enter Name">
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class=" text-center">
+                                            <img src="~/img/avatar5.png" height="100px" width="100px" />
+                                        </div>
+                                        <br />
+                                        <div class="text-center">
+                                            <input type="file" border="1" style="border-style:groove; border-color:black" />
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label>Company</label>
+                                            <select class="form-control select2bs4" id="ddlCompany" style="width: 100%;">
+                                                <option selected="selected">Company 1</option>
+                                                <option>Company 2</option>
+                                                <option>Company 3</option>
+                                                <option>Company 4</option>
+                                                <option>Company 5</option>
+
+                                            </select>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label>Nationality</label>
+                                            <select class="form-control select2bs4" style="width: 100%;">
+                                                <option selected="selected">Oman</option>
+                                                <option>India</option>
+                                                <option>Bangladesh</option>
+                                                <option>Pakistan</option>
+
+
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label for="exampleInputEmail1">Passport Number </label>
+                                            <input type="text" class="form-control" id="exampleInputEmail1" placeholder="Enter Passport Number">
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <div class="form-group">
+                                            <label>Passport Expiry Date</label>
+                                            <div class="input-group date" id="reservationdate" data-target-input="nearest">
+                                                <input type="text" class="form-control datetimepicker-input" data-target="#reservationdate" />
+                                                <div class="input-group-append" data-target="#reservationdate" data-toggle="datetimepicker">
+                                                    <div class="input-group-text"><i class="fa fa-calendar"></i></div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-2">
+                                        <div class="form-group">
+                                            <label>Files</label>
+                                            <div class="input-group">
+                                                <input type="button" name="Files" class="form-control btn btn-sm btn-info" value="Files" />
+
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label for="exampleInputEmail1">Resident Number </label>
+                                            <input type="text" class="form-control" id="exampleInputEmail1" placeholder="Enter Resident No">
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <div class="form-group">
+                                            <label>Resident Expiry Date</label>
+                                            <div class="input-group date" id="reservationdate" data-target-input="nearest">
+                                                <input type="text" class="form-control datetimepicker-input" data-target="#reservationdate" />
+                                                <div class="input-group-append" data-target="#reservationdate" data-toggle="datetimepicker">
+                                                    <div class="input-group-text"><i class="fa fa-calendar"></i></div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-2">
+                                        <div class="form-group">
+                                            <label>Files</label>
+                                            <div class="input-group">
+                                                <input type="button" name="Files" class="form-control btn btn-sm btn-info" value="Files" />
+
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label>Joining Date</label>
+                                            <div class="input-group date" id="reservationdate" data-target-input="nearest">
+                                                <input type="text" class="form-control datetimepicker-input" data-target="#reservationdate" />
+                                                <div class="input-group-append" data-target="#reservationdate" data-toggle="datetimepicker">
+                                                    <div class="input-group-text"><i class="fa fa-calendar"></i></div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label>Contract Start Date</label>
+                                            <div class="input-group date" id="reservationdate" data-target-input="nearest">
+                                                <input type="text" class="form-control datetimepicker-input" data-target="#reservationdate" />
+                                                <div class="input-group-append" data-target="#reservationdate" data-toggle="datetimepicker">
+                                                    <div class="input-group-text"><i class="fa fa-calendar"></i></div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label>Contract End Date</label>
+                                            <div class="input-group date" id="reservationdate" data-target-input="nearest">
+                                                <input type="text" class="form-control datetimepicker-input" data-target="#reservationdate" />
+                                                <div class="input-group-append" data-target="#reservationdate" data-toggle="datetimepicker">
+                                                    <div class="input-group-text"><i class="fa fa-calendar"></i></div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label for="exampleInputEmail1">GSM </label>
+                                            <input type="number" class="form-control" id="exampleInputEmail1" placeholder="Enter GSM" maxlength="8">
+                                        </div>
+
+                                    </div>
+
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label for="exampleInputEmail1">Accomodation Details  </label>
+                                            <input type="text" class="form-control" id="exampleInputEmail1" placeholder="Enter accomodation">
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label>Marital Status</label>
+                                            <div class="form-group" id="raidoID">
+                                                <div class="icheck-success d-inline">
+                                                    <input type="radio" name="r3" checked id="raidoID">
+                                                    Married
+                                                </div>&nbsp;&nbsp;
+                                                <div class="icheck-success d-inline">
+                                                    <input type="radio" name="r3" id="raidoID">
+                                                    Un-Married
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label>ID Profession</label>
+                                            <select class="form-control select2bs4" style="width: 100%;">
+                                                <option selected="selected">Cleaner - General Building</option>
+                                                <option>Other Professions</option>
+                                                <option>Other Professions</option>
+                                                <option>Other Professions</option>
+                                                <option>Other Professions</option>
+
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label for="exampleInputEmail1">Designation</label>
+                                            <input type="text" class="form-control" id="exampleInputEmail1" placeholder="Enter Company">
+                                        </div>
+                                    </div>
+
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label for="exampleInputEmail1">Bank Name </label>
+                                            <input type="text" class="form-control" id="exampleInputEmail1" placeholder="Enter Company">
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label for="exampleInputEmail1">Account No. </label>
+                                            <input type="text" class="form-control" id="exampleInputEmail1" placeholder="Enter Company">
+                                        </div>
+                                    </div>
+                                    <div class="col-md-12">
+
+                                        <div class="form-group">
+                                            <label for="exampleInputFile">File input</label>
+                                            <div class="input-group">
+                                                <div class="custom-file">
+                                                    <input type="file" class="custom-file-input" id="exampleInputFile">
+                                                    <label class="custom-file-label" for="exampleInputFile">Choose file</label>
+                                                </div>
+                                                <div class="input-group-append">
+                                                    <span class="input-group-text" id="">Upload</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                </div>
+                                </div>
+                            <!-- /.card-body -->
+
+                            <div class="card-footer">
+                                <button type="submit" class="btn btn-danger">Delete</button>
+                                <button type="submit" class="btn btn-primary">Reset</button>
+                                <button type="submit" class="btn btn-warning">Update</button>
+                                <button type="submit" class="btn btn-success">Submit</button>
+                            </div>
+                        </form>
+
+                    </div>
+
+
+                </div>
+                <!--/.col (left) -->
+                <!-- right column -->
+                <div class="col-md-4">
+
+                    <!-- general form elements disabled -->
+                    <div class="card card-warning">
+                        <div class="card-header">
+                            <h3 class="card-title">Employee List</h3>
+                        </div>
+                        <!-- /.card-header -->
+                        <div class="card-body">
+                            <form role="form">
+                                <div class="row">
+                                    <div class="col-sm-12">
+                                        <div class="card-body table-responsive p-0">
+                                            <table class="table table-head-fixed text-nowrap">
+                                                <thead>
+                                                    <tr>
+                                                        <th>Emp ID</th>
+                                                        <th>Name</th>
+                                                        <th>View</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    <tr>
+                                                        <td>183</td>
+                                                        <td>John Doe</td>
+                                                        <td><a href="#"> View</a></td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td>184</td>
+                                                        <td>Mark Luke</td>
+                                                        <td><a href="#"> View</a></td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td>185</td>
+                                                        <td>Gilbert Freddy</td>
+                                                        <td><a href="#"> View</a></td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td>186</td>
+                                                        <td>Thomas </td>
+                                                        <td><a href="#"> View</a></td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td>187</td>
+                                                        <td>Akhil</td>
+                                                        <td><a href="#"> View</a></td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td>188</td>
+                                                        <td>John Doe</td>
+                                                        <td><a href="#"> View</a></td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td>189</td>
+                                                        <td>John Doe</td>
+                                                        <td><a href="#"> View</a></td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td>190</td>
+                                                        <td>John Doe</td>
+                                                        <td><a href="#"> View</a></td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td>183</td>
+                                                        <td>John Doe</td>
+                                                        <td><a href="#"> View</a></td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td>183</td>
+                                                        <td>John Doe</td>
+                                                        <td><a href="#"> View</a></td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td>183</td>
+                                                        <td>John Doe</td>
+                                                        <td><a href="#"> View</a></td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td>183</td>
+                                                        <td>John Doe</td>
+                                                        <td><a href="#"> View</a></td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td>183</td>
+                                                        <td>John Doe</td>
+                                                        <td><a href="#"> View</a></td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td>183</td>
+                                                        <td>John Doe</td>
+                                                        <td><a href="#"> View</a></td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td>183</td>
+                                                        <td>John Doe</td>
+                                                        <td><a href="#"> View</a></td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td>183</td>
+                                                        <td>John Doe</td>
+                                                        <td><a href="#"> View</a></td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td>183</td>
+                                                        <td>John Doe</td>
+                                                        <td><a href="#"> View</a></td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td>183</td>
+                                                        <td>John Doe</td>
+                                                        <td><a href="#"> View</a></td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td>183</td>
+                                                        <td>John Doe</td>
+                                                        <td><a href="#"> View</a></td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td>183</td>
+                                                        <td>John Doe</td>
+                                                        <td><a href="#"> View</a></td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+
+                                </div>
+
+
+                            </form>
+                        </div>
+                        <!-- /.card-body -->
+                    </div>
+
+
+
+
+
+
+                </div>
+                <!--/.col (right) -->
+            </div>
+            <!-- /.row -->
+        </div><!-- /.container-fluid -->
+    </section>
+
+    <script src="~/lib/jquery/dist/jquery.js" type="text/javascript"></script>
+    <script src="~/js/App/ManageEmployees.js" type="text/javascript"></script>
+
+  
+    <!-- Jquery Import-->
