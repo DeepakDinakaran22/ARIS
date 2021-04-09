@@ -3,7 +3,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.29519.87
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ArisWorkforceManagementTool", "ArisWorkforceManagementTool\ArisWorkforceManagementTool.csproj", "{32DC958B-E5F4-4E8A-AC21-63AF2D35CC28}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ArisWorkforceManagementTool", "ArisWorkforceManagementTool\ArisWorkforceManagementTool.csproj", "{32DC958B-E5F4-4E8A-AC21-63AF2D35CC28}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Aris.Data", "Aris.Data\Aris.Data.csproj", "{62C37774-7FB2-4A6D-8F01-EBDD7072A71E}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -15,6 +17,10 @@ Global
 		{32DC958B-E5F4-4E8A-AC21-63AF2D35CC28}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{32DC958B-E5F4-4E8A-AC21-63AF2D35CC28}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{32DC958B-E5F4-4E8A-AC21-63AF2D35CC28}.Release|Any CPU.Build.0 = Release|Any CPU
+		{62C37774-7FB2-4A6D-8F01-EBDD7072A71E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{62C37774-7FB2-4A6D-8F01-EBDD7072A71E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{62C37774-7FB2-4A6D-8F01-EBDD7072A71E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{62C37774-7FB2-4A6D-8F01-EBDD7072A71E}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

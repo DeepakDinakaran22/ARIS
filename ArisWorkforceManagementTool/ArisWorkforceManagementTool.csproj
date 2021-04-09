@@ -264,4 +264,9 @@
     <None Include="wwwroot\plugins\datatables\jquery.dataTables.min.js" />
   </ItemGroup>
 
+
+  <ItemGroup>
+    <ProjectReference Include="..\Aris.Data\Aris.Data.csproj" />
+  </ItemGroup>
+
 </Project>
