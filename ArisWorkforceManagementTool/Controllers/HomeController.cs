@@ -6,12 +6,14 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using ArisWorkforceManagementTool.Models;
+using Aris.Data;
 
 namespace ArisWorkforceManagementTool.Controllers
 {
     public class HomeController : Controller
     {
         private readonly ILogger<HomeController> _logger;
+        UnitOfWork UnitOfWork = new UnitOfWork();
 
         public HomeController(ILogger<HomeController> logger)
         {
@@ -20,6 +22,7 @@ namespace ArisWorkforceManagementTool.Controllers
 
         public IActionResult Index()
         {
+            var data = UnitOfWork.UserRepository.Get();
             return View();
         }
 
