@@ -12,6 +12,10 @@ namespace Aris.Data
         {
 
         }
+        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+        {
+            optionsBuilder.UseSqlServer(ConnectionService.connstring);
+        }
 
         public virtual DbSet<Users> Users { get; set; }
         public virtual DbSet<Company> Company { get; set; }
