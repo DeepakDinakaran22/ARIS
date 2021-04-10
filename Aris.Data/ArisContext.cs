@@ -63,7 +63,6 @@ namespace Aris.Data
                 entity.Property(e => e.ModifiedDate)
                .HasColumnName("ModifiedDate");
             });
-
             modelBuilder.Entity<Company>(entity => {
                 entity.HasKey(e => e.CompanyId);
 
@@ -236,50 +235,50 @@ namespace Aris.Data
                 entity.Property(e => e.ModifiedDate)
                .HasColumnName("ModifiedDate");
             });
-            modelBuilder.Entity<Users>(entity =>
-            {
-                entity.HasKey(e => e.UserId);
+            //modelBuilder.Entity<Users>(entity =>
+            //{
+            //    entity.HasKey(e => e.UserId);
 
-                entity.Property(e => e.UserId)
-                .HasColumnName("DocumentId");
+            //    entity.Property(e => e.UserId)
+            //    .HasColumnName("DocumentId");
 
-                entity.Property(e => e.UserName)
-                .HasColumnName("UserName");
+            //    entity.Property(e => e.UserName)
+            //    .HasColumnName("UserName");
 
-                entity.Property(e => e.Password)
-                .HasColumnName("Password");
+            //    entity.Property(e => e.Password)
+            //    .HasColumnName("Password");
 
-                entity.Property(e => e.FullName)
-                .HasColumnName("FullName");
+            //    entity.Property(e => e.FullName)
+            //    .HasColumnName("FullName");
 
 
 
-                entity.Property(e => e.MailAddress)
-               .HasColumnName("MailAddress");
+            //    entity.Property(e => e.MailAddress)
+            //   .HasColumnName("MailAddress");
 
-                entity.Property(e => e.UserImage)
-                .HasColumnName("UserImage");
+            //    entity.Property(e => e.UserImage)
+            //    .HasColumnName("UserImage");
 
-                entity.Property(e => e.UserTypeID)
-                .HasColumnName("UserTypeID");
+            //    entity.Property(e => e.UserTypeID)
+            //    .HasColumnName("UserTypeID");
 
                 
-                entity.Property(e => e.IsActive)
-                .HasColumnName("IsActive");
+            //    entity.Property(e => e.IsActive)
+            //    .HasColumnName("IsActive");
 
-                entity.Property(e => e.CreatedBy)
-               .HasColumnName("CreatedBy");
+            //    entity.Property(e => e.CreatedBy)
+            //   .HasColumnName("CreatedBy");
 
-                entity.Property(e => e.CreatedDate)
-               .HasColumnName("CreatedDate");
+            //    entity.Property(e => e.CreatedDate)
+            //   .HasColumnName("CreatedDate");
 
-                entity.Property(e => e.ModifiedBy)
-               .HasColumnName("ModifiedBy");
+            //    entity.Property(e => e.ModifiedBy)
+            //   .HasColumnName("ModifiedBy");
 
-                entity.Property(e => e.ModifiedDate)
-               .HasColumnName("ModifiedDate");
+            //    entity.Property(e => e.ModifiedDate)
+            //   .HasColumnName("ModifiedDate");
 
-            });
+            //});
             modelBuilder.Entity<UserType>(entity => {
                 entity.HasKey(e => e.UserTypeID);
 

@@ -17,6 +17,7 @@ namespace ArisWorkforceManagementTool
         public Startup(IConfiguration configuration)
         {
             Configuration = configuration;
+            ConnectionService.Set(configuration);
         }
 
         public IConfiguration Configuration { get; }

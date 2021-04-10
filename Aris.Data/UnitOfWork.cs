@@ -7,6 +7,8 @@ namespace Aris.Data
     {
         private ArisContext context = new ArisContext();
         private GenericRepository<Users> userRepository;
+        private GenericRepository<UserType> userTypeRepository;
+
 
         public GenericRepository<Users> UserRepository
         {
@@ -15,6 +17,17 @@ namespace Aris.Data
                 if (this.userRepository == null)
                     this.userRepository = new GenericRepository<Users>(context);
                 return this.userRepository;
+
+            }
+
+        }
+        public GenericRepository<UserType> UserTypeRepository
+        {
+            get
+            {
+                if (this.userTypeRepository == null)
+                    this.userTypeRepository = new GenericRepository<UserType>(context);
+                return this.userTypeRepository;
 
             }
 
