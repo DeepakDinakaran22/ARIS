@@ -23,9 +23,9 @@ namespace ArisWorkforceManagementTool.Controllers
 
         public IActionResult Index()
         {
-           // var user = new Users() { UserName = "Deepak",UserTypeID=1,CreatedDate=DateTime.Now };
-           // UnitOfWork.UserRepository.Insert(user);
-           // UnitOfWork.Save();
+            //var user = new Users() { UserName = "Deepak", UserTypeID = 1, CreatedDate = DateTime.Now };
+            //UnitOfWork.UserRepository.Insert(user);
+            //UnitOfWork.Save();
 
             var data = UnitOfWork.UserRepository.Get();
             return View();

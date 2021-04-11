@@ -8,6 +8,10 @@ namespace Aris.Data
         private ArisContext context = new ArisContext();
         private GenericRepository<Users> userRepository;
         private GenericRepository<UserType> userTypeRepository;
+        private GenericRepository<Company> companyRepository ;
+        private GenericRepository<DocumentCategory> documentCategoryRepository;
+        private GenericRepository<DocumentType> documentTypeRepository;
+        private GenericRepository<EmployeeDetails> employeeDetailsRepository;
 
 
         public GenericRepository<Users> UserRepository
@@ -28,6 +32,56 @@ namespace Aris.Data
                 if (this.userTypeRepository == null)
                     this.userTypeRepository = new GenericRepository<UserType>(context);
                 return this.userTypeRepository;
+
+            }
+
+        }
+
+
+        public GenericRepository<Company> CompanyRepository
+        {
+            get
+            {
+                if (this.companyRepository == null)
+                    this.companyRepository = new GenericRepository<Company>(context);
+                return this.companyRepository;
+
+            }
+
+        }
+
+        public GenericRepository<DocumentCategory> DocumentCategoryRepository
+        {
+            get
+            {
+                if (this.documentCategoryRepository == null)
+                    this.documentCategoryRepository = new GenericRepository<DocumentCategory>(context);
+                return this.documentCategoryRepository;
+
+            }
+
+        }
+
+
+        public GenericRepository<DocumentType> DocumentTypeRepository
+        {
+            get
+            {
+                if (this.documentTypeRepository == null)
+                    this.documentTypeRepository = new GenericRepository<DocumentType>(context);
+                return this.documentTypeRepository;
+
+            }
+
+        }
+
+        public GenericRepository<EmployeeDetails> EmployeeDetailsRepository
+        {
+            get
+            {
+                if (this.employeeDetailsRepository == null)
+                    this.employeeDetailsRepository = new GenericRepository<EmployeeDetails>(context);
+                return this.employeeDetailsRepository;
 
             }
 
