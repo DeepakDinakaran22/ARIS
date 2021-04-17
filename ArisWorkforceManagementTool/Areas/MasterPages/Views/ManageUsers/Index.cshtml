@@ -1,8 +1,13 @@
-﻿
+﻿@model Aris.Models.ViewModel.Users
+
 @{
     ViewData["Title"] = "Manage Users";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
+
+@* Styles for modal - to be replaced to new file *@
+
+
 <section class="content-header">
     <div class="container-fluid">
         <div class="row mb-2">
@@ -33,29 +38,36 @@
                     <!-- /.card-header -->
                     <!-- form start -->
 
-                    <form role="form">
+                    <form role="form" id="userForm">
 
                         <div class="card-body">
                             <div class="row">
                                 <div class="col-md-4">
                                     <div class="form-group">
-                                        <label for="exampleInputEmail1">User Name</label>
-                                        <input type="text" class="form-control" id="exampleInputEmail1" placeholder="Employee Number">
+                                        <label for="txtUserName">User Name</label>
+                                        <input type="text" class="form-control" id="txtUserName" placeholder="User Name">
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="form-group">
+                                        <label for="exampleInputEmail1">User Full Name</label>
+                                        <input type="text" class="form-control" id="txtUserFullName" placeholder="User Full Name">
                                     </div>
                                 </div>
                                 <div class="col-md-4">
                                     <div class="form-group">
                                         <label for="exampleInputEmail1">User Email </label>
-                                        <input type="email" class="form-control" id="exampleInputEmail1" placeholder="Enter Name">
+                                        <input type="email" class="form-control" id="txtUserEmail" placeholder="Email Address">
                                     </div>
                                 </div>
                                 <div class="col-md-4">
                                     <div class="form-group">
                                         <label>Access Type</label>
-                                        <select class="form-control select2bs4" style="width: 100%;">
-                                            <option selected="selected">Adminstrator</option>
-                                            <option>Accountant</option>
-                                            <option>Report Viewer</option>
+                                        <select class="form-control select2bs4" id="ddlUserType" style="width: 100%;">
+
+                                            <option value="1">Adminstrator</option>
+                                            <option value="2">Manager</option>
+                                            <option value="3">Report Viewer</option>
 
                                         </select>
                                     </div>
@@ -64,29 +76,19 @@
                                 <div class="col-md-4">
                                     <div class="form-group">
                                         <label>Status</label>
-                                        <select class="form-control select2bs4" style="width: 100%;">
-                                            <option selected="selected">Active</option>
-                                            <option>Disable</option>
-
+                                        <select class="form-control select2bs4" id="ddlStatus" style="width: 100%;">
+                                            <option value="0">Disable</option>
+                                            <option value="1">Active</option>
 
                                         </select>
                                     </div>
                                 </div>
 
-                                <div class="col-md-8">
+                                <div class="col-md-4">
 
-                                    <div class="form-group">
-                                        <label for="exampleInputFile">User Photo</label>
-                                        <div class="input-group">
-                                            <div class="custom-file">
-                                                <input type="file" class="custom-file-input" id="exampleInputFile">
-                                                <label class="custom-file-label" for="exampleInputFile">Choose file</label>
-                                            </div>
-                                            <div class="input-group-append">
-                                                <span class="input-group-text" id="">Upload</span>
-                                            </div>
-                                        </div>
-                                    </div>
+                                    <label for="formFileLg" class="form-label">User Image</label>
+                                    <input class="form-control form-control" id="userPhoto" type="file" />
+                                    <span id="file_error"></span>
                                 </div>
 
                             </div>
@@ -94,11 +96,10 @@
                         <!-- /.card-body -->
 
                         <div class="card-footer">
-
-                            <button type="submit" class="btn btn-danger btn-sm">Delete</button>
-                            <button type="submit" class="btn btn-primary btn-sm">Reset</button>
-                            <button type="submit" class="btn btn-warning btn-sm">Update</button>
-                            <button type="submit" class="btn btn-success btn-sm">Submit</button>
+                            <button type="submit"  id="btnDelete"  class="btn btn-danger btn-sm">Delete</button>
+                            <button type="submit" id="btnReset" class="btn btn-primary btn-sm">Reset</button>
+                            <button type="submit" id="btnUpdate" class="btn btn-warning btn-sm">Update</button>
+                            <button type="submit" id="btnSubmit" onclick="SubmitRequest()" class="btn btn-success btn-sm">Submit</button>
                         </div>
                     </form>
 
@@ -164,3 +165,37 @@
         <!-- /.row -->
     </div><!-- /.container-fluid -->
 </section>
+<script src="~/lib/jquery/dist/jquery.min.js" type="text/javascript"></script>
+<script src="~/js/Common/Common.js" type="text/javascript"></script>
+
+<script>
+    $(document).ready(function () {
+
+       $("#userPhoto").change(function(){
+$("#file_error").html("");
+var file_size = $('#userPhoto')[0].files[0].size;
+if(file_size>300000) {
+$("#file_error").html("<p style='color:#FF0000'>File size is greater than 300kb</p>");
+
+return false;
+} 
+return true;
+});
+    });
+
+    function SubmitRequest() {
+         var userName = $("#txtUserName").val();
+        var emailAddress = $("#txtUserEmail").val();
+        var userType = $("#ddlUserType option:selected").val();
+        var isActive = $("#ddlStatus option:selected").val();
+        var fullName =  $("#txtUserFullName").val();
+        var data = {
+         UserName : userName,
+         MailAddress: emailAddress,
+         UserTypeID: userType,
+            IsActive: isActive,
+            FullName: fullName
+        };
+        callAjax('POST', '/MasterPages/ManageUsers/SubmitRequest', data);
+    }
+</script>

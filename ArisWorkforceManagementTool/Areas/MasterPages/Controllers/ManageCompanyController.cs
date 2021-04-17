@@ -2,14 +2,20 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Aris.Data;
+using Aris.Data.Entities;
+using Aris.Models.ViewModel;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 
 namespace ArisWorkforceManagementTool.Areas.MasterPages.Controllers
 {
     [Area("MasterPages")]
     public class ManageCompanyController : Controller
     {
+        private readonly ILogger<ManageUsersController> _logger;
+        UnitOfWork UnitOfWork = new UnitOfWork();
         // GET: ManageCompany
         public ActionResult Index()
         {
@@ -90,5 +96,62 @@ namespace ArisWorkforceManagementTool.Areas.MasterPages.Controllers
                 return View();
             }
         }
+        [HttpPost]
+        public JsonResult SubmitRequest(CompanyViewModel companyObj)
+        {
+            try
+            {
+                var company = new Company() { CompanyName = companyObj.CompanyName, CompanyDescription = companyObj.CompanyDescription, IsActive = companyObj.IsActive, CreatedDate = DateTime.Now, CreatedBy = 1 };
+
+                UnitOfWork.CompanyRepository.Insert(company);
+                UnitOfWork.Save();
+
+                return Json(new { success = true, responseText = "Company added successfully." });
+            }
+            catch
+            {
+                return Json(new { success = false, responseText = "Something went wrong." });
+            }
+        }
+        [HttpPost]
+        public ActionResult UpdateRequest(CompanyViewModel companyObj)
+        {try
+            {
+                var company = new Company() { CompanyName = companyObj.CompanyName, CompanyDescription = companyObj.CompanyDescription, IsActive = companyObj.IsActive, ModifiedDate = DateTime.Now,ModifiedBy  = 1,CompanyId=companyObj.CompanyId };
+                UnitOfWork.CompanyRepository.Update(company);
+                UnitOfWork.Save();
+
+                return RedirectToAction(nameof(Index));
+
+            }
+            catch (Exception ex)
+            {
+                return View();
+            }
+
+        }
+        [HttpGet]
+        public JsonResult GetAllCompanies()
+        {
+            var companies = UnitOfWork.CompanyRepository.Get();
+            return Json(companies);
+
+        }
+        [HttpGet]
+        public JsonResult IsCompanyNameExists(CompanyViewModel companyObj)
+        {
+            var companies = UnitOfWork.CompanyRepository.Get();
+            bool has= companies.ToList().Any(x => x.CompanyName == companyObj.CompanyName);
+            if(has)
+            {
+                return Json(new { value = true, responseText = "Company name exists" });
+            }
+            else
+            {
+                return Json(new { value = false, responseText = "Company name is not exists" });
+            }
+
+        }
+
     }
 }

@@ -27,7 +27,7 @@ namespace ArisWorkforceManagementTool.Controllers
             //UnitOfWork.UserRepository.Insert(user);
             //UnitOfWork.Save();
 
-            var data = UnitOfWork.UserRepository.Get();
+           // var data = UnitOfWork.UserRepository.Get();
             return View();
         }
 
@@ -41,5 +41,11 @@ namespace ArisWorkforceManagementTool.Controllers
         {
             return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
         }
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult SubmitRequest(string userName, string emailAddress, int userType, int isActive)
+        {
+            return View();
+        }    
     }
 }

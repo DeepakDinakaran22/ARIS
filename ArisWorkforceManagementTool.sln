@@ -5,7 +5,9 @@ VisualStudioVersion = 16.0.29519.87
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ArisWorkforceManagementTool", "ArisWorkforceManagementTool\ArisWorkforceManagementTool.csproj", "{32DC958B-E5F4-4E8A-AC21-63AF2D35CC28}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Aris.Data", "Aris.Data\Aris.Data.csproj", "{62C37774-7FB2-4A6D-8F01-EBDD7072A71E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Aris.Data", "Aris.Data\Aris.Data.csproj", "{62C37774-7FB2-4A6D-8F01-EBDD7072A71E}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Aris.Models", "Aris.Models\Aris.Models.csproj", "{8890E1AC-F3FE-4A45-984E-A5971C87D744}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -21,6 +23,10 @@ Global
 		{62C37774-7FB2-4A6D-8F01-EBDD7072A71E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{62C37774-7FB2-4A6D-8F01-EBDD7072A71E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{62C37774-7FB2-4A6D-8F01-EBDD7072A71E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8890E1AC-F3FE-4A45-984E-A5971C87D744}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8890E1AC-F3FE-4A45-984E-A5971C87D744}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8890E1AC-F3FE-4A45-984E-A5971C87D744}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8890E1AC-F3FE-4A45-984E-A5971C87D744}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
