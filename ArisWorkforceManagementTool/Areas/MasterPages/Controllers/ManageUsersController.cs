@@ -10,6 +10,7 @@ using Aris.Data.Entities;
 using Aris.Models.ViewModel;
 using Microsoft.Extensions.Logging;
 using Users = Aris.Models.ViewModel.Users;
+using Aris.Models;
 
 namespace ArisWorkforceManagementTool.Areas.MasterPages.Controllers
 {
@@ -21,8 +22,10 @@ namespace ArisWorkforceManagementTool.Areas.MasterPages.Controllers
         // GET: ManageUsers
         public ActionResult Index()
         {
-            return View("Users");
+            return View();
         }
+
+        public JsonResult GetUsers() => Json(UnitOfWork.UserRepository.Get(null, x => x.OrderBy(id => id.UserId)).ToList());
 
         // GET: ManageUsers/Details/5
         public ActionResult Details(int id)
@@ -53,20 +56,26 @@ namespace ArisWorkforceManagementTool.Areas.MasterPages.Controllers
             }
         }
 
-        // GET: ManageUsers/Edit/5
-        public ActionResult Edit(int id)
-        {
-            return View();
-        }
+      
 
         // POST: ManageUsers/Edit/5
         [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult Edit(int id, IFormCollection collection)
+        //[ValidateAntiForgeryToken]
+        public ActionResult UpdateUser(Users users)
         {
             try
             {
-                // TODO: Add update logic here
+                var user = new Aris.Data.Entities.Users
+                {
+                    UserId = users.UserId,
+                    UserName=users.UserName,
+                    FullName = users.FullName,
+                    UserTypeID = users.UserTypeID,
+                    MailAddress=users.MailAddress,
+                    IsActive = users.IsActive
+                };
+                UnitOfWork.UserRepository.Update(user);
+                UnitOfWork.Save();
 
                 return RedirectToAction(nameof(Index));
             }
@@ -104,8 +113,17 @@ namespace ArisWorkforceManagementTool.Areas.MasterPages.Controllers
         {
             try
             {
-                var user = new Aris.Data.Entities.Users() { UserName = userObj.UserName, MailAddress= userObj.MailAddress, UserTypeID = userObj.UserTypeID, IsActive= userObj.IsActive, CreatedDate = DateTime.Now,FullName= userObj.FullName };
-                
+                var user = new Aris.Data.Entities.Users()
+                {
+                    UserName = userObj.UserName,
+                    MailAddress = userObj.MailAddress,
+                    UserTypeID = userObj.UserTypeID,
+                    IsActive = userObj.IsActive,
+                    CreatedDate = DateTime.Now,
+                    FullName = userObj.FullName,
+                    Password = new AuthHelper().HashPassword()
+                };
+
                 UnitOfWork.UserRepository.Insert(user);
                 UnitOfWork.Save();
 
