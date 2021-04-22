@@ -23,6 +23,8 @@ namespace Aris.Data
         public virtual DbSet<DocumentType> DocumentType { get; set; }
         public virtual DbSet<EmployeeDetails> EmployeeDetails { get; set; }
         public virtual DbSet<UserType> UserType { get; set; }
+        public virtual DbSet<EmployeeFileUploads> EmployeeFileUploads { get; set; }
+        public virtual DbSet<ErrorLog> ErrorLog { get; set; }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<Users>(entity =>
@@ -234,51 +236,9 @@ namespace Aris.Data
 
                 entity.Property(e => e.ModifiedDate)
                .HasColumnName("ModifiedDate");
+                entity.Property(e => e.ApprovalStatus)
+               .HasColumnName("ApprovalStatus");
             });
-            //modelBuilder.Entity<Users>(entity =>
-            //{
-            //    entity.HasKey(e => e.UserId);
-
-            //    entity.Property(e => e.UserId)
-            //    .HasColumnName("DocumentId");
-
-            //    entity.Property(e => e.UserName)
-            //    .HasColumnName("UserName");
-
-            //    entity.Property(e => e.Password)
-            //    .HasColumnName("Password");
-
-            //    entity.Property(e => e.FullName)
-            //    .HasColumnName("FullName");
-
-
-
-            //    entity.Property(e => e.MailAddress)
-            //   .HasColumnName("MailAddress");
-
-            //    entity.Property(e => e.UserImage)
-            //    .HasColumnName("UserImage");
-
-            //    entity.Property(e => e.UserTypeID)
-            //    .HasColumnName("UserTypeID");
-
-                
-            //    entity.Property(e => e.IsActive)
-            //    .HasColumnName("IsActive");
-
-            //    entity.Property(e => e.CreatedBy)
-            //   .HasColumnName("CreatedBy");
-
-            //    entity.Property(e => e.CreatedDate)
-            //   .HasColumnName("CreatedDate");
-
-            //    entity.Property(e => e.ModifiedBy)
-            //   .HasColumnName("ModifiedBy");
-
-            //    entity.Property(e => e.ModifiedDate)
-            //   .HasColumnName("ModifiedDate");
-
-            //});
             modelBuilder.Entity<UserType>(entity => {
                 entity.HasKey(e => e.UserTypeID);
 
@@ -304,7 +264,69 @@ namespace Aris.Data
                .HasColumnName("ModifiedDate");
 
             });
+            modelBuilder.Entity<EmployeeFileUploads>(entity => {
+                entity.HasKey(e => e.EmpFileUploadId);
 
-        }
+                entity.Property(e => e.EmpFileUploadId)
+                .HasColumnName("EmpFileUploadId");
+
+                entity.Property(e => e.EmployeeNo)
+                .HasColumnName("EmployeeNo");
+
+                entity.Property(e => e.EmployeeOrderNo)
+                .HasColumnName("EmployeeOrderNo");
+
+                entity.Property(e => e.UploadType)
+              .HasColumnName("UploadType");
+
+                entity.Property(e => e.FileName)
+                .HasColumnName("FileName");
+
+
+                entity.Property(e => e.FileLocation)
+                .HasColumnName("FileLocation");
+
+                entity.Property(e => e.TempEmployeeNo)
+                .HasColumnName("TempEmployeeNo");
+
+                entity.Property(e => e.IsActive)
+                .HasColumnName("IsActive");
+
+                entity.Property(e => e.CreatedBy)
+               .HasColumnName("CreatedBy");
+
+                entity.Property(e => e.CreatedDate)
+               .HasColumnName("CreatedDate");
+
+                entity.Property(e => e.ModifiedBy)
+               .HasColumnName("ModifiedBy");
+
+                entity.Property(e => e.ModifiedDate)
+               .HasColumnName("ModifiedDate");
+
+            });
+            modelBuilder.Entity<ErrorLog>(entity =>
+            {
+                entity.HasKey(e => e.ErrorId);
+
+                entity.Property(e => e.ErrorId)
+                .HasColumnName("ErrorId");
+
+                entity.Property(e => e.Message)
+                .HasColumnName("Message");
+
+                entity.Property(e => e.Method)
+                .HasColumnName("Method");
+
+                entity.Property(e => e.InnerException)
+                .HasColumnName("InnerException");
+
+                entity.Property(e => e.ErrorDate)
+                .HasColumnName("ErrorDate");
+
+            });
+
+
+            }
     }
 }

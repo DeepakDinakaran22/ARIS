@@ -22,80 +22,6 @@ namespace ArisWorkforceManagementTool.Areas.MasterPages.Controllers
             return View();
         }
 
-        // GET: ManageCompany/Details/5
-        public ActionResult Details(int id)
-        {
-            return View();
-        }
-
-        // GET: ManageCompany/Create
-        public ActionResult Create()
-        {
-            return View();
-        }
-
-        // POST: ManageCompany/Create
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult Create(IFormCollection collection)
-        {
-            try
-            {
-                // TODO: Add insert logic here
-
-                return RedirectToAction(nameof(Index));
-            }
-            catch
-            {
-                return View();
-            }
-        }
-
-        // GET: ManageCompany/Edit/5
-        public ActionResult Edit(int id)
-        {
-            return View();
-        }
-
-        // POST: ManageCompany/Edit/5
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult Edit(int id, IFormCollection collection)
-        {
-            try
-            {
-                // TODO: Add update logic here
-
-                return RedirectToAction(nameof(Index));
-            }
-            catch
-            {
-                return View();
-            }
-        }
-
-        // GET: ManageCompany/Delete/5
-        public ActionResult Delete(int id)
-        {
-            return View();
-        }
-
-        // POST: ManageCompany/Delete/5
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult Delete(int id, IFormCollection collection)
-        {
-            try
-            {
-                // TODO: Add delete logic here
-
-                return RedirectToAction(nameof(Index));
-            }
-            catch
-            {
-                return View();
-            }
-        }
         [HttpPost]
         public JsonResult SubmitRequest(CompanyViewModel companyObj)
         {
@@ -114,26 +40,26 @@ namespace ArisWorkforceManagementTool.Areas.MasterPages.Controllers
             }
         }
         [HttpPost]
-        public ActionResult UpdateRequest(CompanyViewModel companyObj)
+        public JsonResult UpdateRequest(CompanyViewModel companyObj)
         {try
             {
-                var company = new Company() { CompanyName = companyObj.CompanyName, CompanyDescription = companyObj.CompanyDescription, IsActive = companyObj.IsActive, ModifiedDate = DateTime.Now,ModifiedBy  = 1,CompanyId=companyObj.CompanyId };
+                var company = new Company() { CompanyName=companyObj.CompanyName, CompanyDescription = companyObj.CompanyDescription, IsActive = companyObj.IsActive, ModifiedDate = DateTime.Now,ModifiedBy  = 1,CompanyId=companyObj.CompanyId };
                 UnitOfWork.CompanyRepository.Update(company);
                 UnitOfWork.Save();
 
-                return RedirectToAction(nameof(Index));
+                return Json(new { success = true, responseText = "Company updated successfully." });
 
             }
             catch (Exception ex)
             {
-                return View();
+                return Json(new { success = false, responseText = "Something went wrong." });
             }
 
         }
         [HttpGet]
         public JsonResult GetAllCompanies()
         {
-            var companies = UnitOfWork.CompanyRepository.Get();
+            var companies = UnitOfWork.CompanyRepository.Get(null,x=>x.OrderByDescending(id=>id.CompanyId));
             return Json(companies);
 
         }

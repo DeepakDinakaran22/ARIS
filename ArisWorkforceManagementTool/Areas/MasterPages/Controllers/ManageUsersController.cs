@@ -61,7 +61,7 @@ namespace ArisWorkforceManagementTool.Areas.MasterPages.Controllers
         // POST: ManageUsers/Edit/5
         [HttpPost]
         //[ValidateAntiForgeryToken]
-        public ActionResult UpdateUser(Users users)
+        public JsonResult UpdateUser(Users users)
         {
             try
             {
@@ -77,11 +77,11 @@ namespace ArisWorkforceManagementTool.Areas.MasterPages.Controllers
                 UnitOfWork.UserRepository.Update(user);
                 UnitOfWork.Save();
 
-                return RedirectToAction(nameof(Index));
+                return Json(new { success = true, responseText = "User updated successfully." });
             }
             catch
             {
-                return View();
+                return Json(new { success = false, responseText = "Something went wrong." });
             }
         }
 
@@ -109,7 +109,7 @@ namespace ArisWorkforceManagementTool.Areas.MasterPages.Controllers
         }
         [HttpPost]
         //[ValidateAntiForgeryToken]
-        public ActionResult SubmitRequest(Users userObj)
+        public JsonResult SubmitRequest(Users userObj)
         {
             try
             {
@@ -127,12 +127,27 @@ namespace ArisWorkforceManagementTool.Areas.MasterPages.Controllers
                 UnitOfWork.UserRepository.Insert(user);
                 UnitOfWork.Save();
 
-                return RedirectToAction(nameof(Index));
+                return Json(new { success = true, responseText = "User Added Successfully." });
             }
             catch
             {
-                return View();
+                return Json(new { success = true, responseText = "Something Went Wrong!" });
             }
+        }
+        [HttpGet]
+        public JsonResult IsUserNameExists(Users userObj)
+        {
+            var users = UnitOfWork.UserRepository.Get();
+            bool has = users.ToList().Any(x => x.UserName == userObj.UserName);
+            if (has)
+            {
+                return Json(new { value = true, responseText = "User name exists" });
+            }
+            else
+            {
+                return Json(new { value = false, responseText = "User name is not exists" });
+            }
+
         }
     }
 }

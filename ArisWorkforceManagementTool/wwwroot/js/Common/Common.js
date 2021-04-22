@@ -100,28 +100,7 @@ function showAlert(pData) {
             $('#btnDialogYes').html('<i class="fa fa-close"></i> No');
             $('#btnDialogNo').show();
         }
-        //$('#btnDialogYes').unbind('click');
-        //$('#btnDialogNo').unbind('click');
-        //if (pData.action) {
-        //    $("#btnDialogYes").bind('click', function () {
-        //        $('.modal-backdrop').remove();
-        //        pData.action();
-        //    });
-        //}
-        //if (pData.cancel) {
-        //    $("#btnDialogNo").bind('click', function () {
-        //        $('.modal-backdrop').remove();
-        //        isCancelButtonClicked = true;
-        //        pData.cancel();
-        //    });
-        //}
-        //$('#alert-modal').on('hidden.bs.modal', function () {
-        //    $('.modal-backdrop').remove();
-        //    if (pData.cancel && isCancelButtonClicked == false) {
-        //        isCancelButtonClicked = false;
-        //        pData.cancel();
-        //    }
-        //});
+        
         $('#alert-modal').modal({
             backdrop: true,
             keyboard: true
@@ -192,3 +171,30 @@ function showAlert_OLD(pData) {
     }
 }
 
+function bindDropDownList(ddl,type,url,dataType,value,name) {
+    try {
+        var ddlName = $("#" + ddl);
+        ddlName.empty().append('<option selected="selected" value="0" disabled = "disabled">Loading...</option>');
+        $.ajax({
+            type: type,
+            url: url,
+            contentType: "application/json; charset=utf-8",
+            dataType: dataType,
+            success: function (response) {
+                ddlName.empty().append('<option selected="selected" value="0">Select</option>');
+                $.each(response, function () {
+                    ddlName.append($("<option></option>").val(this[''+value+'']).html(this[''+name+'']));
+                });
+            },
+            failure: function (response) {
+                alert(response.responseText);
+            },
+            error: function (response) {
+                alert(response.responseText);
+            }
+        });
+    }
+    catch (err) {
+
+    }
+}

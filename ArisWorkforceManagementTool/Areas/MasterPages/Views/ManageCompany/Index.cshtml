@@ -65,10 +65,10 @@
                         <!-- /.card-body -->
 
                         <div class="card-footer" style="text-align:right">
-                            <button type="submit" id="btnDelete" class="btn btn-danger btn-sm">Delete</button>
-                            <button type="submit" id="btnReset" onclick="Reset()" class="btn btn-primary btn-sm">Reset</button>
-                            <button type="submit" id="btnUpdate" onclick="UpdateRequest()" class="btn btn-warning btn-sm">Update</button>
-                            <button type="submit" id="btnSubmit" onclick="SubmitRequest()" class="btn btn-success btn-sm">Submit</button>
+                            <button type="button" id="btnDelete" class="btn btn-danger btn-sm">Delete</button>
+                            <button type="reset" id="btnReset" onclick="Reset()" class="btn btn-primary btn-sm">Reset</button>
+                            <button type="button" id="btnUpdate" onclick="UpdateRequest()" class="btn btn-warning btn-sm">Update</button>
+                            <button type="button" id="btnSubmit" onclick="SubmitRequest()" class="btn btn-success btn-sm">Submit</button>
                         </div>
                     </form>
 
@@ -91,16 +91,7 @@
                             <div class="row">
                                 <div class="col-sm-12">
                                     <div class="card-body table-responsive p-0">
-                                        <table class="table table-head-fixed text-nowrap" id="tblCompanies">
-                                            @*<thead>
-                                                    <tr>
-                                                        <th>Company Name</th>
-                                                        <th>Company Description</th>
-                                                        <th>Status</th>
-                                                        <th>View</th>
-                                                    </tr>
-                                                </thead>*@
-                                        </table>
+                                        <table class="table table-head-fixed text-nowrap" id="tblCompanies"> </table>
                                     </div>
                                 </div>
 
@@ -178,6 +169,7 @@
         $('#tblCompanies').on('click', 'td.edit', function (e) {
             e.preventDefault();
             $("#txtCompanyName").val(table.row(this).data()['companyName']);
+            $("#txtCompanyName").attr("disabled", "disabled");
             $("#txtCompanyDesc").val(table.row(this).data()['companyDescription']);
             if (table.row(this).data()['isActive'] == 1) {
                 $("#ddlStatus").val(1);
@@ -209,7 +201,7 @@
                 if (response != null) {
                     if (response.value == true) {
                         $('#txtCompanyName').css('border-color', 'red');
-                        showAlert({ title: "Warning!", message: 'Company Name is already added!', type: "INFO" });
+                        showAlert({ title: "Warning!", message: 'Company Name is already added!', type: "WARNING" });
                     }
                     else {
                             $('#txtCompanyName').css('border-color', '');
@@ -233,7 +225,7 @@
         }
     }
     function SubmitRequest() {
-
+        var isValid = true;
         var companyName = $("#txtCompanyName").val();
         var companyDesc = $("#txtCompanyDesc").val();
         var isActive = $("#ddlStatus option:selected").val();
@@ -244,14 +236,31 @@
             IsActive: isActive
         };
 
-       
+        if ($('#txtCompanyName').val() == '') {
+            $('#txtCompanyName').css('border-color', 'red');
+            isValid = false;
+        }
+        else if ($("#ddlStatus").val() == -1) {
+            $('#ddlStatus').css('border-color', 'red');
+            isValid = false;
+        }
 
-         callAjax('POST', '/MasterPages/ManageCompany/SubmitRequest',data);
+        if (isValid) {
+
+            callAjax('POST', '/MasterPages/ManageCompany/SubmitRequest', data);
+            GetAllCompanies();
+            Reset();
+        }
+        else {
+
+        }
+
               
 
     }
-   
     function UpdateRequest() {
+                var isValid = true;
+
         try {
             var companyName = $("#txtCompanyName").val();
             var companyDesc = $("#txtCompanyDesc").val();
@@ -263,9 +272,24 @@
                 IsActive: isActive,
                 companyId: companyId
             };
-            var status = callAjax('POST', '/MasterPages/ManageCompany/UpdateRequest', data);
-            console.log('status - ' + status);
-            GetAllCompanies();
+
+
+             if ($('#txtCompanyName').val() == '') {
+            $('#txtCompanyName').css('border-color', 'red');
+            isValid = false;
+        }
+        else if ($("#ddlStatus").val() == -1) {
+            $('#ddlStatus').css('border-color', 'red');
+            isValid = false;
+        }
+
+            if (isValid) {
+
+                callAjax('POST', '/MasterPages/ManageCompany/UpdateRequest', data);
+                GetAllCompanies();
+                Reset();
+            }
+
         }
         catch (err) {
             console.log(err);
@@ -273,6 +297,7 @@
     }
     //Fetch all data
     function GetAllCompanies() {
+        alert('came to load');
         $.ajax({
             type: "GET",
             url: "/MasterPages/ManageCompany/GetAllCompanies",
@@ -293,8 +318,6 @@
             }
         });
     }
-
-
     function populateCompanies(response) {
         table = $('#tblCompanies').DataTable(
             {
@@ -306,6 +329,8 @@
                 scrollY: false,
                 select: true,
                 pageLength: 5,
+                destroy:true,
+                order: [[ 0, "desc" ]],
                 //columnDefs: [ { "visible": false,  "targets": [ 0 ] }],
                 columns: [
                     {
@@ -343,9 +368,9 @@
 
     function Reset() {
         try {
-            $("#txtCompanyName").val() = '';
-            $("#txtCompanyDesc").val() = '';
-            $("#ddlStatus").val() = -1;
+            $("#txtCompanyName").val('');
+            $("#txtCompanyDesc").val('');
+            $("#ddlStatus").val(-1);
         }
         catch (err) {
             console.log(err);

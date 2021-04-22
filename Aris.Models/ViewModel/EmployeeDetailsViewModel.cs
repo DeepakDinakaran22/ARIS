@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace Aris.Data.Entities
+namespace Aris.Models.ViewModel
 {
-    public class EmployeeDetails
+    public class EmployeeDetailsViewModel
     {
         public int EmployeeNo { get; set; }
 

@@ -22,4 +22,5 @@ namespace Aris.Data.Entities
 
         public DateTime? ModifiedDate { get; set; }
     }
+   
 }
