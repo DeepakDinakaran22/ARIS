@@ -238,6 +238,8 @@ namespace Aris.Data
                .HasColumnName("ModifiedDate");
                 entity.Property(e => e.ApprovalStatus)
                .HasColumnName("ApprovalStatus");
+                entity.Property(e => e.EmployeeReferenceNo)
+                .HasColumnName("EmployeeReferenceNo");
             });
             modelBuilder.Entity<UserType>(entity => {
                 entity.HasKey(e => e.UserTypeID);

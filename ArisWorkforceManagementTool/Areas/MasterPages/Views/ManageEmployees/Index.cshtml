@@ -4,6 +4,7 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 <link rel="stylesheet" href="~/css/jquery-ui.css">
+@*<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">*@
 @*<link rel="stylesheet" href="~/css/bootstrap.min.css">*@
 
 <div class="content-header">
@@ -22,11 +23,12 @@
     </div>
 </div>
 <!-- Main content -->
+
 <section class="content">
     <div class="container-fluid">
         <div class="row">
             <!-- left column -->
-            <div class="col-md-8">
+            <div class="col-md-7">
                 <!-- general form elements -->
                 <div class="card card-primary">
                     <div class="card-header">
@@ -108,7 +110,7 @@
                                 <div class="col-md-4">
                                     <div class="form-group">
                                         <label>Resident Expiry Date</label>
-                                        <input type="text" class="form-control date" id="dpResidenttExpiryDate">
+                                        <input type="text" class="form-control date" id="dpResidentExpiryDate">
                                     </div>
                                 </div>
                                 <div class="col-md-2">
@@ -192,30 +194,99 @@
                                     </div>
                                 </div>
                                 <div class="col-md-12">
-
-                                    <div class="form-group">
-                                        <label for="fileInput">File input</label>
-                                        <div class="input-group">
-                                            <div class="custom-file">
-                                                <input type="file" class="custom-file-input" id="txtFileInput">
-                                                <label class="custom-file-label" for="exampleInputFile">Choose file</label>
-                                            </div>
-                                            <div class="input-group-append">
-                                                <span class="input-group-text" id="">Upload</span>
-                                            </div>
-                                        </div>
-                                    </div>
+                                    <table class="table table-striped table-bordered" id="tblResidentFiles">
+                                        <thead>
+                                            <tr>
+                                                <th>
+                                                    File 
+                                                </th>
+                                                <th>
+                                                    Upload
+                                                </th>
+                                                <th>
+                                                    Uploaded File
+                                                </th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr>
+                                                <td>
+                                                    Insurance
+                                                </td>
+                                                <td><input type="file" id="myFile" name="filename2">
+                                                </td>
+                                                <td>
+                                                    <a href="#"> Insurance.jpg</a>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td>
+                                                    Contract Agreement With Company
+                                                </td>
+                                                <td><input type="file" id="myFile" name="filename2">
+                                                </td>
+                                                <td>
+                                                    <a href="#"> CompanyContract.jpg</a>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td>
+                                                    Manpower Contract Agreement
+                                                </td>
+                                                <td><input type="file" id="myFile" name="filename2">
+                                                </td>
+                                                <td>
+                                                    <a href="#"> Manpower.jpg</a>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td>
+                                                    Letters
+                                                </td>
+                                                <td><input type="file" id="myFile" name="filename2">
+                                                </td>
+                                                <td>
+                                                    <a href="#"> Letter.jpg</a>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td>
+                                                    Other
+                                                </td>
+                                                <td><input type="file" id="myFile" name="filename2">
+                                                </td>
+                                                <td>
+                                                    <a href="#"> Other.jpg</a>
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
                                 </div>
+                                @*<div class="col-md-12">
+
+            <div class="form-group">
+                <label for="fileInput">File input</label>
+                <div class="input-group">
+                    <div class="custom-file">
+                        <input type="file" class="custom-file-input" id="txtFileInput">
+                        <label class="custom-file-label" for="exampleInputFile">Choose file</label>
+                    </div>
+                    <div class="input-group-append">
+                        <span class="input-group-text" id="">Upload</span>
+                    </div>
+                </div>
+            </div>
+        </div>*@
 
                             </div>
                         </div>
                         <!-- /.card-body -->
 
-                        <div class="card-footer">
-                            <button type="button" class="btn btn-danger">Delete</button>
-                            <button type="button" class="btn btn-primary">Reset</button>
-                            <button type="button" id="btnUpdate" class="btn btn-warning">Update</button>
-                            <button type="button" onclick="SubmitRequest()" class="btn btn-success">Submit</button>
+                        <div class="card-footer" style="text-align:right">
+                            <button type="button" id="btnDelete" class="btn btn-danger">Delete</button>
+                            <button type="reset" id="btnReset" class="btn btn-primary">Reset</button>
+                            <button type="button" id="btnUpdate" onclick="UpdateRequest()" class="btn btn-warning">Update</button>
+                            <button type="button" id="btnSubmit" onclick="SubmitRequest()" class="btn btn-success">Submit</button>
                         </div>
                     </form>
 
@@ -225,7 +296,7 @@
             </div>
             <!--/.col (left) -->
             <!-- right column -->
-            <div class="col-md-4">
+            <div class="col-md-5">
 
                 <!-- general form elements disabled -->
                 <div class="card card-warning">
@@ -237,7 +308,7 @@
                         <form role="form">
                             <div class="row">
                                 <div class="col-sm-12">
-                                    <div class="card-body table-responsive p-0">
+                                    <div class="card-body table-responsive p-0" style="overflow:hidden">
                                         <table class="table table-head-fixed text-nowrap" id="tblEmployees"> </table>
                                     </div>
                                 </div>
@@ -261,7 +332,6 @@
         <!-- /.row -->
     </div><!-- /.container-fluid -->
 </section>
-
 @* Modal for file Upload *@
 @* Passport *@
 <div class="modal fade" id="modal-passport" role="dialog">
@@ -314,7 +384,36 @@
                     </table>
                 </div>
                 <div class="col-md-12">
-                    <table class="table table-head-fixed text-nowrap" id="tblCompanies">
+                    <table class="table table-striped table-bordered" id="tblPassportFiles">
+                        <thead>
+                          <tr>
+                              <th>
+                                  File
+                              </th>
+                              <th>
+                                  File Name
+                              </th>
+                              
+                          </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>
+                                    Front Page
+                                </td>
+                                <td>
+                                    <a href="#"> PassportFrontPage.jpg</a>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    Front Page
+                                </td>
+                                <td>
+                                    <a href="#"> PassportBackPage.jpg</a>
+                                </td>
+                            </tr>
+                        </tbody>
                     </table>
                 </div>
             </div>
@@ -377,11 +476,39 @@
 
                 </div>
                 <div class="col-md-12">
-                    <table class="table table-head-fixed text-nowrap" id="tblCompanies">
+                    <table class="table table-striped table-bordered" id="tblResidentFiles">
+                        <thead>
+                            <tr>
+                                <th>
+                                    File
+                                </th>
+                                <th>
+                                    File Name
+                                </th>
+
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>
+                                    Front Page
+                                </td>
+                                <td>
+                                    <a href="#"> ResidentCardFrontPage.jpg</a>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    Front Page
+                                </td>
+                                <td>
+                                    <a href="#"> ResidentCardBackPage.jpg</a>
+                                </td>
+                            </tr>
+                        </tbody>
                     </table>
-
-
                 </div>
+
             </div>
             <div class="modal-footer">
                 <button type="button" id="btnResidentReset" class="btn btn-warning">Reset</button>
@@ -429,16 +556,19 @@
 <script src="~/plugins/countrypicker/js/jquery.countrySelector.js" type="text/javascript"></script>
 @* Solution Specific files ends *@
 <script>
-     var row;
+    var row;
     var table;
-    var employeeNumber;
+    var empNO;
     $(document).ready(function () {
+        $("#btnUpdate").hide();
+        $("#btnSubmit").show();
         getCompanies();
         GetAllEmployees();
+        GetEmployeeReferenceNo();
         $("#dpContractEndDate").datepicker({ minDate: 0 }); //maxDate: "+1M +15D" });
         $("#dpContractStartDate").datepicker({ minDate: 0 });
         $("#dpJoiningDate").datepicker({ minDate: 0 });
-        $("#dpResidenttExpiryDate").datepicker({ minDate: 0 });
+        $("#dpResidentExpiryDate").datepicker({ minDate: 0 });
         $("#dpPassportExpiryDate").datepicker({ minDate: 0 });
 
         //fileupload code
@@ -474,12 +604,35 @@
             }
         });
 
-         $('#tblEmployees').on('click', 'td.edit', function (e) {
-             e.preventDefault();
-             console.log(employeeNumber);
-             employeeNumber = table.row(this).data()['employeeNumber'];
-             $("#txtEmployeeName").val(table.row(this).data()['employeeName']);
-             
+        $('#tblEmployees').on('click', 'td.edit', function (e) {
+            e.preventDefault();
+            empNO = parseInt(table.row(this).data()['employeeNo']);
+            console.log('1-' + table.row(this).data()['employeeNo']);
+            console.log('2-'+empNO);
+            $("#txtEmployeeNumber").val('ARIS-'+table.row(this).data()['employeeReferenceNo']);
+            $("#txtEmployeeName").val(table.row(this).data()['employeeName']);
+            $("#ddlCompany").val(table.row(this).data()['companyId']);
+            $("#ddlCountry").val(table.row(this).data()['nationality']);
+            $("#txtPassportNumber").val(table.row(this).data()['passportNumber']);
+            $( "#dpPassportExpiryDate" ).datepicker("setDate", $.datepicker.parseDate( "yy-mm-dd",  table.row(this).data()['passportExpiryDate'].replace('T00:00:00','') ));
+            $("#txtResidentNumber").val(table.row(this).data()['residentNumber']);
+            $("#dpResidentExpiryDate" ).datepicker("setDate", $.datepicker.parseDate( "yy-mm-dd", table.row(this).data()['residentExpiryDate'].replace('T00:00:00','') ));
+            $("#dpJoiningDate" ).datepicker("setDate", $.datepicker.parseDate( "yy-mm-dd", table.row(this).data()['joiningDate'].replace('T00:00:00','') ));
+            $( "#dpContractStartDate" ).datepicker("setDate", $.datepicker.parseDate( "yy-mm-dd", table.row(this).data()['contractStartDate'].replace('T00:00:00','') ));
+            $( "#dpContractEndDate" ).datepicker("setDate", $.datepicker.parseDate( "yy-mm-dd", table.row(this).data()['contractEndDate'].replace('T00:00:00','') ));
+            $("#txtGsm").val(parseInt(table.row(this).data()['gsm']));
+            $("#txtAccomodationDetails").val(table.row(this).data()['accomodationDetails']);
+            $("input[name='radioMarital'][value='"+table.row(this).data()['maritalStatus']+"']").prop('checked', true);
+            $("#txtIdProfession").val(table.row(this).data()['idProfession']);
+            $("#txtDesignation").val(table.row(this).data()['designation']);
+            $("#txtBankName").val(table.row(this).data()['bankName']);
+            $("#txtAccountNumber").val(table.row(this).data()['bankAccountNumber']);
+
+
+
+            $("#btnUpdate").show();
+            $("#btnSubmit").hide();
+
         });
 
 
@@ -494,17 +647,17 @@
             console.log(err);
         }
     }
-
+    
     function SubmitRequest() {
         var isValid = true;
         var employeeName = $("#txtEmployeeName").val();
-        var employeeNumber = $("#txtEmployeeNumber").val();
+        var employeeReferenceNo = parseInt( $("#txtEmployeeNumber").val().replace('ARIS-',''));
         var companyId = $("#ddlCompany option:selected").val();
         var nationality = $("#ddlCountry option:selected").val();
         var passportNumber = $("#txtPassportNumber").val();
         var passportExpiryDate = $("#dpPassportExpiryDate").val() != '' ? $("#dpPassportExpiryDate").datepicker('getDate').toLocaleString() : '';
         var residentNumber = $("#txtResidentNumber").val();
-        var residentExpiryDate = $("#dpResidenttExpiryDate").val() != '' ? $("#dpResidenttExpiryDate").datepicker('getDate').toLocaleString() : '';
+        var residentExpiryDate = $("#dpResidentExpiryDate").val() != '' ? $("#dpResidentExpiryDate").datepicker('getDate').toLocaleString() : '';
         var joiningDate = $("#dpJoiningDate").val() != '' ? $("#dpJoiningDate").datepicker('getDate').toLocaleString() : '';
         var contractStartDate = $("#dpContractStartDate").val() != '' ? $("#dpContractStartDate").datepicker('getDate').toLocaleString() : '';
         var contractEndDate = $("#dpContractEndDate").val() != '' ? $("#dpContractEndDate").datepicker('getDate').toLocaleString() : '';
@@ -520,7 +673,7 @@
 
         var data = {
             EmployeeName: employeeName,
-            EmployeeNumber: employeeNumber,
+            EmployeeReferenceNo: employeeReferenceNo,
             CompanyId: companyId,
             Nationality: nationality,
             PassportNumber: passportNumber,
@@ -544,6 +697,65 @@
 
         if (isValid) {
             callAjax('POST', '/MasterPages/ManageEmployees/SubmitRequest', data);
+            GetAllEmployees();
+            ClearFields();
+        }
+        else {
+
+        }
+
+
+
+    }
+     function UpdateRequest() {
+        var isValid = true;
+        var employeeName = $("#txtEmployeeName").val();
+        var companyId = $("#ddlCompany option:selected").val();
+        var nationality = $("#ddlCountry option:selected").val();
+        var passportNumber = $("#txtPassportNumber").val();
+        var passportExpiryDate = $("#dpPassportExpiryDate").val() != '' ? $("#dpPassportExpiryDate").datepicker('getDate').toLocaleString() : '';
+        var residentNumber = $("#txtResidentNumber").val();
+        var residentExpiryDate = $("#dpResidentExpiryDate").val() != '' ? $("#dpResidentExpiryDate").datepicker('getDate').toLocaleString() : '';
+        var joiningDate = $("#dpJoiningDate").val() != '' ? $("#dpJoiningDate").datepicker('getDate').toLocaleString() : '';
+        var contractStartDate = $("#dpContractStartDate").val() != '' ? $("#dpContractStartDate").datepicker('getDate').toLocaleString() : '';
+        var contractEndDate = $("#dpContractEndDate").val() != '' ? $("#dpContractEndDate").datepicker('getDate').toLocaleString() : '';
+        var gsm = $("#txtGsm").val();
+        var accomodationDetails = $("#txtAccomodationDetails").val();
+        var maritalStatus = $("input[name='radioMarital']:checked").val();
+        var idProfession = $("#txtIdProfession").val();
+        var designation = $("#txtDesignation").val();
+        var bankName = $("#txtBankName").val();
+        var bankAccountNumber = $("#txtAccountNumber").val();
+        // employee image
+        // file uploads
+
+         var data = {
+            EmployeeName: employeeName,
+            EmployeeNo: empNO,
+            CompanyId: companyId,
+            Nationality: nationality,
+            PassportNumber: passportNumber,
+            PassportExpiryDate: passportExpiryDate,
+            ResidentNumber: residentNumber,
+            ResidentExpiryDate: residentExpiryDate,
+            JoiningDate: joiningDate,
+            ContractStartDate: contractStartDate,
+            ContractEndDate: contractEndDate,
+            Gsm: gsm,
+            AccomodationDetails: accomodationDetails,
+            MaritalStatus: maritalStatus,
+            IdProfession: idProfession,
+            Designation: designation,
+            BankName: bankName,
+            BankAccountNumber: bankAccountNumber
+        };
+
+        isValid = isValidEntry();
+
+
+        if (isValid) {
+            callAjax('POST', '/MasterPages/ManageEmployees/UpdateRequest', data);
+            GetAllEmployees();
             ClearFields();
         }
         else {
@@ -599,12 +811,12 @@
         else {
             $('#txtResidentNumber').css('border-color', '');
         }
-        if ($("#dpResidenttExpiryDate").val() == '') {
-            $('#dpResidenttExpiryDate').css('border-color', 'red');
+        if ($("#dpResidentExpiryDate").val() == '') {
+            $('#dpResidentExpiryDate').css('border-color', 'red');
             valid = false;
         }
         else {
-            $('#dpResidenttExpiryDate').css('border-color', '');
+            $('#dpResidentExpiryDate').css('border-color', '');
         }
         if ($("#dpJoiningDate").val() == '') {
             $('#dpJoiningDate').css('border-color', 'red');
@@ -684,7 +896,7 @@
 
         $('#txtResidentNumber').val('');
 
-        $('#dpResidenttExpiryDate').val('');
+        $('#dpResidentExpiryDate').val('');
 
         $('#dpJoiningDate').val('');
 
@@ -733,9 +945,12 @@
                 bSort: true,
                 bPaginate: true,
                 data: response,
+                scrollX: false,
                 scrollY: false,
                 select: true,
-                pageLength: 5,
+                pageLength: 10,
+                destroy:true,
+              //  columnDefs: [ { width: 90, targets: 0 } ],
                 columns: [
                     {
                         data: 'employeeNo', title: 'Employee Number', visible: false,
@@ -766,6 +981,24 @@
             });
 
     }
-
+     function GetEmployeeReferenceNo() {
+        $.ajax({
+            type: "GET",
+            url: "/MasterPages/ManageEmployees/GetEmployeeReferenceNo",
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            success: function (response) {
+                if (response.success == true) {
+                    $("#txtEmployeeNumber").val( 'ARIS-' + response.responseText );
+                } 
+            },
+            failure: function (response) {
+                alert(response.responseText);
+            },
+            error: function (response) {
+                alert(response.responseText);
+            }
+        });
+    }
 
 </script>

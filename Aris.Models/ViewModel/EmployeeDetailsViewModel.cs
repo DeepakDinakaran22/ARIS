@@ -54,5 +54,6 @@ namespace Aris.Models.ViewModel
 
         public DateTime? ModifiedDate { get; set; }
         public int? ApprovalStatus { get; set; }
+        public int? EmployeeReferenceNo { get; set; }
     }
 }

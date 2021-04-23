@@ -73,6 +73,7 @@ function getRootFolderPath() {
 }
 function showAlert(pData) {
     try {
+        //$('#modal-Loader').modal('hide');
         var isCancelButtonClicked = false;
         $('#alert-modal .modal-content').removeClass('alert-success');
         $('#alert-modal .modal-content').removeClass('alert-danger');

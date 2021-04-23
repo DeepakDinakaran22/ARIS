@@ -104,25 +104,25 @@ namespace ArisWorkforceManagementTool.Areas.MasterPages.Controllers
         [HttpGet]
         public JsonResult GetCompanies()
         {
-            var companies = UnitOfWork.CompanyRepository.Get(x=>x.IsActive==1).ToList();
-            
+            var companies = UnitOfWork.CompanyRepository.Get(x => x.IsActive == 1).ToList();
+
             return Json(companies);
 
         }
 
         [HttpPost]
-        public JsonResult UploadFiles( EmployeeFileUploadsViewModel modelObj)
+        public JsonResult UploadFiles(EmployeeFileUploadsViewModel modelObj)
         {
             try
             {
-                var files = new EmployeeFileUploads() { FileName=modelObj.FileName };
+                var files = new EmployeeFileUploads() { FileName = modelObj.FileName };
 
                 UnitOfWork.EmployeeFileUploadsRepository.Insert(files);
                 UnitOfWork.Save();
 
                 return Json(new { success = true, responseText = "Company added successfully." });
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 return Json(new { success = false, responseText = "Something went wrong" });
             }
@@ -133,28 +133,29 @@ namespace ArisWorkforceManagementTool.Areas.MasterPages.Controllers
         {
             try
             {
-                var employee = new EmployeeDetails() { 
-                   EmployeeName=obj.EmployeeName,
-                   CompanyId=obj.CompanyId,
-                   Nationality=obj.Nationality,
-                   PassportNumber=obj.PassportNumber,
-                   PassportExpiryDate=obj.PassportExpiryDate,
-                   ResidentNumber=obj.ResidentNumber,
-                   ResidentExpiryDate=obj.ResidentExpiryDate,
-                   JoiningDate=obj.JoiningDate,
-                   ContractStartDate=obj.ContractStartDate,
-                   ContractEndDate=obj.ContractEndDate,
-                   Gsm=obj.Gsm,
-                   AccomodationDetails=obj.AccomodationDetails,
-                   MaritalStatus=obj.MaritalStatus,
-                   IDProfession=obj.IDProfession,
-                   Designation=obj.Designation,
-                   BankName=obj.BankName,
-                   BankAccountNumber=obj.BankAccountNumber,
-                   ApprovalStatus=0,
-                   IsActive = 1, 
-                   CreatedDate = DateTime.Now, 
-                   CreatedBy = 1 
+                var employee = new EmployeeDetails() {
+                    EmployeeName = obj.EmployeeName,
+                    CompanyId = obj.CompanyId,
+                    Nationality = obj.Nationality,
+                    PassportNumber = obj.PassportNumber,
+                    PassportExpiryDate = obj.PassportExpiryDate,
+                    ResidentNumber = obj.ResidentNumber,
+                    ResidentExpiryDate = obj.ResidentExpiryDate,
+                    JoiningDate = obj.JoiningDate,
+                    ContractStartDate = obj.ContractStartDate,
+                    ContractEndDate = obj.ContractEndDate,
+                    Gsm = obj.Gsm,
+                    AccomodationDetails = obj.AccomodationDetails,
+                    MaritalStatus = obj.MaritalStatus,
+                    IDProfession = obj.IDProfession,
+                    Designation = obj.Designation,
+                    BankName = obj.BankName,
+                    BankAccountNumber = obj.BankAccountNumber,
+                    ApprovalStatus = 0,
+                    EmployeeReferenceNo = obj.EmployeeReferenceNo,
+                    IsActive = 1,
+                    CreatedDate = DateTime.Now,
+                    CreatedBy = 1
                 };
 
                 UnitOfWork.EmployeeDetailsRepository.Insert(employee);
@@ -174,6 +175,70 @@ namespace ArisWorkforceManagementTool.Areas.MasterPages.Controllers
             var employees = UnitOfWork.EmployeeDetailsRepository.Get(null, x => x.OrderBy(id => id.EmployeeNo));
             return Json(employees);
 
+        }
+        [HttpPost]
+        public JsonResult UpdateRequest(EmployeeDetailsViewModel obj)
+        {
+            try
+            {
+                var employee = new EmployeeDetails()
+                {
+                    EmployeeNo = obj.EmployeeNo,
+                    EmployeeName = obj.EmployeeName,
+                    CompanyId = obj.CompanyId,
+                    Nationality = obj.Nationality,
+                    PassportNumber = obj.PassportNumber,
+                    PassportExpiryDate = obj.PassportExpiryDate,
+                    ResidentNumber = obj.ResidentNumber,
+                    ResidentExpiryDate = obj.ResidentExpiryDate,
+                    JoiningDate = obj.JoiningDate,
+                    ContractStartDate = obj.ContractStartDate,
+                    ContractEndDate = obj.ContractEndDate,
+                    Gsm = obj.Gsm,
+                    AccomodationDetails = obj.AccomodationDetails,
+                    MaritalStatus = obj.MaritalStatus,
+                    IDProfession = obj.IDProfession,
+                    Designation = obj.Designation,
+                    BankName = obj.BankName,
+                    BankAccountNumber = obj.BankAccountNumber,
+                    ApprovalStatus = 0,
+                    IsActive = 1,
+                    ModifiedDate = DateTime.Now,
+                    ModifiedBy = 1
+                };
+                UnitOfWork.EmployeeDetailsRepository.Update(employee);
+                UnitOfWork.Save();
+
+                return Json(new { success = true, responseText = "Employee details updated successfully." });
+
+            }
+            catch (Exception ex)
+            {
+                return Json(new { success = false, responseText = "Something went wrong." });
+            }
+
+        }
+
+        [HttpGet]
+        public JsonResult GetEmployeeReferenceNo()
+        {
+            try
+            {
+                var employees = UnitOfWork.EmployeeDetailsRepository.Get(null, x => x.OrderByDescending(id => id.EmployeeNo)).First();
+                var EmployeeReferenceNo = Convert.ToInt32(employees.EmployeeReferenceNo)+1;
+                return Json(new { success = true, responseText = EmployeeReferenceNo });
+            }
+        catch(Exception ex)
+            {
+                if(ex.Message== "Sequence contains no elements")
+                {
+                    return Json(new { success = true, responseText = 1 });
+                }
+                else
+                {
+                    return Json(new { success = false, responseText = "Something went wrong." });
+                }
+            }
         }
 
     }
