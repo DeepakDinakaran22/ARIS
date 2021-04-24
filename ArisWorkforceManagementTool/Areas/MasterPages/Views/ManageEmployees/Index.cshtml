@@ -194,11 +194,17 @@
                                     </div>
                                 </div>
                                 <div class="col-md-12">
+                                    <div class="form-group">
+                                        <label for="txtRemarks">Remarks </label>
+                                        <textarea class="form-control" rows="5" id="txtRemarks"></textarea>
+                                    </div>
+                                </div>
+                                <div class="col-md-12">
                                     <table class="table table-striped table-bordered" id="tblResidentFiles">
                                         <thead>
                                             <tr>
                                                 <th>
-                                                    File 
+                                                    File
                                                 </th>
                                                 <th>
                                                     Upload
@@ -213,7 +219,8 @@
                                                 <td>
                                                     Insurance
                                                 </td>
-                                                <td><input type="file" id="myFile" name="filename2">
+                                                <td>
+                                                    <input type="file" id="myFile" name="filename2">
                                                 </td>
                                                 <td>
                                                     <a href="#"> Insurance.jpg</a>
@@ -223,7 +230,8 @@
                                                 <td>
                                                     Contract Agreement With Company
                                                 </td>
-                                                <td><input type="file" id="myFile" name="filename2">
+                                                <td>
+                                                    <input type="file" id="myFile" name="filename2">
                                                 </td>
                                                 <td>
                                                     <a href="#"> CompanyContract.jpg</a>
@@ -233,7 +241,8 @@
                                                 <td>
                                                     Manpower Contract Agreement
                                                 </td>
-                                                <td><input type="file" id="myFile" name="filename2">
+                                                <td>
+                                                    <input type="file" id="myFile" name="filename2">
                                                 </td>
                                                 <td>
                                                     <a href="#"> Manpower.jpg</a>
@@ -243,7 +252,8 @@
                                                 <td>
                                                     Letters
                                                 </td>
-                                                <td><input type="file" id="myFile" name="filename2">
+                                                <td>
+                                                    <input type="file" id="myFile" name="filename2">
                                                 </td>
                                                 <td>
                                                     <a href="#"> Letter.jpg</a>
@@ -253,7 +263,8 @@
                                                 <td>
                                                     Other
                                                 </td>
-                                                <td><input type="file" id="myFile" name="filename2">
+                                                <td>
+                                                    <input type="file" id="myFile" name="filename2">
                                                 </td>
                                                 <td>
                                                     <a href="#"> Other.jpg</a>
@@ -627,7 +638,7 @@
             $("#txtDesignation").val(table.row(this).data()['designation']);
             $("#txtBankName").val(table.row(this).data()['bankName']);
             $("#txtAccountNumber").val(table.row(this).data()['bankAccountNumber']);
-
+            $("#txtRemarks").val(table.row(this).data()['remarks']);
 
 
             $("#btnUpdate").show();
@@ -668,6 +679,7 @@
         var designation = $("#txtDesignation").val();
         var bankName = $("#txtBankName").val();
         var bankAccountNumber = $("#txtAccountNumber").val();
+        var remarks = $("#txtRemarks").val();
         // employee image
         // file uploads
 
@@ -689,7 +701,8 @@
             IdProfession: idProfession,
             Designation: designation,
             BankName: bankName,
-            BankAccountNumber: bankAccountNumber
+            BankAccountNumber: bankAccountNumber,
+            Remarks: remarks
         };
 
         isValid = isValidEntry();
@@ -725,7 +738,8 @@
         var idProfession = $("#txtIdProfession").val();
         var designation = $("#txtDesignation").val();
         var bankName = $("#txtBankName").val();
-        var bankAccountNumber = $("#txtAccountNumber").val();
+         var bankAccountNumber = $("#txtAccountNumber").val();
+         var remarks = $("#txtRemarks").val();
         // employee image
         // file uploads
 
@@ -747,7 +761,8 @@
             IdProfession: idProfession,
             Designation: designation,
             BankName: bankName,
-            BankAccountNumber: bankAccountNumber
+             BankAccountNumber: bankAccountNumber,
+             Remarks: remarks
         };
 
         isValid = isValidEntry();

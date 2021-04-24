@@ -138,7 +138,7 @@ namespace ArisWorkforceManagementTool.Areas.MasterPages.Controllers
         public JsonResult IsUserNameExists(Users userObj)
         {
             var users = UnitOfWork.UserRepository.Get();
-            bool has = users.ToList().Any(x => x.UserName == userObj.UserName);
+            bool has = users.ToList().Any(x => x.UserName.ToLower() == userObj.UserName.ToLower());
             if (has)
             {
                 return Json(new { value = true, responseText = "User name exists" });

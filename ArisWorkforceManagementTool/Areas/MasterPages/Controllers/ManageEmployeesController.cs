@@ -153,6 +153,7 @@ namespace ArisWorkforceManagementTool.Areas.MasterPages.Controllers
                     BankAccountNumber = obj.BankAccountNumber,
                     ApprovalStatus = 0,
                     EmployeeReferenceNo = obj.EmployeeReferenceNo,
+                    Remarks=obj.Remarks,
                     IsActive = 1,
                     CreatedDate = DateTime.Now,
                     CreatedBy = 1
@@ -202,6 +203,7 @@ namespace ArisWorkforceManagementTool.Areas.MasterPages.Controllers
                     BankName = obj.BankName,
                     BankAccountNumber = obj.BankAccountNumber,
                     ApprovalStatus = 0,
+                    Remarks=obj.Remarks,
                     IsActive = 1,
                     ModifiedDate = DateTime.Now,
                     ModifiedBy = 1

@@ -64,7 +64,7 @@
                                     <div class="form-group">
                                         <label>Access Type</label>
                                         <select class="form-control select2bs4" id="ddlUserType" style="width: 100%;">
-
+                                            <option value="0" selected>Select</option>
                                             <option value="1">Adminstrator</option>
                                             <option value="2">Manager</option>
                                             <option value="3">Report Viewer</option>
@@ -95,7 +95,7 @@
                         </div>
                         <!-- /.card-body -->
 
-                        <div class="card-footer">
+                        <div class="card-footer" style="text-align:right">
                             <button type="button" id="btnDelete" class="btn btn-danger btn-sm">Delete</button>
                             <button type="reset" id="btnReset" class="btn btn-primary btn-sm">Reset</button>
                             <button type="button" id="btnUpdate" onclick="UpdateUser()" class="btn btn-warning btn-sm">Update</button>
@@ -172,14 +172,17 @@
 
 
 <script src="~/lib/jquery/dist/jquery.min.js" type="text/javascript"></script>
+<link rel="stylesheet" href="~/plugins/datatables-bs4/css/dataTables.bootstrap4.css">
+<link rel="stylesheet" href="~/plugins/datatables-responsive/css/responsive.bootstrap4.css">
 <script src="~/js/Common/Common.js" type="text/javascript"></script>
 
 <script>
     var userId;
     $(document).ready(function () {
-
+          $("#btnUpdate").hide();
+        $("#btnSubmit").show();
         GetUsers();
-     $("#txtUserName").focusout(function () {
+        $("#txtUserName").focusout(function () {
             CheckNameExists();
         });
         $("#userPhoto").change(function () {
@@ -193,37 +196,37 @@
             return true;
         });
     });
-     function CheckNameExists() {
+    function CheckNameExists() {
         try {
 
             $.ajax({
-            type: "GET",
+                type: "GET",
                 url: "/MasterPages/ManageUsers/IsUserNameExists",
                 data: { UserName: $("#txtUserName").val() },
-            contentType: "application/json; charset=utf-8",
-            dataType: "json",
-            success: function (response) {
-                if (response != null) {
-                    if (response.value == true) {
-                        $('#txtUserName').css('border-color', 'red');
-                        showAlert({ title: "Warning!", message: 'User Name is already added!', type: "WARNING" });
-                    }
-                    else {
-                            $('#txtUserName').css('border-color', '');
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: function (response) {
+                    if (response != null) {
+                        if (response.value == true) {
+                            $('#txtUserName').css('border-color', 'red');
+                            showAlert({ title: "Warning!", message: 'User Name is already added!', type: "WARNING" });
+                        }
+                        else {
+                            $('#txtUserName').css('border-color', 'green');
 
+                        }
+
+                    } else {
+                        alert("Something went wrong");
                     }
-                    
-                } else {
-                    alert("Something went wrong");
+                },
+                failure: function (response) {
+                    alert(response.responseText);
+                },
+                error: function (response) {
+                    alert(response.responseText);
                 }
-            },
-            failure: function (response) {
-                alert(response.responseText);
-            },
-            error: function (response) {
-                alert(response.responseText);
-            }
-        });
+            });
         }
         catch (err) {
 
@@ -292,6 +295,8 @@
         $("#txtUserFullName").val('');
         $("#txtUserEmail").val('');
         $("#ddlStatus").val(-1);
+        $("#txtUserName").attr("readonly", false);
+        $('#txtUserName').css('border-color', '');
     }
     function UpdateUser() {
         try {
@@ -301,7 +306,6 @@
             var isActive = $("#ddlStatus option:selected").val();
             var userTypeId = $("#ddlUserType option:selected").val();
 
-            alert(userId);
             var data = {
                 UserName: userName,
                 FullName: userFullName,
@@ -311,7 +315,7 @@
                 UserId: userId
             };
             var status = callAjax('POST', '/MasterPages/ManageUsers/UpdateUser', data);
-           
+
             GetUsers();
             Reset();
         }
@@ -329,10 +333,11 @@
                 bPaginate: true,
                 data: response,
                 scrollY: false,
+                crollX: false,
                 select: true,
-                pageLength: 5,
+                //pageLength: 5,
                 destroy: true,
-                order:[[0,"desc"]],
+                order: [[0, "desc"]],
                 columns: [
                     {
                         data: 'userId', title: 'User Id', visible: false,
@@ -342,6 +347,20 @@
                     },
                     {
                         data: 'fullName', title: 'Full Name'
+                    },
+                    {
+                        data: 'userTypeID', title: 'Access Type',
+                        render: function (data) {
+                            if (data == 1) {
+                                return 'Administrator';
+                            }
+                            else  if (data==2){
+                                return 'Manager';
+                            }
+                                else {
+                                return "Report Viewer";
+                            }
+                        }
                     },
                     {
                         data: 'mailAddress', title: 'User Email'

@@ -30,6 +30,11 @@ namespace ArisWorkforceManagementTool.Controllers
            // var data = UnitOfWork.UserRepository.Get();
             return View();
         }
+        public IActionResult ManagerHomeLanding()
+        {
+            
+            return View();
+        }
 
         public IActionResult Login()
         {
@@ -46,6 +51,50 @@ namespace ArisWorkforceManagementTool.Controllers
         public ActionResult SubmitRequest(string userName, string emailAddress, int userType, int isActive)
         {
             return View();
-        }    
+        }
+
+        [HttpGet]
+        public JsonResult GetDashboardValues()
+        {
+            try
+            {
+                var employees = UnitOfWork.EmployeeDetailsRepository.Get(x => x.ApprovalStatus==0);
+                var pendingReq = Convert.ToInt32(employees.Count());
+                return Json(new { pendingRequests = pendingReq });
+            }
+            catch (Exception ex)
+            {
+                if (ex.Message == "Sequence contains no elements")
+                {
+                    return Json(new { pendingRequests = 0 });
+                }
+                else
+                {
+                    return Json(new { pendingRequests  = 0});
+                }
+            }
+        }
+        [HttpGet]
+        public JsonResult GetDashboardValuesHomeLanding()
+        {
+            try
+            {
+                var employees = UnitOfWork.EmployeeDetailsRepository.Get(x => x.ApprovalStatus == 1);
+                var pendingReq = Convert.ToInt32(employees.Count());
+                return Json(new { pendingRequests = pendingReq });
+            }
+            catch (Exception ex)
+            {
+                if (ex.Message == "Sequence contains no elements")
+                {
+                    return Json(new { pendingRequests = 0 });
+                }
+                else
+                {
+                    return Json(new { pendingRequests = 0 });
+                }
+            }
+        }
+
     }
 }
