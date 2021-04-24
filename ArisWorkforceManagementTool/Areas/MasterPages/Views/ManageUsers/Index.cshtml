@@ -87,8 +87,11 @@
                                 <div class="col-md-4">
 
                                     <label for="formFileLg" class="form-label">User Image</label>
-                                    <input class="form-control form-control" id="userPhoto" type="file" />
+                                    @*<input class="form-control form-control" id="userPhoto" type="file" />*@
+                                    <input class="form-control form-control" id="files" name="files" type="file" size="1" multiple onchange="uploadFiles('files');" />
+                                    <input type="hidden" id="hdnProfilePicturePath" />
                                     <span id="file_error"></span>
+
                                 </div>
 
                             </div>
@@ -179,68 +182,72 @@
     $(document).ready(function () {
 
         GetUsers();
-     $("#txtUserName").focusout(function () {
+        $("#txtUserName").focusout(function () {
             CheckNameExists();
         });
-        $("#userPhoto").change(function () {
-            $("#file_error").html("");
-            var file_size = $('#userPhoto')[0].files[0].size;
-            if (file_size > 300000) {
-                $("#file_error").html("<p style='color:#FF0000'>File size is greater than 300kb</p>");
+        //$("#userPhoto").change(function () {
+        //    $("#file_error").html("");
+        //    var file_size = $('#userPhoto')[0].files[0].size;
+        //    if (file_size > 300000) {
+        //        $("#file_error").html("<p style='color:#FF0000'>File size is greater than 300kb</p>");
 
-                return false;
-            }
-            return true;
-        });
+        //        return false;
+        //    }
+        //    return true;
+        //});
     });
-     function CheckNameExists() {
+    function CheckNameExists() {
         try {
 
             $.ajax({
-            type: "GET",
+                type: "GET",
                 url: "/MasterPages/ManageUsers/IsUserNameExists",
                 data: { UserName: $("#txtUserName").val() },
-            contentType: "application/json; charset=utf-8",
-            dataType: "json",
-            success: function (response) {
-                if (response != null) {
-                    if (response.value == true) {
-                        $('#txtUserName').css('border-color', 'red');
-                        showAlert({ title: "Warning!", message: 'User Name is already added!', type: "WARNING" });
-                    }
-                    else {
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: function (response) {
+                    if (response != null) {
+                        if (response.value == true) {
+                            $('#txtUserName').css('border-color', 'red');
+                            showAlert({ title: "Warning!", message: 'User Name is already added!', type: "WARNING" });
+                        }
+                        else {
                             $('#txtUserName').css('border-color', '');
 
+                        }
+
+                    } else {
+                        alert("Something went wrong");
                     }
-                    
-                } else {
-                    alert("Something went wrong");
+                },
+                failure: function (response) {
+                    alert(response.responseText);
+                },
+                error: function (response) {
+                    alert(response.responseText);
                 }
-            },
-            failure: function (response) {
-                alert(response.responseText);
-            },
-            error: function (response) {
-                alert(response.responseText);
-            }
-        });
+            });
         }
         catch (err) {
 
         }
     }
+
     function SubmitRequest() {
         var userName = $("#txtUserName").val();
         var emailAddress = $("#txtUserEmail").val();
         var userType = $("#ddlUserType option:selected").val();
         var isActive = $("#ddlStatus option:selected").val();
         var fullName = $("#txtUserFullName").val();
+        var ProfileImage = $("#hdnProfilePicturePath").val();
+
         var data = {
             UserName: userName,
             MailAddress: emailAddress,
             UserTypeID: userType,
             IsActive: isActive,
-            FullName: fullName
+            FullName: fullName,
+            ProfileImage: ProfileImage
         };
         callAjax('POST', '/MasterPages/ManageUsers/SubmitRequest', data);
         GetUsers();
@@ -311,7 +318,7 @@
                 UserId: userId
             };
             var status = callAjax('POST', '/MasterPages/ManageUsers/UpdateUser', data);
-           
+
             GetUsers();
             Reset();
         }
@@ -332,7 +339,7 @@
                 select: true,
                 pageLength: 5,
                 destroy: true,
-                order:[[0,"desc"]],
+                order: [[0, "desc"]],
                 columns: [
                     {
                         data: 'userId', title: 'User Id', visible: false,
@@ -368,5 +375,28 @@
                 ]
             });
 
+    }
+
+    function uploadFiles(inputId) {
+        var input = document.getElementById(inputId);
+        var files = input.files;
+        var formData = new FormData();
+
+        for (var i = 0; i != files.length; i++) {
+            formData.append("files", files[i]);
+        }
+
+        $.ajax(
+            {
+                url: "/MasterPages/ManageUsers/UploadImage",
+                data: formData,
+                processData: false,
+                contentType: false,
+                type: "POST",
+                success: function (data) {
+                    $("#hdnProfilePicturePath").val(data.profileImagePath);
+                }
+            }
+        );
     }
 </script>
