@@ -278,7 +278,6 @@
             var companyName = $("#txtCompanyName").val();
             var companyDesc = $("#txtCompanyDesc").val();
             var isActive = $("#ddlStatus option:selected").val();
-            alert(companyId);
             var data = {
                 CompanyName: companyName,
                 CompanyDescription: companyDesc,
@@ -391,6 +390,8 @@
             $("#txtCompanyName").val('');
             $("#txtCompanyDesc").val('');
             $("#ddlStatus").val(-1);
+            $("#txtCompanyName").attr("readonly", false);
+            $('#txtCompanyName').css('border-color', '');
         }
         catch (err) {
             console.log(err);

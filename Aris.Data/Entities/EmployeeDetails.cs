@@ -56,5 +56,6 @@ namespace Aris.Data.Entities
         public int? ApprovalStatus { get; set; }
 
         public int? EmployeeReferenceNo { get; set; }
+        public string Remarks { get; set; }
     }
 }
