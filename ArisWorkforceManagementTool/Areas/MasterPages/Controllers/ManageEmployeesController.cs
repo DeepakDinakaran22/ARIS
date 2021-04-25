@@ -104,7 +104,11 @@ namespace ArisWorkforceManagementTool.Areas.MasterPages.Controllers
         [HttpGet]
         public JsonResult GetCompanies()
         {
-            var companies = UnitOfWork.CompanyRepository.Get(x => x.IsActive == 1).ToList();
+            var companies = UnitOfWork.CompanyRepository.Get(x => x.IsActive == 1).ToList().OrderBy(o=>o.CompanyName);
+            foreach(var item in companies)
+            {
+                item.CompanyName = item.CompanyName+'-'+item.CompanyLocation;
+            }
 
             return Json(companies);
 

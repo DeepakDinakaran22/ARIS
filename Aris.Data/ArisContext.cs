@@ -74,8 +74,8 @@ namespace Aris.Data
                 entity.Property(e => e.CompanyName)
                 .HasColumnName("companyName");
 
-                entity.Property(e => e.CompanyDescription)
-                .HasColumnName("CompanyDescription");
+                entity.Property(e => e.CompanyServices)
+                .HasColumnName("CompanyServices");
 
                 entity.Property(e => e.IsActive)
                 .HasColumnName("IsActive");
@@ -91,6 +91,9 @@ namespace Aris.Data
 
                 entity.Property(e => e.ModifiedDate)
                .HasColumnName("ModifiedDate");
+
+                entity.Property(e => e.CompanyLocation)
+               .HasColumnName("CompanyLocation");
 
             });
             modelBuilder.Entity<DocumentCategory>(entity =>

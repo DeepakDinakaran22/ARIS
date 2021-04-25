@@ -184,7 +184,7 @@ function bindDropDownList(ddl,type,url,dataType,value,name) {
             success: function (response) {
                 ddlName.empty().append('<option selected="selected" value="0">Select</option>');
                 $.each(response, function () {
-                    ddlName.append($("<option></option>").val(this[''+value+'']).html(this[''+name+'']));
+                   ddlName.append($("<option></option>").val(this['' + value + '']).html(this['' + name + '']));
                 });
             },
             failure: function (response) {

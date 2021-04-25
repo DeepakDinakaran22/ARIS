@@ -1,6 +1,6 @@
 ﻿@model Aris.Models.ViewModel.CompanyViewModel
 @{
-    ViewData["Title"] = "Index";
+    ViewData["Title"] = "Clients";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 @*<link rel="stylesheet" href="~/plugins/loader/css/bootstrap.min.css">
@@ -15,7 +15,7 @@
             <div class="col-sm-6">
                 <ol class="breadcrumb float-sm-right">
                     <li class="breadcrumb-item"><a href="#">Home</a></li>
-                    <li class="breadcrumb-item active">ManageCompany</li>
+                    <li class="breadcrumb-item active">Manage Clients</li>
                 </ol>
             </div>
         </div>
@@ -29,7 +29,7 @@
                 <!-- general form elements -->
                 <div class="card card-primary">
                     <div class="card-header">
-                        <h3 class="card-title">Company  Details	</h3>
+                        <h3 class="card-title">Client  Details	</h3>
                     </div>
                     <!-- /.card-header -->
                     <!-- form start -->
@@ -40,16 +40,17 @@
                             <div class="row">
                                 <div class="col-md-4">
                                     <div class="form-group">
-                                        <label for="txtCompanyName">Company Name</label>
+                                        <label for="txtCompanyName">Client Name</label>
                                         <input type="text" name="companyName" required class="form-control" id="txtCompanyName" placeholder="Company Name">
                                     </div>
                                 </div>
                                 <div class="col-md-4">
                                     <div class="form-group">
-                                        <label for="txtCompanyDesc">Company Description </label>
-                                        <input type="text" name="companyDesc" class="form-control" id="txtCompanyDesc" placeholder="Company Description">
+                                        <label for="txtCompanyName">Client Location</label>
+                                        <input type="text" name="companyLocation" required class="form-control" id="txtCompanyLocation" placeholder="Clent Location Name">
                                     </div>
                                 </div>
+
                                 <div class="col-md-4">
                                     <div class="form-group">
                                         <label>Status</label>
@@ -60,6 +61,12 @@
 
 
                                         </select>
+                                    </div>
+                                </div>
+                                <div class="col-md-12">
+                                    <div class="form-group">
+                                        <label for="txtCompanyServices">Services To The Client</label>
+                                        <textarea class="form-control" rows="2" id="txtCompanyServices"></textarea>
                                     </div>
                                 </div>
 
@@ -176,20 +183,29 @@
         GetAllCompanies();
 
         $("#txtCompanyName").focusout(function () {
+            if ($("#txtCompanyLocation").val() != '') {
             CheckNameExists();
+            }
+        });
+        $("#txtCompanyLocation").focusout(function () {
+            if ($("#txtCompanyName").val != '') {
+                CheckNameExists();
+            }
         });
 
         $('#tblCompanies').on('click', 'td.edit', function (e) {
             e.preventDefault();
             $("#txtCompanyName").val(table.row(this).data()['companyName']);
             $("#txtCompanyName").attr("disabled", "disabled");
-            $("#txtCompanyDesc").val(table.row(this).data()['companyDescription']);
+            $("#txtCompanyLocation").attr("disabled", "disabled");
+            $("#txtCompanyServices").val(table.row(this).data()['companyServices']);
             if (table.row(this).data()['isActive'] == 1) {
                 $("#ddlStatus").val(1);
             }
             else {
                 $("#ddlStatus").val(0);
             }
+            $("#txtCompanyLocation").val(table.row(this).data()['companyLocation'])
             companyId = table.row(this).data()['companyId'];
 
             $("#btnUpdate").show();
@@ -207,7 +223,7 @@
             $.ajax({
                 type: "GET",
                 url: "/MasterPages/ManageCompany/IsCompanyNameExists",
-                data: { CompanyName: $("#txtCompanyName").val() },
+                data: { CompanyName: $("#txtCompanyName").val().trim(),CompanyLocation:$("#txtCompanyLocation").val().trim() },
                 contentType: "application/json; charset=utf-8",
                 dataType: "json",
                 success: function (response) {
@@ -239,22 +255,27 @@
     }
     function SubmitRequest() {
         var isValid = true;
-        var companyName = $("#txtCompanyName").val();
-        var companyDesc = $("#txtCompanyDesc").val();
+        var companyName = $("#txtCompanyName").val().trim();
+        var companyServices = $("#txtCompanyServices").val().trim();
         var isActive = $("#ddlStatus option:selected").val();
-
+        var companyLocation = $("#txtCompanyLocation").val().trim();
         var data = {
             CompanyName: companyName,
-            CompanyDescription: companyDesc,
-            IsActive: isActive
+            CompanyServices: companyServices,
+            IsActive: isActive,
+            CompanyLocation: companyLocation
         };
 
         if ($('#txtCompanyName').val() == '') {
             $('#txtCompanyName').css('border-color', 'red');
             isValid = false;
         }
-        else if ($("#ddlStatus").val() == -1) {
+        if ($("#ddlStatus").val() == -1) {
             $('#ddlStatus').css('border-color', 'red');
+            isValid = false;
+        }
+        if ($("#txtCompanyLocation").val() == '') {
+            $('#txtCompanyLocation').css('border-color', 'red');
             isValid = false;
         }
 
@@ -275,18 +296,21 @@
         var isValid = true;
 
         try {
-            var companyName = $("#txtCompanyName").val();
-            var companyDesc = $("#txtCompanyDesc").val();
+            var companyName = $("#txtCompanyName").val().trim();
+        var companyServices = $("#txtCompanyServices").val().trim();
             var isActive = $("#ddlStatus option:selected").val();
+                    var companyLocation = $("#txtCompanyLocation").val().trim();
+
             var data = {
                 CompanyName: companyName,
-                CompanyDescription: companyDesc,
+                CompanyServices: companyServices,
                 IsActive: isActive,
-                companyId: companyId
+                companyId: companyId,
+                CompanyLocation:companyLocation
             };
 
 
-            if ($('#txtCompanyName').val() == '') {
+            if ($('#txtCompanyName').val().trim() == '') {
                 $('#txtCompanyName').css('border-color', 'red');
                 isValid = false;
             }
@@ -294,6 +318,10 @@
                 $('#ddlStatus').css('border-color', 'red');
                 isValid = false;
             }
+             if ($("#txtCompanyLocation").val().trim() == '') {
+            $('#txtCompanyLocation').css('border-color', 'red');
+            isValid = false;
+        }
 
             if (isValid) {
 
@@ -356,10 +384,13 @@
                         data: 'companyId', title: 'Company ID', visible: false,
                     },
                     {
-                        data: 'companyName', title: 'Company Name'
+                        data: 'companyName', title: 'Client Name'
                     },
                     {
-                        data: 'companyDescription', title: 'Company Description'
+                        data: 'companyLocation', title: 'Client Location'
+                    },
+                    {
+                        data: 'companyServices', title: 'Services'
                     },
                     {
                         data: 'isActive', title: 'Status',
@@ -388,10 +419,13 @@
     function Reset() {
         try {
             $("#txtCompanyName").val('');
-            $("#txtCompanyDesc").val('');
+            $("#txtCompanyServices").val('');
+            $("#txtCompanyLocation").val('');
             $("#ddlStatus").val(-1);
-            $("#txtCompanyName").attr("readonly", false);
+            $("#txtCompanyName").attr("disabled", false);
             $('#txtCompanyName').css('border-color', '');
+            $("#txtCompanyLocation").attr("disabled", false);
+            $("#txtCompanyLocation").css('border-color', '');
         }
         catch (err) {
             console.log(err);

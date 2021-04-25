@@ -10,7 +10,7 @@ namespace Aris.Data.Entities
 
         public string CompanyName { get; set; }
 
-        public string CompanyDescription { get; set; }
+        public string CompanyServices { get; set; }
 
         public int? IsActive { get; set; }
 
@@ -21,6 +21,7 @@ namespace Aris.Data.Entities
         public int? ModifiedBy { get; set; }
 
         public DateTime? ModifiedDate { get; set; }
+        public string CompanyLocation { get; set; }
     }
    
 }
