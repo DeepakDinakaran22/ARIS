@@ -87,8 +87,11 @@
                                 <div class="col-md-4">
 
                                     <label for="formFileLg" class="form-label">User Image</label>
-                                    <input class="form-control form-control" id="userPhoto" type="file" />
+                                    @*<input class="form-control form-control" id="userPhoto" type="file" />*@
+                                    <input class="form-control form-control" id="files" name="files" type="file" size="1" multiple onchange="uploadFiles('files');" />
+                                    <input type="hidden" id="hdnProfilePicturePath" />
                                     <span id="file_error"></span>
+
                                 </div>
 
                             </div>
@@ -185,16 +188,16 @@
         $("#txtUserName").focusout(function () {
             CheckNameExists();
         });
-        $("#userPhoto").change(function () {
-            $("#file_error").html("");
-            var file_size = $('#userPhoto')[0].files[0].size;
-            if (file_size > 300000) {
-                $("#file_error").html("<p style='color:#FF0000'>File size is greater than 300kb</p>");
+        //$("#userPhoto").change(function () {
+        //    $("#file_error").html("");
+        //    var file_size = $('#userPhoto')[0].files[0].size;
+        //    if (file_size > 300000) {
+        //        $("#file_error").html("<p style='color:#FF0000'>File size is greater than 300kb</p>");
 
-                return false;
-            }
-            return true;
-        });
+        //        return false;
+        //    }
+        //    return true;
+        //});
     });
     function CheckNameExists() {
         try {
@@ -232,18 +235,22 @@
 
         }
     }
+
     function SubmitRequest() {
         var userName = $("#txtUserName").val();
         var emailAddress = $("#txtUserEmail").val();
         var userType = $("#ddlUserType option:selected").val();
         var isActive = $("#ddlStatus option:selected").val();
         var fullName = $("#txtUserFullName").val();
+        var ProfileImage = $("#hdnProfilePicturePath").val();
+
         var data = {
             UserName: userName,
             MailAddress: emailAddress,
             UserTypeID: userType,
             IsActive: isActive,
-            FullName: fullName
+            FullName: fullName,
+            ProfileImage: ProfileImage
         };
         callAjax('POST', '/MasterPages/ManageUsers/SubmitRequest', data);
         GetUsers();
@@ -387,5 +394,28 @@
                 ]
             });
 
+    }
+
+    function uploadFiles(inputId) {
+        var input = document.getElementById(inputId);
+        var files = input.files;
+        var formData = new FormData();
+
+        for (var i = 0; i != files.length; i++) {
+            formData.append("files", files[i]);
+        }
+
+        $.ajax(
+            {
+                url: "/MasterPages/ManageUsers/UploadImage",
+                data: formData,
+                processData: false,
+                contentType: false,
+                type: "POST",
+                success: function (data) {
+                    $("#hdnProfilePicturePath").val(data.profileImagePath);
+                }
+            }
+        );
     }
 </script>
