@@ -59,16 +59,18 @@
                                 </div>
                                 <div class="col-md-6">
                                     <div class=" text-center">
-                                        <img src="~/img/avatar5.png" height="100px" width="100px" />
+                                        <img src="~/img/avatar.png" id="imgUser" height="100px" width="100px" />
                                     </div>
                                     <br />
                                     <div class="text-center">
-                                        <input type="file" border="1" style="border-style:groove; border-color:black" />
+                                        <input  style="border-style:groove; border-color:black" id="files" name="files" type="file" size="1" onchange="uploadFiles('files');" />
+                                        <input type="hidden" id="hdnEmployeePicturePath" />
+                                        <span id="file_error"></span>
                                     </div>
                                 </div>
                                 <div class="col-md-6">
                                     <div class="form-group">
-                                        <label>Company</label>
+                                        <label>Client</label>
                                         <select class="form-control select2bs4" id="ddlCompany" style="width: 100%;">
                                         </select>
                                     </div>
@@ -77,7 +79,7 @@
                                 <div class="col-md-6">
                                     <div class="form-group">
                                         <label>Nationality</label>
-                                        <select id="ddlCountry" class="form-control select2bs4" value="512" data-role="country-selector" data-code-mode="numeric"></select>
+                                        <select id="ddlCountry" class="form-control select2bs4" value="0" data-role="country-selector" data-code-mode="numeric"></select>
                                     </div>
                                 </div>
                                 <div class="col-md-6">
@@ -220,7 +222,7 @@
                                                     Insurance
                                                 </td>
                                                 <td>
-                                                    <input type="file" id="myFile" name="filename2">
+                                                    <input type="file" id="myFile1" name="filename2">
                                                 </td>
                                                 <td>
                                                     <a href="#"> Insurance.jpg</a>
@@ -231,7 +233,7 @@
                                                     Contract Agreement With Company
                                                 </td>
                                                 <td>
-                                                    <input type="file" id="myFile" name="filename2">
+                                                    <input type="file" id="myFile2" name="filename2">
                                                 </td>
                                                 <td>
                                                     <a href="#"> CompanyContract.jpg</a>
@@ -242,7 +244,7 @@
                                                     Manpower Contract Agreement
                                                 </td>
                                                 <td>
-                                                    <input type="file" id="myFile" name="filename2">
+                                                    <input type="file" id="myFile3" name="filename2">
                                                 </td>
                                                 <td>
                                                     <a href="#"> Manpower.jpg</a>
@@ -253,7 +255,7 @@
                                                     Letters
                                                 </td>
                                                 <td>
-                                                    <input type="file" id="myFile" name="filename2">
+                                                    <input type="file" id="myFile4" name="filename2">
                                                 </td>
                                                 <td>
                                                     <a href="#"> Letter.jpg</a>
@@ -264,7 +266,7 @@
                                                     Other
                                                 </td>
                                                 <td>
-                                                    <input type="file" id="myFile" name="filename2">
+                                                    <input type="file" id="myFile5" name="filename2">
                                                 </td>
                                                 <td>
                                                     <a href="#"> Other.jpg</a>
@@ -582,38 +584,7 @@
         $("#dpResidentExpiryDate").datepicker({ minDate: 0 });
         $("#dpPassportExpiryDate").datepicker({ minDate: 0 });
 
-        //fileupload code
-        $("#btnPassportSave1231231").click(function () {
-            if (window.FormData !== undefined) {
-
-                var fileUpload = $("#fuPassportFrontPage").get(0);
-                var files = fileUpload.files;
-                // Create FormData object
-                var fileData = new FormData();
-                // Looping over all files and add it to FormData object
-                for (var i = 0; i < files.length; i++) {
-                    fileData.append(files[i].name, files[i]);
-                }
-                // Adding one more key to FormData object
-                fileData.append('username', 'sreeraj');
-                console.log(fileData);
-                $.ajax({
-                    url: '/MasterPages/ManageEmployees/UploadFiles',
-                    type: "POST",
-                    contentType: false, // Not to set any content header
-                    processData: false, // Not to process data
-                    data: fileData,
-                    success: function (result) {
-                        alert(result);
-                    },
-                    error: function (err) {
-                        alert(err.statusText);
-                    }
-                });
-            } else {
-                alert("FormData is not supported.");
-            }
-        });
+       
 
         $('#tblEmployees').on('click', 'td.edit', function (e) {
             e.preventDefault();
@@ -720,9 +691,10 @@
 
 
     }
-     function UpdateRequest() {
+    function UpdateRequest() {
         var isValid = true;
         var employeeName = $("#txtEmployeeName").val();
+        var employeeReferenceNo = parseInt( $("#txtEmployeeNumber").val().replace('ARIS-',''));
         var companyId = $("#ddlCompany option:selected").val();
         var nationality = $("#ddlCountry option:selected").val();
         var passportNumber = $("#txtPassportNumber").val();
@@ -761,8 +733,9 @@
             IdProfession: idProfession,
             Designation: designation,
             BankName: bankName,
-             BankAccountNumber: bankAccountNumber,
-             Remarks: remarks
+            BankAccountNumber: bankAccountNumber,
+            Remarks: remarks,
+            EmployeeReferenceNo : employeeReferenceNo
         };
 
         isValid = isValidEntry();
@@ -955,23 +928,39 @@
     function populateEmployees(response) {
         table = $('#tblEmployees').DataTable(
             {
-                bLengthChange: true,
+                bLengthChange: false,
                 bFilter: true,
                 bSort: true,
                 bPaginate: true,
                 data: response,
-                scrollX: false,
-                scrollY: false,
+                //scrollX: false,
+                //scrollY: false,
+                scrollY: "650px",
+                sScrollX: "100%",
+                scrollCollapse: true,
                 select: true,
                 pageLength: 10,
                 destroy:true,
-              //  columnDefs: [ { width: 90, targets: 0 } ],
+                 columnDefs: [
+                {
+                    render: function (data, type, full, meta) {
+                        return "<div class='text-wrap width-35'>" + data + "</div>";
+                    },
+                    targets: 2
+                }
+             ],
                 columns: [
                     {
                         data: 'employeeNo', title: 'Employee Number', visible: false,
                     },
+                     {
+                         data: 'employeeReferenceNo', title: 'Employee</br> No',
+                         render: function (data) {
+                             return 'ARIS-' + data;
+                         }
+                    },
                     {
-                        data: 'employeeName', title: 'Employee Name'
+                        data: 'employeeName', title: 'Employee</br> Name'
                     },
                     {
                         data: 'approvalStatus', title: 'Status',
@@ -996,7 +985,7 @@
             });
 
     }
-     function GetEmployeeReferenceNo() {
+    function GetEmployeeReferenceNo() {
         $.ajax({
             type: "GET",
             url: "/MasterPages/ManageEmployees/GetEmployeeReferenceNo",
@@ -1015,5 +1004,26 @@
             }
         });
     }
+   //function uploadFiles(inputId) {
+   //     var input = document.getElementById(inputId);
+   //     var files = input.files;
+   //     var formData = new FormData();
+   //     for (var i = 0; i != files.length; i++) {
+   //         formData.append("files", files[i]);
+   //     }
+
+   //     $.ajax(
+   //         {
+   //             url: "/MasterPages/ManageEmployees/UploadImage",
+   //             data: formData,
+   //             processData: false,
+   //             contentType: false,
+   //             type: "POST",
+   //             success: function (data) {
+   //                 $("#hdnProfilePicturePath").val(data.profileImagePath);
+   //             }
+   //         }
+   //     );
+   // }
 
 </script>

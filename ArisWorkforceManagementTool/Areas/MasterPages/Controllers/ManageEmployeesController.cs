@@ -20,6 +20,13 @@ namespace ArisWorkforceManagementTool.Areas.MasterPages.Controllers
     {
         private readonly ILogger<ManageUsersController> _logger;
         UnitOfWork UnitOfWork = new UnitOfWork();
+        UnitOfWork objUnitOfWorkFetched = new UnitOfWork();
+        private readonly IWebHostEnvironment webHostEnvironment;
+        private string imagePath = string.Empty;
+        public ManageEmployeesController(IWebHostEnvironment hostEnvironment)
+        {
+            this.webHostEnvironment = hostEnvironment;
+        }
 
         // GET: ManageEmployees
         public ActionResult Index()
@@ -186,6 +193,8 @@ namespace ArisWorkforceManagementTool.Areas.MasterPages.Controllers
         {
             try
             {
+                var empExistingData = objUnitOfWorkFetched.EmployeeDetailsRepository.Get(x => x.EmployeeNo == obj.EmployeeNo).ToList();
+
                 var employee = new EmployeeDetails()
                 {
                     EmployeeNo = obj.EmployeeNo,
@@ -207,10 +216,13 @@ namespace ArisWorkforceManagementTool.Areas.MasterPages.Controllers
                     BankName = obj.BankName,
                     BankAccountNumber = obj.BankAccountNumber,
                     ApprovalStatus = 0,
-                    Remarks=obj.Remarks,
+                    Remarks = obj.Remarks,
                     IsActive = 1,
                     ModifiedDate = DateTime.Now,
-                    ModifiedBy = 1
+                    ModifiedBy = 1,
+                    CreatedDate = empExistingData[0].CreatedDate,
+                    CreatedBy = empExistingData[0].CreatedBy,
+                    EmployeeReferenceNo = obj.EmployeeReferenceNo
                 };
                 UnitOfWork.EmployeeDetailsRepository.Update(employee);
                 UnitOfWork.Save();
@@ -245,6 +257,50 @@ namespace ArisWorkforceManagementTool.Areas.MasterPages.Controllers
                     return Json(new { success = false, responseText = "Something went wrong." });
                 }
             }
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> UploadImage(IList<IFormFile> files,string empNo)
+        {
+            string filename = string.Empty;
+            foreach (IFormFile source in files)
+            {
+                filename = ContentDispositionHeaderValue.Parse(source.ContentDisposition).FileName.Trim('"');
+
+                filename = Guid.NewGuid().ToString() + "_" + this.EnsureCorrectFilename(filename);
+                imagePath = filename;
+
+                using (FileStream output = System.IO.File.Create(this.GetPathAndFilename(filename, empNo)))
+                    await source.CopyToAsync(output);
+            }
+
+            return Json(new { success = true, responseText = "Employee Image updated successfully.", profileImagePath = imagePath, imageFullPath= this.GetFullImagePathAndFilename(filename,empNo) });
+        }
+        private string EnsureCorrectFilename(string filename)
+        {
+            if (filename.Contains("\\"))
+                filename = filename.Substring(filename.LastIndexOf("\\") + 1);
+
+            return filename;
+        }
+
+        private string GetPathAndFilename(string filename,string empNo)
+        {
+            if( Directory.Exists(this.webHostEnvironment.WebRootPath + "\\Uploads\\EmployeeUploads\\"+ empNo))
+            {
+                return this.webHostEnvironment.WebRootPath + "\\Uploads\\EmployeeUploads\\"+empNo+"\\"+ filename;
+
+            }
+            else
+            {
+                Directory.CreateDirectory(this.webHostEnvironment.WebRootPath + "\\Uploads\\EmployeeUploads\\" + empNo);
+                return this.webHostEnvironment.WebRootPath + "\\Uploads\\EmployeeUploads\\" + empNo + "\\" + filename;
+
+            }
+        }
+        private string GetFullImagePathAndFilename(string filename,string empNo)
+        {
+            return "\\Uploads\\EmployeeUploads\\"+empNo+"\\"+ filename;
         }
 
     }

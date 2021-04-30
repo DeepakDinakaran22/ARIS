@@ -100,7 +100,7 @@
 
                         <div class="card-footer" style="text-align:right">
                             <button type="button" id="btnDelete" class="btn btn-danger btn-sm">Delete</button>
-                            <button type="reset" id="btnReset" class="btn btn-primary btn-sm">Reset</button>
+                            <button type="reset" id="btnReset" onclick="Reset()" class="btn btn-primary btn-sm">Reset</button>
                             <button type="button" id="btnUpdate" onclick="UpdateUser()" class="btn btn-warning btn-sm">Update</button>
                             <button type="button" id="btnSubmit" onclick="SubmitRequest()" class="btn btn-success btn-sm">Submit</button>
                         </div>
@@ -182,54 +182,49 @@
 <script>
     var userId;
     $(document).ready(function () {
-          $("#btnUpdate").hide();
+        $("#btnUpdate").hide();
         $("#btnSubmit").show();
         GetUsers();
         $("#txtUserName").focusout(function () {
             CheckNameExists();
         });
-        //$("#userPhoto").change(function () {
-        //    $("#file_error").html("");
-        //    var file_size = $('#userPhoto')[0].files[0].size;
-        //    if (file_size > 300000) {
-        //        $("#file_error").html("<p style='color:#FF0000'>File size is greater than 300kb</p>");
-
-        //        return false;
-        //    }
-        //    return true;
-        //});
     });
     function CheckNameExists() {
         try {
+            if ($("#txtUserName").val().trim().indexOf(' ')>0) {
+                showAlert({ title: "Warning!", message: 'User Name should not contain spance!', type: "WARNING" });
+            }
+            else {
 
-            $.ajax({
-                type: "GET",
-                url: "/MasterPages/ManageUsers/IsUserNameExists",
-                data: { UserName: $("#txtUserName").val() },
-                contentType: "application/json; charset=utf-8",
-                dataType: "json",
-                success: function (response) {
-                    if (response != null) {
-                        if (response.value == true) {
-                            $('#txtUserName').css('border-color', 'red');
-                            showAlert({ title: "Warning!", message: 'User Name is already added!', type: "WARNING" });
+                $.ajax({
+                    type: "GET",
+                    url: "/MasterPages/ManageUsers/IsUserNameExists",
+                    data: { UserName: $("#txtUserName").val().trim() },
+                    contentType: "application/json; charset=utf-8",
+                    dataType: "json",
+                    success: function (response) {
+                        if (response != null) {
+                            if (response.value == true) {
+                                $('#txtUserName').css('border-color', 'red');
+                                showAlert({ title: "Warning!", message: 'User Name is already added!', type: "WARNING" });
+                            }
+                            else {
+                                $('#txtUserName').css('border-color', 'green');
+
+                            }
+
+                        } else {
+                            alert("Something went wrong");
                         }
-                        else {
-                            $('#txtUserName').css('border-color', 'green');
-
-                        }
-
-                    } else {
-                        alert("Something went wrong");
+                    },
+                    failure: function (response) {
+                        alert(response.responseText);
+                    },
+                    error: function (response) {
+                        alert(response.responseText);
                     }
-                },
-                failure: function (response) {
-                    alert(response.responseText);
-                },
-                error: function (response) {
-                    alert(response.responseText);
-                }
-            });
+                });
+            }
         }
         catch (err) {
 
@@ -237,11 +232,11 @@
     }
 
     function SubmitRequest() {
-        var userName = $("#txtUserName").val();
-        var emailAddress = $("#txtUserEmail").val();
+        var userName = $("#txtUserName").val().trim();
+        var emailAddress = $("#txtUserEmail").val().trim();
         var userType = $("#ddlUserType option:selected").val();
         var isActive = $("#ddlStatus option:selected").val();
-        var fullName = $("#txtUserFullName").val();
+        var fullName = $("#txtUserFullName").val().trim();
         var ProfileImage = $("#hdnProfilePicturePath").val();
 
         var data = {
@@ -259,7 +254,7 @@
 
     $('#tblUsers').on('click', 'td.edit', function (e) {
         e.preventDefault();
-        $("#txtUserName").val(table.row(this).data()['userName']).attr('readonly', 'true');
+        $("#txtUserName").val(table.row(this).data()['userName']).attr('disabled', 'true');
         $("#txtUserFullName").val(table.row(this).data()['fullName']);
         $("#txtUserEmail").val(table.row(this).data()['mailAddress']);
 
@@ -302,16 +297,27 @@
         $("#txtUserFullName").val('');
         $("#txtUserEmail").val('');
         $("#ddlStatus").val(-1);
-        $("#txtUserName").attr("readonly", false);
+        $("#ddlUserType").val(0);
+        $("#txtUserName").attr("disabled", false);
         $('#txtUserName').css('border-color', '');
+        $("#hdnProfilePicturePath").val('');
+        $("#files").val('');
+         $("#btnUpdate").hide();
+        $("#btnSubmit").show();
+
     }
     function UpdateUser() {
         try {
-            var userName = $("#txtUserName").val();
-            var userFullName = $("#txtUserFullName").val();
-            var Useremail = $("#txtUserEmail").val();
+            var userName = $("#txtUserName").val().trim();
+            var userFullName = $("#txtUserFullName").val().trim();
+            var Useremail = $("#txtUserEmail").val().trim();
             var isActive = $("#ddlStatus option:selected").val();
             var userTypeId = $("#ddlUserType option:selected").val();
+            var ProfileImage = $("#hdnProfilePicturePath").val();
+            if (ProfileImage == '') {
+                ProfileImage = null;
+
+            }
 
             var data = {
                 UserName: userName,
@@ -400,7 +406,6 @@
         var input = document.getElementById(inputId);
         var files = input.files;
         var formData = new FormData();
-
         for (var i = 0; i != files.length; i++) {
             formData.append("files", files[i]);
         }

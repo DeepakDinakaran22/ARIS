@@ -43,6 +43,9 @@
     <Folder Include="wwwroot\lib\" />
     <Folder Include="wwwroot\plugins\loader\" />
     <Folder Include="wwwroot\Uploads\EmployeeUploads\" />
+    <Folder Include="wwwroot\Uploads\CompanyUploads\" />
+    <Folder Include="wwwroot\Uploads\EmployeeUploads\ARIS-3\" />
+    <Folder Include="wwwroot\Uploads\UserUploads\" />
   </ItemGroup>
 
 

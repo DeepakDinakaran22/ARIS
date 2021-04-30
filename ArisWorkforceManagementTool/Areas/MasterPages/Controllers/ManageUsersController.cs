@@ -24,6 +24,7 @@ namespace ArisWorkforceManagementTool.Areas.MasterPages.Controllers
         private readonly IWebHostEnvironment webHostEnvironment;
         private string imagePath = string.Empty;
         UnitOfWork UnitOfWork = new UnitOfWork();
+        UnitOfWork objUnitOfWorkFetch = new UnitOfWork();
         public ManageUsersController(IWebHostEnvironment hostEnvironment)
         {
             this.webHostEnvironment = hostEnvironment;
@@ -75,21 +76,42 @@ namespace ArisWorkforceManagementTool.Areas.MasterPages.Controllers
         {
             try
             {
-                var user = new Aris.Data.Entities.Users
+                if (users.UserId != 0)
                 {
-                    UserId = users.UserId,
-                    UserName = users.UserName,
-                    FullName = users.FullName,
-                    UserTypeID = users.UserTypeID,
-                    MailAddress = users.MailAddress,
-                    IsActive = users.IsActive
-                };
-                UnitOfWork.UserRepository.Update(user);
-                UnitOfWork.Save();
+                  var fetchedUser = objUnitOfWorkFetch.UserRepository.Get(x => x.UserId == users.UserId).ToList();
+                    string img = fetchedUser[0].UserImage;
+                    string pwd = fetchedUser[0].Password;
+                    DateTime createdDate = Convert.ToDateTime(fetchedUser[0].CreatedDate);
+                    int createdBy = Convert.ToInt32( fetchedUser[0].CreatedBy);
 
-                return Json(new { success = true, responseText = "User updated successfully." });
+                  var  user = new Aris.Data.Entities.Users
+                    {
+                        UserId = users.UserId,
+                        UserName = users.UserName,
+                        FullName = users.FullName,
+                        UserTypeID = users.UserTypeID,
+                        MailAddress = users.MailAddress,
+                        IsActive = users.IsActive,
+                        CreatedBy = createdBy,
+                        CreatedDate=createdDate,
+                        ModifiedBy = 1,
+                        ModifiedDate = DateTime.Now,
+                        UserImage = users.ProfileImage==null?img: users.ProfileImage,
+                        Password = pwd
+                    };
+
+                    UnitOfWork.UserRepository.Update(user);
+                    UnitOfWork.Save();
+
+                    return Json(new { success = true, responseText = "User updated successfully." });
+                }
+                else
+                {
+                    return Json(new { success = false, responseText = "Something went wrong." });
+                }
+
             }
-            catch
+            catch (Exception ex)
             {
                 return Json(new { success = false, responseText = "Something went wrong." });
             }
@@ -143,7 +165,7 @@ namespace ArisWorkforceManagementTool.Areas.MasterPages.Controllers
 
         private string GetPathAndFilename(string filename)
         {
-            return this.webHostEnvironment.WebRootPath + "\\img\\" + filename;
+            return this.webHostEnvironment.WebRootPath + "\\Uploads\\UserUploads\\" + filename;
         }
         [HttpPost]
         //[ValidateAntiForgeryToken]
@@ -159,6 +181,7 @@ namespace ArisWorkforceManagementTool.Areas.MasterPages.Controllers
                     UserTypeID = userObj.UserTypeID,
                     IsActive = userObj.IsActive,
                     CreatedDate = DateTime.Now,
+                    CreatedBy = 1,
                     FullName = userObj.FullName,
                     Password = new AuthHelper().HashPassword(),
                     UserImage = userObj.ProfileImage
@@ -174,27 +197,12 @@ namespace ArisWorkforceManagementTool.Areas.MasterPages.Controllers
                 return Json(new { success = true, responseText = "Something Went Wrong!" });
             }
         }
-        //private string UploadedFile(Users model)
-        //{
-        //    string uniqueFileName = null;
-
-        //    if (model.ProfileImage != null)
-        //    {
-        //        string uploadsFolder = Path.Combine(webHostEnvironment.WebRootPath, "img");
-        //        uniqueFileName = Guid.NewGuid().ToString() + "_" + model.ProfileImage.FileName;
-        //        string filePath = Path.Combine(uploadsFolder, uniqueFileName);
-        //        using (var fileStream = new FileStream(filePath, FileMode.Create))
-        //        {
-        //            model.ProfileImage.CopyTo(fileStream);
-        //        }
-        //    }
-        //    return uniqueFileName;
-        //}
+      
         [HttpGet]
         public JsonResult IsUserNameExists(Users userObj)
         {
             var users = UnitOfWork.UserRepository.Get();
-            bool has = users.ToList().Any(x => x.UserName.ToLower() == userObj.UserName.ToLower());
+            bool has = users.ToList().Any(x => x.UserName.ToLower() == (userObj.UserName==null?"":userObj.UserName.ToLower()));
             if (has)
             {
                 return Json(new { value = true, responseText = "User name exists" });
