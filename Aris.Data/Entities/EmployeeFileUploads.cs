@@ -8,17 +8,17 @@ namespace Aris.Data.Entities
     {
         public int EmpFileUploadId { get; set; }
 
-        public string EmployeeNo { get; set; }
+        public int EmployeeNo { get; set; }
 
-        public string EmployeeOrderNo { get; set; }
+        public int EmployeeReferenceNo { get; set; }
 
-        public int? UploadType { get; set; }
+        public int? DocumentId { get; set; }
 
         public string FileName { get; set; }
 
         public string FileLocation { get; set; }
 
-        public int? TempEmployeeNo { get; set; }
+        public int? IsValid { get; set; }
 
         public int IsActive { get; set; }
 
@@ -29,5 +29,6 @@ namespace Aris.Data.Entities
         public int? ModifiedBy { get; set; }
 
         public DateTime? ModifiedDate { get; set; }
+        public string ActualFileName { get; set; }
     }
 }

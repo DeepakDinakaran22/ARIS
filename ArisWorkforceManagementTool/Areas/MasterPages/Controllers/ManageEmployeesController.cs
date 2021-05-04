@@ -276,6 +276,53 @@ namespace ArisWorkforceManagementTool.Areas.MasterPages.Controllers
 
             return Json(new { success = true, responseText = "Employee Image updated successfully.", profileImagePath = imagePath, imageFullPath= this.GetFullImagePathAndFilename(filename,empNo) });
         }
+
+        [HttpPost]
+        public async Task<IActionResult> UploadDocuments(IList<IFormFile> files, string empNo, int docId)
+        {
+            try
+            {
+                string filename = string.Empty;
+                string actualFileName = string.Empty;
+
+                foreach (IFormFile source in files)
+                {
+                    filename = ContentDispositionHeaderValue.Parse(source.ContentDisposition).FileName.Trim('"');
+                    actualFileName = this.EnsureCorrectFilename(filename);
+                    filename = DateTime.Now.ToFileTime() + "_" + actualFileName;
+                    imagePath = filename;
+
+                    using (FileStream output = System.IO.File.Create(this.GetPathAndFilename(filename, empNo)))
+                        await source.CopyToAsync(output);
+
+                    var fileDetails = new EmployeeFileUploads()
+                    {
+                        EmployeeReferenceNo = Convert.ToInt32(empNo.Replace("ARIS-", "")),
+                        IsActive = 1,
+                        CreatedBy = 1,
+                        CreatedDate = DateTime.Now,
+                        IsValid = 0,
+                        DocumentId = docId,
+                        ActualFileName = actualFileName,
+                        FileName = filename,
+                        FileLocation = GetFullDocumentPathWithoutFileName(empNo)
+
+                    };
+                    UnitOfWork.EmployeeFileUploadsRepository.Insert(fileDetails);
+                    UnitOfWork.Save();
+                }
+               
+                   
+               
+
+                return Json(new { success = true, responseText = "Employee Image updated successfully.", profileImagePath = imagePath, imageFullPath = this.GetFullImagePathAndFilename(filename, empNo) });
+            }
+            catch(Exception ex)
+            {
+                return Json(new { success = false, responseText = "Something went wrong. Please try again !"});
+
+            }
+        }
         private string EnsureCorrectFilename(string filename)
         {
             if (filename.Contains("\\"))
@@ -302,6 +349,54 @@ namespace ArisWorkforceManagementTool.Areas.MasterPages.Controllers
         {
             return "\\Uploads\\EmployeeUploads\\"+empNo+"\\"+ filename;
         }
+        private string GetFullDocumentPathWithoutFileName(string empNo)
+        {
+            return "\\Uploads\\EmployeeUploads\\" + empNo + "\\" ;
+        }
+
+        #region Upload documents section
+        [HttpGet]
+        public JsonResult GetAllUploads(string uploadType)
+        {
+
+            List<DocumentType> documents = UnitOfWork.DocumentTypeRepository.Get(x => x.IsActive==1).ToList();
+            List<EmployeeFileUploads>  files = UnitOfWork.EmployeeFileUploadsRepository.Get(x => x.IsActive == 1).ToList();
+            #region commented
+          var  data = from d in documents
+                   join f in files
+                   on d.DocumentId equals f.DocumentId into eGroup
+                   where d.DocumentCategoryID == 1 && !(d.DocumentName.ToLower().Contains("passport")) &&!(d.DocumentName.ToLower().Contains("resident"))
+                   from f in eGroup.DefaultIfEmpty()
+                   select new { FileName = f == null ? "No Files" : f.FileName, DocumentName = d.DocumentName, DocumentId = d.DocumentId };
+            switch (uploadType)
+            {
+                case "PASSPORT":
+                     data = from d in documents
+                               join f in files
+                               on d.DocumentId equals f.DocumentId into eGroup
+                               where d.DocumentCategoryID == 1 && d.DocumentName.ToLower().Contains("passport")
+                               from f in eGroup.DefaultIfEmpty()
+                               select new { FileName = f == null ? "No Files" : f.FileName, DocumentName = d.DocumentName, DocumentId = d.DocumentId };
+
+                    break;
+                case "RESIDENT":
+                     data = from d in documents
+                               join f in files
+                               on d.DocumentId equals f.DocumentId into eGroup
+                               where d.DocumentCategoryID == 1 && d.DocumentName.ToLower().Contains("resident")
+                               from f in eGroup.DefaultIfEmpty()
+                               select new { FileName = f == null ? "No Files" : f.FileName, DocumentName = d.DocumentName, DocumentId = d.DocumentId };
+
+                    break;
+                
+              
+            }
+            #endregion
+
+            return Json(data);
+        
+        }
+        #endregion
 
     }
 

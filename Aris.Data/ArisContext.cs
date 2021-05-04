@@ -281,11 +281,11 @@ namespace Aris.Data
                 entity.Property(e => e.EmployeeNo)
                 .HasColumnName("EmployeeNo");
 
-                entity.Property(e => e.EmployeeOrderNo)
-                .HasColumnName("EmployeeOrderNo");
+                entity.Property(e => e.EmployeeReferenceNo)
+                .HasColumnName("EmployeeReferenceNo");
 
-                entity.Property(e => e.UploadType)
-              .HasColumnName("UploadType");
+                entity.Property(e => e.DocumentId)
+              .HasColumnName("DocumentId");
 
                 entity.Property(e => e.FileName)
                 .HasColumnName("FileName");
@@ -294,8 +294,8 @@ namespace Aris.Data
                 entity.Property(e => e.FileLocation)
                 .HasColumnName("FileLocation");
 
-                entity.Property(e => e.TempEmployeeNo)
-                .HasColumnName("TempEmployeeNo");
+                entity.Property(e => e.IsValid)
+                .HasColumnName("IsValid");
 
                 entity.Property(e => e.IsActive)
                 .HasColumnName("IsActive");
@@ -312,6 +312,8 @@ namespace Aris.Data
                 entity.Property(e => e.ModifiedDate)
                .HasColumnName("ModifiedDate");
 
+                entity.Property(e => e.ActualFileName)
+                .HasColumnName("ActualFileName");
             });
             modelBuilder.Entity<ErrorLog>(entity =>
             {
