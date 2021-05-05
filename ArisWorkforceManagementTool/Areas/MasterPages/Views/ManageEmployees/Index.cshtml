@@ -6,7 +6,11 @@
 <link rel="stylesheet" href="~/css/jquery-ui.css">
 @*<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">*@
 @*<link rel="stylesheet" href="~/css/bootstrap.min.css">*@
-
+<style>
+    /*.dataTables_scrollBody{
+        overflow:auto!important;
+    }*/
+</style>
 <div class="content-header">
     <div class="container-fluid">
         <div class="row mb-2">
@@ -201,10 +205,11 @@
                                         <textarea class="form-control" rows="5" id="txtRemarks"></textarea>
                                     </div>
                                 </div>
-                                <div class="col-md-12">
-                                    <table class="table table-striped table-bordered" id="tblRemainingFiles">
-                                      
-                                    </table>
+                                <div class="col-sm-12">
+                                    <div class="card-body table-responsive p-0" style="overflow:hidden">
+                                        <table class="table table-head-fixed text-wrap" id="tblRemainingFiles"> </table>
+                                    </div>
+                                    @*<table class="table table-striped table-bordered" id="tblRemainingFiles"> </table>*@
                                 </div>
                                
                             </div>
@@ -213,7 +218,7 @@
 
                         <div class="card-footer" style="text-align:right">
                             <button type="button" id="btnDelete" class="btn btn-danger">Delete</button>
-                            <button type="reset" id="btnReset" class="btn btn-primary">Reset</button>
+                            <button type="reset" id="btnReset" onclick="ClearFields()" class="btn btn-primary">Reset</button>
                             <button type="button" id="btnUpdate" onclick="UpdateRequest()" class="btn btn-warning">Update</button>
                             <button type="button" id="btnSubmit" onclick="SubmitRequest()" class="btn btn-success">Submit</button>
                         </div>
@@ -276,14 +281,16 @@
             </div>
             <div class="modal-body">
                 <div class="row">
-                    <div class="col-md-12">
-                        <table class="table text-nowrap" id="tblPassportFiles"> </table>
+                    <div class="col-sm-12 ">
+                        <div class="card-body table-responsive p-0" style="overflow:hidden">
+                            <table class="table table-head-fixed text-wrap" id="tblPassportFiles"> </table>
+                        </div>
+                        @*<table class="table text-wrap compact border-dark" id="tblPassportFiles"> </table>*@
                     </div>
                 </div>
             </div>
             <div class="modal-footer">
-                <button type="button" id="btnPassportReset" class="btn btn-warning">Reset</button>
-                <button type="submit" id="btnPassportSave" class="btn btn-success">Close</button>
+                <button type="button" class="btn btn-outline-success"  data-dismiss="modal">Close</button>
             </div>
         </div>
     </div>
@@ -302,16 +309,18 @@
             </div>
             <div class="modal-body">
                 <div class="row">
-                    <div class="col-md-12">
-                        <table class="table text-nowrap" id="tblResidentFiles"> </table>
+                    <div class="col-sm-12">
+                        <div class="card-body table-responsive p-0" style="overflow:hidden">
+                            <table class="table table-head-fixed text-wrap" id="tblResidentFiles"> </table>
+                        </div>
+                      @*  <table class="table text-nowrap" id="tblResidentFiles"> </table>*@
                     </div>
                 </div>
 
 
             </div>
             <div class="modal-footer">
-                <button type="button" id="btnResidentReset" class="btn btn-warning">Reset</button>
-                <button type="submit" id="btnResidentSave" class="btn btn-success">Close</button>
+                <button type="button" class="btn btn-outline-success" data-dismiss="modal">Close</button>
             </div>
         </div>
     </div>
@@ -331,7 +340,7 @@
                 <p></p>
             </div>
             <div class="modal-footer justify-content">
-                <button type="button" class="btn btn-outline-light" data-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-outline-success" data-dismiss="modal">Close</button>
             </div>
         </div>
         <!-- /.modal-content -->
@@ -370,9 +379,9 @@
 
         $("#btnUpdate").hide();
         $("#btnSubmit").show();
+        GetEmployeeReferenceNo();
         getCompanies();
         GetAllEmployees();
-        GetEmployeeReferenceNo();
         $("#dpContractEndDate").datepicker({ minDate: 0 }); //maxDate: "+1M +15D" });
         $("#dpContractStartDate").datepicker({ minDate: 0 });
         $("#dpJoiningDate").datepicker({ minDate: 0 });
@@ -680,6 +689,13 @@
 
         $("#btnUpdate").hide();
         $("#btnSubmit").show();
+
+      
+        alert(123123);
+        GetEmployeeReferenceNo();
+        //GetAllUploads("PASSPORT");  
+        //GetAllUploads("RESIDENT");
+        //GetAllUploads("REMAINING");
     }
     function GetAllEmployees() {
         $.ajax({
@@ -763,14 +779,20 @@
 
     }
     function GetEmployeeReferenceNo() {
+        
         $.ajax({
             type: "GET",
             url: "/MasterPages/ManageEmployees/GetEmployeeReferenceNo",
             contentType: "application/json; charset=utf-8",
             dataType: "json",
+             async: false,
             success: function (response) {
                 if (response.success == true) {
                     $("#txtEmployeeNumber").val('ARIS-' + response.responseText);
+                    deleteInvalidUploads();
+                     //GetAllUploads("PASSPORT");  
+                    //GetAllUploads("RESIDENT");
+                    //GetAllUploads("REMAINING");
                 }
             },
             failure: function (response) {

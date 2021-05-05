@@ -308,6 +308,14 @@ namespace ArisWorkforceManagementTool.Areas.MasterPages.Controllers
                         FileLocation = GetFullDocumentPathWithoutFileName(empNo)
 
                     };
+
+                    var uploadedData = UnitOfWork.EmployeeFileUploadsRepository.Get(f => f.IsValid == 0 && f.DocumentId == docId);
+                    foreach(var item in uploadedData)
+                    {
+                        UnitOfWork.EmployeeFileUploadsRepository.Delete(item.EmpFileUploadId);
+                        UnitOfWork.Save();
+                    }
+
                     UnitOfWork.EmployeeFileUploadsRepository.Insert(fileDetails);
                     UnitOfWork.Save();
                 }
@@ -367,7 +375,7 @@ namespace ArisWorkforceManagementTool.Areas.MasterPages.Controllers
                    on d.DocumentId equals f.DocumentId into eGroup
                    where d.DocumentCategoryID == 1 && !(d.DocumentName.ToLower().Contains("passport")) &&!(d.DocumentName.ToLower().Contains("resident"))
                    from f in eGroup.DefaultIfEmpty()
-                   select new { FileName = f == null ? "No Files" : f.FileName, DocumentName = d.DocumentName, DocumentId = d.DocumentId };
+                   select new { FileName = f == null ? "No Files" : f.ActualFileName, DocumentName = d.DocumentName, DocumentId = d.DocumentId };
             switch (uploadType)
             {
                 case "PASSPORT":
@@ -376,7 +384,7 @@ namespace ArisWorkforceManagementTool.Areas.MasterPages.Controllers
                                on d.DocumentId equals f.DocumentId into eGroup
                                where d.DocumentCategoryID == 1 && d.DocumentName.ToLower().Contains("passport")
                                from f in eGroup.DefaultIfEmpty()
-                               select new { FileName = f == null ? "No Files" : f.FileName, DocumentName = d.DocumentName, DocumentId = d.DocumentId };
+                               select new { FileName = f == null ? "No Files" : f.ActualFileName, DocumentName = d.DocumentName, DocumentId = d.DocumentId };
 
                     break;
                 case "RESIDENT":
@@ -385,7 +393,7 @@ namespace ArisWorkforceManagementTool.Areas.MasterPages.Controllers
                                on d.DocumentId equals f.DocumentId into eGroup
                                where d.DocumentCategoryID == 1 && d.DocumentName.ToLower().Contains("resident")
                                from f in eGroup.DefaultIfEmpty()
-                               select new { FileName = f == null ? "No Files" : f.FileName, DocumentName = d.DocumentName, DocumentId = d.DocumentId };
+                               select new { FileName = f == null ? "No Files" : f.ActualFileName, DocumentName = d.DocumentName, DocumentId = d.DocumentId };
 
                     break;
                 
@@ -395,6 +403,34 @@ namespace ArisWorkforceManagementTool.Areas.MasterPages.Controllers
 
             return Json(data);
         
+        }
+
+        [HttpGet]
+        public JsonResult DeleteInValidUploads(string empNo, int userID )
+        {
+            try
+            {
+                string filename = string.Empty;
+                string actualFileName = string.Empty;
+
+               
+
+                    var uploadedData = UnitOfWork.EmployeeFileUploadsRepository.Get(f => f.IsValid == 0 && f.CreatedBy == userID && f.EmployeeReferenceNo== Convert.ToInt32(empNo.Replace("ARIS-", "")));
+                    foreach (var item in uploadedData)
+                    {
+                        UnitOfWork.EmployeeFileUploadsRepository.Delete(item.EmpFileUploadId);
+                        UnitOfWork.Save();
+                    }
+
+                return Json(new { success = true, responseText = "success" });
+
+
+            }
+            catch (Exception ex)
+            {
+                return Json(new { success = false, responseText = "Something went wrong. Please try again !" });
+
+            }
         }
         #endregion
 
