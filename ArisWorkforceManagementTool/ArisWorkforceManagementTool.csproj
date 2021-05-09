@@ -41,7 +41,7 @@
     <Folder Include="Areas\MasterPages\Models\" />
     <Folder Include="wwwroot\dist\" />
     <Folder Include="wwwroot\lib\" />
-    <Folder Include="wwwroot\plugins\loader\" />
+    <Folder Include="wwwroot\plugins\loader\img\" />
     <Folder Include="wwwroot\Uploads\EmployeeUploads\" />
     <Folder Include="wwwroot\Uploads\CompanyUploads\" />
     <Folder Include="wwwroot\Uploads\EmployeeUploads\ARIS-3\" />

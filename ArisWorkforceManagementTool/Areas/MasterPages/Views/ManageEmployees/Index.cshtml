@@ -4,13 +4,7 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 <link rel="stylesheet" href="~/css/jquery-ui.css">
-@*<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">*@
-@*<link rel="stylesheet" href="~/css/bootstrap.min.css">*@
-<style>
-    /*.dataTables_scrollBody{
-        overflow:auto!important;
-    }*/
-</style>
+<link rel="stylesheet" href="~/plugins/loader/css/style.css" />
 <div class="content-header">
     <div class="container-fluid">
         <div class="row mb-2">
@@ -28,7 +22,8 @@
 </div>
 <!-- Main content -->
 
-<section class="content">
+
+<section class="content" id="divLoader">
     <div class="container-fluid">
         <div class="row">
             <!-- left column -->
@@ -67,7 +62,7 @@
                                     </div>
                                     <br />
                                     <div class="text-center">
-                                        <input style="border-style:groove; border-color:black" id="files"  type="file" size="1" onchange="uploadFiles('files');" />
+                                        <input style="border-style:groove; border-color:black" id="files" type="file" size="1" onchange="uploadFiles('files');" />
                                         <input type="hidden" id="hdnEmployeePicturePath" />
                                         <span id="file_error"></span>
                                     </div>
@@ -211,7 +206,7 @@
                                     </div>
                                     @*<table class="table table-striped table-bordered" id="tblRemainingFiles"> </table>*@
                                 </div>
-                               
+
                             </div>
                         </div>
                         <!-- /.card-body -->
@@ -290,7 +285,7 @@
                 </div>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-outline-success"  data-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-outline-success" data-dismiss="modal">Close</button>
             </div>
         </div>
     </div>
@@ -313,7 +308,7 @@
                         <div class="card-body table-responsive p-0" style="overflow:hidden">
                             <table class="table table-head-fixed text-wrap" id="tblResidentFiles"> </table>
                         </div>
-                      @*  <table class="table text-nowrap" id="tblResidentFiles"> </table>*@
+                        @*  <table class="table text-nowrap" id="tblResidentFiles"> </table>*@
                     </div>
                 </div>
 
@@ -347,7 +342,12 @@
     </div>
     <!-- /.modal-dialog -->
 </div>
-<!-- /.modal -->
+
+
+@* loader *@
+<div class="overlay"></div>
+
+
 @* Common files Starts*@
 <script src="~/lib/jquery/dist/jquery.min.js" type="text/javascript"></script>
 <link rel="stylesheet" href="~/plugins/datatables-bs4/css/dataTables.bootstrap4.css">
@@ -358,10 +358,13 @@
 <script src="~/js/jquery-ui.js" type="text/javascript"></script>
 <script src="~/plugins/bootstrap/js/bootstrap.min.js" type="text/x-jsrender">
 </script>
+
 @* Common files ends *@
 @* Solution Specific files starts *@
 <script src="~/js/App/ManageEmployees.js" type="text/javascript"></script>
 <script src="~/plugins/countrypicker/js/jquery.countrySelector.js" type="text/javascript"></script>
+
+
 @* Solution Specific files ends *@
 <script>
     var row;
@@ -391,8 +394,7 @@
         $('#tblEmployees').on('click', 'td.edit', function (e) {
             e.preventDefault();
             empNO = parseInt(table.row(this).data()['employeeNo']);
-            console.log('1-' + table.row(this).data()['employeeNo']);
-            console.log('2-' + empNO);
+
             $("#txtEmployeeNumber").val('ARIS-' + table.row(this).data()['employeeReferenceNo']);
             $("#txtEmployeeName").val(table.row(this).data()['employeeName']);
             $("#ddlCompany").val(table.row(this).data()['companyId']);
@@ -412,7 +414,10 @@
             $("#txtBankName").val(table.row(this).data()['bankName']);
             $("#txtAccountNumber").val(table.row(this).data()['bankAccountNumber']);
             $("#txtRemarks").val(table.row(this).data()['remarks']);
-
+            $("#hdnEmployeePicturePath").val(table.row(this).data()['employeeImage']);
+            $("#imgUser").attr('src',  window.location.host + "'/Uploads/employeeUploads/" + $("#txtEmployeeNumber").val() +"/"+ table.row(this).data()['employeeImage']);
+            console.log(window.location.host + "/Uploads/employeeUploads/" + $("#txtEmployeeNumber").val() + "/" + table.row(this).data()['employeeImage']);
+           
 
             $("#btnUpdate").show();
             $("#btnSubmit").hide();
@@ -421,6 +426,7 @@
     });
     function getCompanies() {
         try {
+
             bindDropDownList('ddlCompany', 'GET', '/MasterPages/ManageEmployees/GetCompanies', 'json', 'companyId', 'companyName');
 
         }
@@ -449,6 +455,7 @@
         var bankName = $("#txtBankName").val();
         var bankAccountNumber = $("#txtAccountNumber").val();
         var remarks = $("#txtRemarks").val();
+        var employeeImage = $("#hdnEmployeePicturePath").val();
         // employee image
         // file uploads
 
@@ -471,11 +478,13 @@
             Designation: designation,
             BankName: bankName,
             BankAccountNumber: bankAccountNumber,
-            Remarks: remarks
+            Remarks: remarks,
+            EmployeeImage : employeeImage
         };
 
         isValid = isValidEntry();
         if (isValid) {
+            showLoader(true);
             callAjax('POST', '/MasterPages/ManageEmployees/SubmitRequest', data);
             GetAllEmployees();
             ClearFields();
@@ -531,6 +540,7 @@
         };
         isValid = isValidEntry();
         if (isValid) {
+            showLoader(true);
             callAjax('POST', '/MasterPages/ManageEmployees/UpdateRequest', data);
             GetAllEmployees();
             ClearFields();
@@ -687,17 +697,14 @@
 
         $('#txtAccountNumber').val('');
 
+        $("#hdnEmployeePicturePath").val('');
+
         $("#btnUpdate").hide();
         $("#btnSubmit").show();
-
-      
-        alert(123123);
         GetEmployeeReferenceNo();
-        //GetAllUploads("PASSPORT");  
-        //GetAllUploads("RESIDENT");
-        //GetAllUploads("REMAINING");
     }
     function GetAllEmployees() {
+        showLoader(true);
         $.ajax({
             type: "GET",
             url: "/MasterPages/ManageEmployees/GetAllEmployees",
@@ -709,6 +716,10 @@
                 } else {
                     alert("Something went wrong");
                 }
+               // showLoader(false);
+            },
+            complete: function (response) {
+                        showLoader(false);
             },
             failure: function (response) {
                 alert(response.responseText);
@@ -779,21 +790,24 @@
 
     }
     function GetEmployeeReferenceNo() {
-        
+        showLoader(true);
         $.ajax({
             type: "GET",
             url: "/MasterPages/ManageEmployees/GetEmployeeReferenceNo",
             contentType: "application/json; charset=utf-8",
             dataType: "json",
-             async: false,
+            async: false,
             success: function (response) {
                 if (response.success == true) {
                     $("#txtEmployeeNumber").val('ARIS-' + response.responseText);
                     deleteInvalidUploads();
-                     //GetAllUploads("PASSPORT");  
+                    //GetAllUploads("PASSPORT");
                     //GetAllUploads("RESIDENT");
                     //GetAllUploads("REMAINING");
                 }
+            },
+            complete: function (response) {
+                        showLoader(false);
             },
             failure: function (response) {
                 alert(response.responseText);
@@ -804,5 +818,6 @@
         });
     }
     //testing region
+
 
 </script>

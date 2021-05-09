@@ -21,6 +21,7 @@ namespace ArisWorkforceManagementTool.Areas.MasterPages.Controllers
         private readonly ILogger<ManageUsersController> _logger;
         UnitOfWork UnitOfWork = new UnitOfWork();
         UnitOfWork objUnitOfWorkFetched = new UnitOfWork();
+        UnitOfWork uploadUnitOfWork = new UnitOfWork();
         private readonly IWebHostEnvironment webHostEnvironment;
         private string imagePath = string.Empty;
         public ManageEmployeesController(IWebHostEnvironment hostEnvironment)
@@ -167,10 +168,22 @@ namespace ArisWorkforceManagementTool.Areas.MasterPages.Controllers
                     Remarks=obj.Remarks,
                     IsActive = 1,
                     CreatedDate = DateTime.Now,
-                    CreatedBy = 1
+                    CreatedBy = 1,
+                    EmployeeImage = obj.EmployeeImage
                 };
 
                 UnitOfWork.EmployeeDetailsRepository.Insert(employee);
+                UnitOfWork.Save();
+
+                var uploadedData = UnitOfWork.EmployeeFileUploadsRepository.Get(f => f.IsValid == 0 && f.EmployeeReferenceNo == obj.EmployeeReferenceNo);
+                foreach (var item in uploadedData)
+                {
+                    item.IsValid = 1;
+                }
+                EmployeeFileUploads uploads = new EmployeeFileUploads();
+                uploads = (EmployeeFileUploads)uploadedData;
+
+                UnitOfWork.EmployeeFileUploadsRepository.Insert(uploads);
                 UnitOfWork.Save();
 
                 return Json(new { success = true, responseText = "Employee details submitted for approval" });
@@ -267,7 +280,7 @@ namespace ArisWorkforceManagementTool.Areas.MasterPages.Controllers
             {
                 filename = ContentDispositionHeaderValue.Parse(source.ContentDisposition).FileName.Trim('"');
 
-                filename = Guid.NewGuid().ToString() + "_" + this.EnsureCorrectFilename(filename);
+                filename = DateTime.Now.ToFileTime() + "_" + this.EnsureCorrectFilename(filename);
                 imagePath = filename;
 
                 using (FileStream output = System.IO.File.Create(this.GetPathAndFilename(filename, empNo)))
@@ -375,7 +388,7 @@ namespace ArisWorkforceManagementTool.Areas.MasterPages.Controllers
                    on d.DocumentId equals f.DocumentId into eGroup
                    where d.DocumentCategoryID == 1 && !(d.DocumentName.ToLower().Contains("passport")) &&!(d.DocumentName.ToLower().Contains("resident"))
                    from f in eGroup.DefaultIfEmpty()
-                   select new { FileName = f == null ? "No Files" : f.ActualFileName, DocumentName = d.DocumentName, DocumentId = d.DocumentId };
+                   select new { FileName = f == null ? "No Files" : f.ActualFileName, FilePath = f == null ? "No Path" : f.FileLocation+f.FileName, DocumentName = d.DocumentName, DocumentId = d.DocumentId };
             switch (uploadType)
             {
                 case "PASSPORT":
@@ -384,7 +397,7 @@ namespace ArisWorkforceManagementTool.Areas.MasterPages.Controllers
                                on d.DocumentId equals f.DocumentId into eGroup
                                where d.DocumentCategoryID == 1 && d.DocumentName.ToLower().Contains("passport")
                                from f in eGroup.DefaultIfEmpty()
-                               select new { FileName = f == null ? "No Files" : f.ActualFileName, DocumentName = d.DocumentName, DocumentId = d.DocumentId };
+                               select new { FileName = f == null ? "No Files" : f.ActualFileName, FilePath = f == null ? "No Path" : f.FileLocation + f.FileName, DocumentName = d.DocumentName, DocumentId = d.DocumentId };
 
                     break;
                 case "RESIDENT":
@@ -393,7 +406,7 @@ namespace ArisWorkforceManagementTool.Areas.MasterPages.Controllers
                                on d.DocumentId equals f.DocumentId into eGroup
                                where d.DocumentCategoryID == 1 && d.DocumentName.ToLower().Contains("resident")
                                from f in eGroup.DefaultIfEmpty()
-                               select new { FileName = f == null ? "No Files" : f.ActualFileName, DocumentName = d.DocumentName, DocumentId = d.DocumentId };
+                               select new { FileName = f == null ? "No Files" : f.ActualFileName , FilePath = f == null ? "No Path" : f.FileLocation + f.FileName, DocumentName = d.DocumentName, DocumentId = d.DocumentId };
 
                     break;
                 

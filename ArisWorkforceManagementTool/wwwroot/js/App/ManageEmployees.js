@@ -32,6 +32,7 @@ function uploadFiles(inputId) {
             success: function (data) {
                 $("#hdnEmployeePicturePath").val(data.profileImagePath);
                 $("#imgUser").attr('src', data.imageFullPath);
+               
             }
         }
     );
@@ -124,6 +125,9 @@ function populatePassport(response) {
 
                 },
                 {
+                    data: 'filePath', title: 'File Path', visible: false,
+                },
+                {
                     data: 'documentName', title: 'Document Name',
                 },
                 {
@@ -152,7 +156,7 @@ function populatePassport(response) {
 }
 function populateResident(response) {
     var docId = 0;
-    table_passport = $("#tblResidentFiles").DataTable(
+    table_resident = $("#tblResidentFiles").DataTable(
         {
             bLengthChange: false,
             bFilter: true,
@@ -175,17 +179,20 @@ function populateResident(response) {
 
                 },
                 {
+                    data: 'filePath', title: 'File Path', visible: false,
+                },
+                {
                     data: 'documentName', title: 'Document Name',
                 },
                 {
                     data: 'fileName', title: 'File Name',
+                    class: 'download',
                     render: function (data) {
                         if (data == "No Files") {
                             return data;
                         }
                         else {
-                            return '<a href="test" id="download_' + docId + '">' + data + '</a>';
-                        }
+                            return '<a href="#" id="download_' + docId + '">' + data + '</a>';                        }
                     }
                 },
                 {
@@ -225,16 +232,20 @@ function populateRemaining(response) {
 
                 },
                 {
+                    data: 'filePath', title: 'File Path', visible: false,
+                },
+                {
                     data: 'documentName', title: 'Document Name',
                 },
                 {
                     data: 'fileName', title: 'File Name',
+                    class: 'download',
                     render: function (data) {
                         if (data == "No Files") {
                             return data;
                         }
                         else {
-                            return '<a href="test" id="download_' + docId + '">' + data + '</a>';
+                            return '<a href="#" id="download_' + docId + '">' + data + '</a>';
                         }
                     }
                 },
@@ -281,13 +292,42 @@ function deleteInvalidUploads() {
     });
 }
 //download function for passport files
-$('#tblPassportFiles').on('click', 'td.download', function (e) {
+$('#tblPassportFiles').on('click', 'td.download', function(e) {
     e.preventDefault();
     try {
-       // window.location.href = "../Uploads/EmployeeUploads/ARIS-3/132647177523759410_5. ColorPhoto.jpeg";
-        var filePath = "../Uploads/EmployeeUploads/ARIS-3/132647177523759410_5. ColorPhoto.jpeg";
+        var filePath = table_passport.row(this).data()['filePath'];
         var link = document.createElement('a');
         link.href = filePath;
+        link.download = filePath.substr(filePath.lastIndexOf('/') + 1);
+        link.click();
+    }
+    catch (err) {
+        console.log(err);
+    }
+});
+//download function for Resident Card files
+$('#tblResidentFiles').on('click', 'td.download', function(e) {
+    e.preventDefault();
+    try {
+        var filePath = table_resident.row(this).data()['filePath'];
+        var link = document.createElement('a');
+        link.href = filePath;
+        link.download = filePath.substr(filePath.lastIndexOf('/') + 1);
+        link.click();
+    }
+    catch (err) {
+        console.log(err);
+    }
+});
+//download function for Remining uploads
+$('#tblRemainingFiles').on('click', 'td.download', function(e) {
+    e.preventDefault();
+    try {
+        var filePath = table_remaining.row(this).data()['filePath'];
+        var link = document.createElement('a');
+        link.href = filePath;
+        console.log(filePath);
+        console.log(filePath.substr(filePath.lastIndexOf('/') + 1));
         link.download = filePath.substr(filePath.lastIndexOf('/') + 1);
         link.click();
     }
