@@ -175,20 +175,19 @@ namespace ArisWorkforceManagementTool.Areas.MasterPages.Controllers
                 UnitOfWork.EmployeeDetailsRepository.Insert(employee);
                 UnitOfWork.Save();
 
-                var uploadedData = UnitOfWork.EmployeeFileUploadsRepository.Get(f => f.IsValid == 0 && f.EmployeeReferenceNo == obj.EmployeeReferenceNo);
+                var uploadedData =   UnitOfWork.EmployeeFileUploadsRepository.Get(f => f.IsValid == 0 && f.EmployeeReferenceNo == obj.EmployeeReferenceNo);
                 foreach (var item in uploadedData)
                 {
                     item.IsValid = 1;
+                    UnitOfWork.EmployeeFileUploadsRepository.Update(item);
+                    UnitOfWork.Save();
                 }
-                EmployeeFileUploads uploads = new EmployeeFileUploads();
-                uploads = (EmployeeFileUploads)uploadedData;
-
-                UnitOfWork.EmployeeFileUploadsRepository.Insert(uploads);
-                UnitOfWork.Save();
+              
+              
 
                 return Json(new { success = true, responseText = "Employee details submitted for approval" });
             }
-            catch
+            catch (Exception ex)
             {
                 return Json(new { success = false, responseText = "Something went wrong." });
             }
@@ -235,7 +234,8 @@ namespace ArisWorkforceManagementTool.Areas.MasterPages.Controllers
                     ModifiedBy = 1,
                     CreatedDate = empExistingData[0].CreatedDate,
                     CreatedBy = empExistingData[0].CreatedBy,
-                    EmployeeReferenceNo = obj.EmployeeReferenceNo
+                    EmployeeReferenceNo = obj.EmployeeReferenceNo,
+                    EmployeeImage = obj.EmployeeImage == null ? empExistingData[0].EmployeeImage : obj.EmployeeImage
                 };
                 UnitOfWork.EmployeeDetailsRepository.Update(employee);
                 UnitOfWork.Save();
@@ -377,11 +377,11 @@ namespace ArisWorkforceManagementTool.Areas.MasterPages.Controllers
 
         #region Upload documents section
         [HttpGet]
-        public JsonResult GetAllUploads(string uploadType)
+        public JsonResult GetAllUploads(string uploadType, int EmpRefNo)
         {
 
-            List<DocumentType> documents = UnitOfWork.DocumentTypeRepository.Get(x => x.IsActive==1).ToList();
-            List<EmployeeFileUploads>  files = UnitOfWork.EmployeeFileUploadsRepository.Get(x => x.IsActive == 1).ToList();
+            List<DocumentType> documents = UnitOfWork.DocumentTypeRepository.Get(x => x.IsActive==1 ).ToList();
+            List<EmployeeFileUploads>  files = UnitOfWork.EmployeeFileUploadsRepository.Get(x => x.IsActive == 1 && x.EmployeeReferenceNo==EmpRefNo).ToList();
             #region commented
           var  data = from d in documents
                    join f in files

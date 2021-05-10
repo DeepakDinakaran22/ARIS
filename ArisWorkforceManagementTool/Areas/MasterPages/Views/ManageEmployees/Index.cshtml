@@ -335,7 +335,7 @@
                 <p></p>
             </div>
             <div class="modal-footer justify-content">
-                <button type="button" class="btn btn-outline-success" data-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-outline-light" data-dismiss="modal">Close</button>
             </div>
         </div>
         <!-- /.modal-content -->
@@ -376,15 +376,9 @@
         ////demo region starts
         //$("#tblPassportFiles").css('background-color', 'red');
         ////demo region ends
-        // GetAllUploads("RESIDENT");  // testing is in progress
-        //  GetAllUploads("REMAINING");  // testing is in progress
+       
 
-
-        $("#btnUpdate").hide();
-        $("#btnSubmit").show();
-        GetEmployeeReferenceNo();
-        getCompanies();
-        GetAllEmployees();
+       
         $("#dpContractEndDate").datepicker({ minDate: 0 }); //maxDate: "+1M +15D" });
         $("#dpContractStartDate").datepicker({ minDate: 0 });
         $("#dpJoiningDate").datepicker({ minDate: 0 });
@@ -414,10 +408,10 @@
             $("#txtBankName").val(table.row(this).data()['bankName']);
             $("#txtAccountNumber").val(table.row(this).data()['bankAccountNumber']);
             $("#txtRemarks").val(table.row(this).data()['remarks']);
-            $("#hdnEmployeePicturePath").val(table.row(this).data()['employeeImage']);
-            $("#imgUser").attr('src',  window.location.host + "'/Uploads/employeeUploads/" + $("#txtEmployeeNumber").val() +"/"+ table.row(this).data()['employeeImage']);
-            console.log(window.location.host + "/Uploads/employeeUploads/" + $("#txtEmployeeNumber").val() + "/" + table.row(this).data()['employeeImage']);
-           
+            $("#imgUser").attr('src',  "/Uploads/employeeUploads/" + $("#txtEmployeeNumber").val() +"/"+ table.row(this).data()['employeeImage']);
+            GetAllUploads("PASSPORT",table.row(this).data()['employeeReferenceNo']);  // testing is in progress
+            GetAllUploads("RESIDENT",table.row(this).data()['employeeReferenceNo']);
+            GetAllUploads("REMAINING",table.row(this).data()['employeeReferenceNo']);
 
             $("#btnUpdate").show();
             $("#btnSubmit").hide();
@@ -513,9 +507,9 @@
         var bankName = $("#txtBankName").val();
         var bankAccountNumber = $("#txtAccountNumber").val();
         var remarks = $("#txtRemarks").val();
-        // employee image
+        var employeeImage = $("#hdnEmployeePicturePath").val()==''?null:$("#hdnEmployeePicturePath").val();
         // file uploads
-
+        console.log(employeeImage + ' - empimg');
         var data = {
             EmployeeName: employeeName,
             EmployeeNo: empNO,
@@ -536,7 +530,8 @@
             BankName: bankName,
             BankAccountNumber: bankAccountNumber,
             Remarks: remarks,
-            EmployeeReferenceNo: employeeReferenceNo
+            EmployeeReferenceNo: employeeReferenceNo,
+            EmployeeImage: employeeImage
         };
         isValid = isValidEntry();
         if (isValid) {
@@ -698,6 +693,8 @@
         $('#txtAccountNumber').val('');
 
         $("#hdnEmployeePicturePath").val('');
+        $("#imgUser").attr('src',  "/img/avatar.png");
+        $("#files").val(null);
 
         $("#btnUpdate").hide();
         $("#btnSubmit").show();
@@ -801,9 +798,7 @@
                 if (response.success == true) {
                     $("#txtEmployeeNumber").val('ARIS-' + response.responseText);
                     deleteInvalidUploads();
-                    //GetAllUploads("PASSPORT");
-                    //GetAllUploads("RESIDENT");
-                    //GetAllUploads("REMAINING");
+                   
                 }
             },
             complete: function (response) {

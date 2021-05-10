@@ -5,9 +5,16 @@ var table_remaining;
 
 $(document).ready(function () {
 
-    GetAllUploads("PASSPORT");  
-    GetAllUploads("RESIDENT");
-    GetAllUploads("REMAINING");
+
+    $("#btnUpdate").hide();
+    $("#btnSubmit").show();
+    GetEmployeeReferenceNo();
+    getCompanies();
+    GetAllEmployees();
+
+    GetAllUploads("PASSPORT", $("#txtEmployeeNumber").val().replace('ARIS-',''));
+    GetAllUploads("RESIDENT", $("#txtEmployeeNumber").val().replace('ARIS-', ''));
+    GetAllUploads("REMAINING", $("#txtEmployeeNumber").val().replace('ARIS-', ''));
 
    
 });
@@ -59,21 +66,21 @@ function uploadDocuments(inputId) {
             type: "POST",
             async: false,
             success: function (data) {
-                GetAllUploads("PASSPORT");  // testing is in progress
-                GetAllUploads("RESIDENT");
-                GetAllUploads("REMAINING");
+                GetAllUploads("PASSPORT", empNo.replace('ARIS-',''));  // testing is in progress
+                GetAllUploads("RESIDENT", empNo.replace('ARIS-', ''));
+                GetAllUploads("REMAINING", empNo.replace('ARIS-', ''));
             }
         }
     );
 }
 
-function GetAllUploads(uType) {
+function GetAllUploads(uType,empNo) {
 
     $.ajax({
         type: "GET",
         url: "/MasterPages/ManageEmployees/GetAllUploads",
         contentType: "application/json; charset=utf-8",
-        data: { uploadType: uType },
+        data: { uploadType: uType, EmpRefNo: empNo },
         dataType: "json",
         success: function (response) {
             if (response != null) {
@@ -274,9 +281,9 @@ function deleteInvalidUploads() {
         success: function (response) {
             if (response != null) {
 
-                 GetAllUploads("PASSPORT");  
-                 GetAllUploads("RESIDENT");
-                 GetAllUploads("REMAINING");
+                GetAllUploads("PASSPORT", empNo.replace('ARIS-',''));
+                GetAllUploads("RESIDENT", empNo.replace('ARIS-', ''));
+                GetAllUploads("REMAINING", empNo.replace('ARIS-', ''));
 
 
             } else {
