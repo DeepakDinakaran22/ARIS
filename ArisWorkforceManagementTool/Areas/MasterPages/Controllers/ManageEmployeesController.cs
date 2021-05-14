@@ -179,6 +179,8 @@ namespace ArisWorkforceManagementTool.Areas.MasterPages.Controllers
                 foreach (var item in uploadedData)
                 {
                     item.IsValid = 1;
+                    item.ModifiedBy = 1;
+                    item.ModifiedDate = DateTime.Now;
                     UnitOfWork.EmployeeFileUploadsRepository.Update(item);
                     UnitOfWork.Save();
                 }
@@ -239,7 +241,6 @@ namespace ArisWorkforceManagementTool.Areas.MasterPages.Controllers
                 };
                 UnitOfWork.EmployeeDetailsRepository.Update(employee);
                 UnitOfWork.Save();
-
                 return Json(new { success = true, responseText = "Employee details updated successfully." });
 
             }
@@ -297,44 +298,68 @@ namespace ArisWorkforceManagementTool.Areas.MasterPages.Controllers
             {
                 string filename = string.Empty;
                 string actualFileName = string.Empty;
-
-                foreach (IFormFile source in files)
+                var uploadedData = UnitOfWork.EmployeeFileUploadsRepository.Get(f => f.IsValid == 1 && f.EmployeeReferenceNo == Convert.ToInt32(empNo.Replace("ARIS-", "")) && f.DocumentId ==docId);
+               
+                if (uploadedData.Count() == 0)
                 {
-                    filename = ContentDispositionHeaderValue.Parse(source.ContentDisposition).FileName.Trim('"');
-                    actualFileName = this.EnsureCorrectFilename(filename);
-                    filename = DateTime.Now.ToFileTime() + "_" + actualFileName;
-                    imagePath = filename;
-
-                    using (FileStream output = System.IO.File.Create(this.GetPathAndFilename(filename, empNo)))
-                        await source.CopyToAsync(output);
-
-                    var fileDetails = new EmployeeFileUploads()
+                    foreach (IFormFile source in files)
                     {
-                        EmployeeReferenceNo = Convert.ToInt32(empNo.Replace("ARIS-", "")),
-                        IsActive = 1,
-                        CreatedBy = 1,
-                        CreatedDate = DateTime.Now,
-                        IsValid = 0,
-                        DocumentId = docId,
-                        ActualFileName = actualFileName,
-                        FileName = filename,
-                        FileLocation = GetFullDocumentPathWithoutFileName(empNo)
+                        filename = ContentDispositionHeaderValue.Parse(source.ContentDisposition).FileName.Trim('"');
+                        actualFileName = this.EnsureCorrectFilename(filename);
+                        filename = DateTime.Now.ToFileTime() + "_" + actualFileName;
+                        imagePath = filename;
 
-                    };
+                        using (FileStream output = System.IO.File.Create(this.GetPathAndFilename(filename, empNo)))
+                            await source.CopyToAsync(output);
 
-                    var uploadedData = UnitOfWork.EmployeeFileUploadsRepository.Get(f => f.IsValid == 0 && f.DocumentId == docId);
-                    foreach(var item in uploadedData)
-                    {
-                        UnitOfWork.EmployeeFileUploadsRepository.Delete(item.EmpFileUploadId);
+                        var fileDetails = new EmployeeFileUploads()
+                        {
+                            EmployeeReferenceNo = Convert.ToInt32(empNo.Replace("ARIS-", "")),
+                            IsActive = 1,
+                            CreatedBy = 1,
+                            CreatedDate = DateTime.Now,
+                            IsValid = 0,
+                            DocumentId = docId,
+                            ActualFileName = actualFileName,
+                            FileName = filename,
+                            FileLocation = GetFullDocumentPathWithoutFileName(empNo)
+
+                        };
+
+                        var uploadedDataGet = UnitOfWork.EmployeeFileUploadsRepository.Get(f => f.IsValid == 0 && f.DocumentId == docId);
+                        foreach (var item in uploadedDataGet)
+                        {
+                            UnitOfWork.EmployeeFileUploadsRepository.Delete(item.EmpFileUploadId);
+                            UnitOfWork.Save();
+                        }
+
+                        UnitOfWork.EmployeeFileUploadsRepository.Insert(fileDetails);
                         UnitOfWork.Save();
                     }
-
-                    UnitOfWork.EmployeeFileUploadsRepository.Insert(fileDetails);
-                    UnitOfWork.Save();
                 }
-               
-                   
-               
+                else
+                {
+                    foreach (IFormFile source in files)
+                    {
+                        filename = ContentDispositionHeaderValue.Parse(source.ContentDisposition).FileName.Trim('"');
+                        actualFileName = this.EnsureCorrectFilename(filename);
+                        filename = DateTime.Now.ToFileTime() + "_" + actualFileName;
+                        imagePath = filename;
+
+                        using (FileStream output = System.IO.File.Create(this.GetPathAndFilename(filename, empNo)))
+                            await source.CopyToAsync(output);
+
+                        foreach (var item in uploadedData)
+                        {
+                            item.ActualFileName = item.ActualFileName == actualFileName ? item.ActualFileName : actualFileName;
+                            item.FileName = item.ActualFileName == filename ? item.FileName : filename;
+                            item.FileLocation = GetFullDocumentPathWithoutFileName(empNo);
+                            UnitOfWork.EmployeeFileUploadsRepository.Update(item);
+                            UnitOfWork.Save();
+                        }
+                    }
+
+                }
 
                 return Json(new { success = true, responseText = "Employee Image updated successfully.", profileImagePath = imagePath, imageFullPath = this.GetFullImagePathAndFilename(filename, empNo) });
             }
@@ -446,6 +471,22 @@ namespace ArisWorkforceManagementTool.Areas.MasterPages.Controllers
             }
         }
         #endregion
+
+        [HttpGet]
+        public JsonResult IsEmployeeNameExists(EmployeeDetails obj)
+        {
+            var employees = UnitOfWork.EmployeeDetailsRepository.Get();
+            bool has = employees.ToList().Any(x => x.PassportNumber == obj.PassportNumber);
+            if (has)
+            {
+                return Json(new { value = true, responseText = "Employee name exists" });
+            }
+            else
+            {
+                return Json(new { value = false, responseText = "Employee name is not exists" });
+            }
+
+        }
 
     }
 

@@ -62,8 +62,10 @@ function showAlert(pData) {
         $('#alert-modal .modal-content').removeClass('alert-danger');
         $('#alert-modal .modal-content').removeClass('alert-warning');
         $('#alert-modal .modal-content').removeClass('alert-info');
-        $('#btnDialogYes').hide();
-        $('#btnDialogNo').html('<i class="fa fa-close"></i> Close');
+        //$('#btnDialogYes').hide();
+        //$('#btnDialogNo').hide();
+        $('#btnDialogClose').show();
+        //$('#btnDialogNo').html('<i class="fa fa-close"></i> Close');
         $('#alert-modal .modal-title').html(pData.title);
         $('#alert-modal .modal-body').html('<p style="font-size:16px">' + pData.message + '</p>');
 
@@ -81,8 +83,9 @@ function showAlert(pData) {
         }
         else if (pData.type == 'CONFIRM') {
             $('#alert-modal .modal-content').addClass('alert-warning');
-            $('#btnDialogYes').html('<i class="fa fa-close"></i> No');
+            $('#btnDialogYes').show();
             $('#btnDialogNo').show();
+            $('#btnDialogClose').hide();
         }
         
         $('#alert-modal').modal({
@@ -193,7 +196,6 @@ function showLoader(val) {
         }
         else {
             $("body").removeClass("loading");
-
         }
     }
     catch (err) {

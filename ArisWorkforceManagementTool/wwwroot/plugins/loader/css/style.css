@@ -21,3 +21,7 @@ body {
         body.loading .overlay {
             display: block;
         }
+
+        .card-body{
+            font-size:small;
+        }
