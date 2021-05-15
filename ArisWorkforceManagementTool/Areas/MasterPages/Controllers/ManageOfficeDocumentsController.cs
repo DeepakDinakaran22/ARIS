@@ -2,92 +2,146 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Aris.Data;
+using Aris.Data.Entities;
+using Aris.Models.ViewModel;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 
 namespace ArisWorkforceManagementTool.Areas.MasterPages.Controllers
 {
     [Area("MasterPages")]
     public class ManageOfficeDocumentsController : Controller
     {
-        // GET: ManageOfficeDocuments
+        private readonly ILogger<ManageUsersController> _logger;
+        UnitOfWork UnitOfWork = new UnitOfWork();
+        UnitOfWork objUnitOfWorkFetch = new UnitOfWork();
+
         public ActionResult Index()
         {
             return View();
         }
 
-        // GET: ManageOfficeDocuments/Details/5
-        public ActionResult Details(int id)
+        [HttpGet]
+        public JsonResult GetAllOfficeDocuments()
         {
-            return View();
+            var officeD = UnitOfWork.OfficeDocDetailsRepository.Get(null, x => x.OrderByDescending(id => id.OfficeDocId));
+            if (officeD.Count() > 0)
+            {
+                List<DocumentType> documents = UnitOfWork.DocumentTypeRepository.Get(x => x.IsActive == 1&&x.DocumentCategoryID==2).ToList();
+
+                List<OfficeDocDetails> officeDocs = UnitOfWork.OfficeDocDetailsRepository.Get(null).ToList();
+
+               
+                var data = from od in officeDocs where od.DocumentId != 0
+                           join d in documents
+                           on od.DocumentId equals d.DocumentId  into eGroup
+                           where od.DocumentId.ToString() != string.Empty
+                           from d in eGroup.DefaultIfEmpty()
+                           select new
+                           {
+                               OfficeDocId = od.OfficeDocId,
+                               DocumentName = d.DocumentName,
+                               DocumentId = od.DocumentId,
+                               DocIssueDate = od.DocIssueDate,
+                               DocExpiryDate = od.DocExpiryDate,
+                               OfficeDocDesc = od.OfficeDocDesc,
+                               IsActive = od.IsActive,
+                           };
+
+                   
+
+
+                return Json(data);
+            }
+            else
+            {
+                return Json(officeD);
+            }
+
+        }
+        [HttpGet]
+        public JsonResult IsDocumentExists(OfficeDocDetails obj)
+        {
+            var docs = UnitOfWork.OfficeDocDetailsRepository.Get();
+            bool has = docs.ToList().Any(x => x.DocumentId == obj.DocumentId);
+            if (has)
+            {
+                return Json(new { value = true, responseText = "Document name exists" });
+            }
+            else
+            {
+                return Json(new { value = false, responseText = "Document name is not exists" });
+            }
+
         }
 
-        // GET: ManageOfficeDocuments/Create
-        public ActionResult Create()
+        [HttpGet]
+        public JsonResult GetDocuments()
         {
-            return View();
+            var docuements = UnitOfWork.DocumentTypeRepository.Get(x => x.IsActive == 1 && x.DocumentCategoryID==2 ).ToList().OrderBy(o => o.DocumentName);
+            //foreach (var item in companies)
+            //{
+            //    item.CompanyName = item.CompanyName + '-' + item.CompanyLocation;
+            //}
+
+            return Json(docuements);
+
         }
 
-        // POST: ManageOfficeDocuments/Create
         [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult Create(IFormCollection collection)
+        public JsonResult SubmitRequest(OfficeDocDetailsViewModel obj)
         {
             try
             {
-                // TODO: Add insert logic here
+                var officeDoc = new OfficeDocDetails()
+                {
+                    DocumentId = obj.DocumentId,
+                    OfficeDocDesc = obj.OfficeDocDesc,
+                    DocIssueDate = obj.DocIssueDate,
+                    DocExpiryDate = obj.DocExpiryDate,
+                    IsActive = obj.IsActive,
+                    CreatedBy = 1,
+                    CreatedDate = DateTime.Now
+                };
 
-                return RedirectToAction(nameof(Index));
+                UnitOfWork.OfficeDocDetailsRepository.Insert(officeDoc);
+                UnitOfWork.Save();
+                return Json(new { success = true, responseText = "Document added successfully." });
             }
             catch
             {
-                return View();
+                return Json(new { success = false, responseText = "Something went wrong." });
             }
         }
-
-        // GET: ManageOfficeDocuments/Edit/5
-        public ActionResult Edit(int id)
-        {
-            return View();
-        }
-
-        // POST: ManageOfficeDocuments/Edit/5
         [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult Edit(int id, IFormCollection collection)
+        public JsonResult UpdateRequest(OfficeDocDetailsViewModel obj)
         {
             try
             {
-                // TODO: Add update logic here
+                var fetchedDocs = objUnitOfWorkFetch.OfficeDocDetailsRepository.Get(x => x.OfficeDocId == obj.OfficeDocId).ToList();
+                var officeDoc = new OfficeDocDetails()
+                {
+                    OfficeDocId = obj.OfficeDocId,
+                    DocumentId = obj.DocumentId,
+                    OfficeDocDesc = obj.OfficeDocDesc,
+                    DocIssueDate = obj.DocIssueDate,
+                    DocExpiryDate = obj.DocExpiryDate,
+                    IsActive = obj.IsActive,
+                    CreatedBy = fetchedDocs[0].CreatedBy,
+                    CreatedDate = fetchedDocs[0].CreatedDate,
+                    ModifiedBy = 1,
+                    ModifiedDate = DateTime.Now
+                };
 
-                return RedirectToAction(nameof(Index));
+                UnitOfWork.OfficeDocDetailsRepository.Update(officeDoc);
+                UnitOfWork.Save();
+                return Json(new { success = true, responseText = "Document Updated successfully." });
             }
             catch
             {
-                return View();
-            }
-        }
-
-        // GET: ManageOfficeDocuments/Delete/5
-        public ActionResult Delete(int id)
-        {
-            return View();
-        }
-
-        // POST: ManageOfficeDocuments/Delete/5
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult Delete(int id, IFormCollection collection)
-        {
-            try
-            {
-                // TODO: Add delete logic here
-
-                return RedirectToAction(nameof(Index));
-            }
-            catch
-            {
-                return View();
+                return Json(new { success = false, responseText = "Something went wrong." });
             }
         }
     }
