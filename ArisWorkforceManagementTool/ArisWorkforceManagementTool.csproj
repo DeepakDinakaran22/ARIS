@@ -6,10 +6,15 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Areas\MasterPages\Views\Account\**" />
     <Compile Remove="Assets\**" />
+    <Content Remove="Areas\MasterPages\Views\Account\**" />
     <Content Remove="Assets\**" />
+    <EmbeddedResource Remove="Areas\MasterPages\Views\Account\**" />
     <EmbeddedResource Remove="Assets\**" />
+    <None Remove="Areas\MasterPages\Views\Account\**" />
     <None Remove="Assets\**" />
+    <TypeScriptCompile Remove="Areas\MasterPages\Views\Account\**" />
     <TypeScriptCompile Remove="Assets\**" />
   </ItemGroup>
 

@@ -8,6 +8,8 @@ using Microsoft.Extensions.Logging;
 using ArisWorkforceManagementTool.Models;
 using Aris.Data;
 using Aris.Data.Entities;
+using Microsoft.AspNetCore.Authorization;
+using System.Security.Claims;
 
 namespace ArisWorkforceManagementTool.Controllers
 {
@@ -20,19 +22,14 @@ namespace ArisWorkforceManagementTool.Controllers
         {
             _logger = logger;
         }
-
+        [Authorize]
         public IActionResult Index()
         {
-            //var user = new Users() { UserName = "Deepak", UserTypeID = 1, CreatedDate = DateTime.Now };
-            //UnitOfWork.UserRepository.Insert(user);
-            //UnitOfWork.Save();
-
-           // var data = UnitOfWork.UserRepository.Get();
             return View();
         }
         public IActionResult ManagerHomeLanding()
         {
-            
+
             return View();
         }
 
@@ -58,7 +55,7 @@ namespace ArisWorkforceManagementTool.Controllers
         {
             try
             {
-                var employees = UnitOfWork.EmployeeDetailsRepository.Get(x => x.ApprovalStatus==0);
+                var employees = UnitOfWork.EmployeeDetailsRepository.Get(x => x.ApprovalStatus == 0);
                 var pendingReq = Convert.ToInt32(employees.Count());
                 return Json(new { pendingRequests = pendingReq });
             }
@@ -70,7 +67,7 @@ namespace ArisWorkforceManagementTool.Controllers
                 }
                 else
                 {
-                    return Json(new { pendingRequests  = 0});
+                    return Json(new { pendingRequests = 0 });
                 }
             }
         }

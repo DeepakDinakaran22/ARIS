@@ -253,8 +253,8 @@ namespace Aris.Data
                 entity.Property(e => e.UserTypeID)
                 .HasColumnName("UserTypeID");
 
-                entity.Property(e => e.UserTypes)
-                .HasColumnName("UserTypes");
+                entity.Property(e => e.UserRole)
+                .HasColumnName("UserType");
 
                 entity.Property(e => e.IsActive)
                 .HasColumnName("IsActive");

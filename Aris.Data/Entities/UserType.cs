@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace Aris.Data.Entities
 {
@@ -8,7 +6,7 @@ namespace Aris.Data.Entities
     {
         public int UserTypeID { get; set; }
 
-        public string UserTypes { get; set; }
+        public string UserRole { get; set; }
 
         public int IsActive { get; set; }
 
