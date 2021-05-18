@@ -1,4 +1,5 @@
 ﻿function callAjax(method, url, data, successCallbackFn, errorCallbackFn, bAsync = false, dataType = 'json') {
+    showLoader(true);
     var forgeryToken = $("input[name='__RequestVerificationToken']").val();
     try {
         $.ajax({
@@ -12,13 +13,16 @@
             async: bAsync,
             success: function (response) {
                 if (response.success == true) {
+                    showLoader(false);
                     showAlert({ title: "SUCCESS!", message: response.responseText, type: "SUCCESS" });
 
                 } else {
+                    showLoader(false);
                     showAlert({ title: "ERROR!", message: response.responseText, type: "ERROR" });
                 }
                 
             },
+           
             error: function (exception) {
                 showAlert({ title: "ERROR!", message: response.responseText, type: "ERROR" });
             }
@@ -28,28 +32,6 @@
 
     }
 };
-
-
-function httpFormPost(pData) {
-   
-return $.ajax({
-type: 'POST',
-url: window.location.origin + getRootFolderPath() + pData.api,
-//data: JSON.stringify(pData.formData),
-    data: pData.formData,
-//contentType: 'application/json; charset=utf-8',
-//dataType: 'json'
-}).promise();
-}
-function httpGet(pData) {
-return $.ajax({
-type: 'GET',
-url: window.location.origin + getRootFolderPath() + pData.api,
-data: {},
-contentType: 'application/json; charset=utf-8',
-dataType: 'json'
-}).promise();
-}
 function getRootFolderPath() {
     try {
         var _location = document.location.toString();
@@ -73,14 +55,17 @@ function getRootFolderPath() {
 }
 function showAlert(pData) {
     try {
+        showLoader(false);
         //$('#modal-Loader').modal('hide');
         var isCancelButtonClicked = false;
         $('#alert-modal .modal-content').removeClass('alert-success');
         $('#alert-modal .modal-content').removeClass('alert-danger');
         $('#alert-modal .modal-content').removeClass('alert-warning');
         $('#alert-modal .modal-content').removeClass('alert-info');
-        $('#btnDialogYes').hide();
-        $('#btnDialogNo').html('<i class="fa fa-close"></i> Close');
+        //$('#btnDialogYes').hide();
+        //$('#btnDialogNo').hide();
+        $('#btnDialogClose').show();
+        //$('#btnDialogNo').html('<i class="fa fa-close"></i> Close');
         $('#alert-modal .modal-title').html(pData.title);
         $('#alert-modal .modal-body').html('<p style="font-size:16px">' + pData.message + '</p>');
 
@@ -98,8 +83,9 @@ function showAlert(pData) {
         }
         else if (pData.type == 'CONFIRM') {
             $('#alert-modal .modal-content').addClass('alert-warning');
-            $('#btnDialogYes').html('<i class="fa fa-close"></i> No');
+            $('#btnDialogYes').show();
             $('#btnDialogNo').show();
+            $('#btnDialogClose').hide();
         }
         
         $('#alert-modal').modal({
@@ -174,6 +160,7 @@ function showAlert_OLD(pData) {
 
 function bindDropDownList(ddl,type,url,dataType,value,name) {
     try {
+        showLoader(true);
         var ddlName = $("#" + ddl);
         ddlName.empty().append('<option selected="selected" value="0" disabled = "disabled">Loading...</option>');
         $.ajax({
@@ -187,6 +174,9 @@ function bindDropDownList(ddl,type,url,dataType,value,name) {
                    ddlName.append($("<option></option>").val(this['' + value + '']).html(this['' + name + '']));
                 });
             },
+            complete: function (response) {
+                showLoader(false);
+            },
             failure: function (response) {
                 alert(response.responseText);
             },
@@ -197,5 +187,18 @@ function bindDropDownList(ddl,type,url,dataType,value,name) {
     }
     catch (err) {
 
+    }
+}
+function showLoader(val) {
+    try {
+        if (val == true) {
+            $("body").addClass("loading");
+        }
+        else {
+            $("body").removeClass("loading");
+        }
+    }
+    catch (err) {
+        console.log(err);
     }
 }

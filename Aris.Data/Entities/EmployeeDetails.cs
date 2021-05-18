@@ -57,5 +57,6 @@ namespace Aris.Data.Entities
 
         public int? EmployeeReferenceNo { get; set; }
         public string Remarks { get; set; }
+       
     }
 }

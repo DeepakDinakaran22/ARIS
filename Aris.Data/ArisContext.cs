@@ -24,6 +24,8 @@ namespace Aris.Data
         public virtual DbSet<EmployeeDetails> EmployeeDetails { get; set; }
         public virtual DbSet<UserType> UserType { get; set; }
         public virtual DbSet<EmployeeFileUploads> EmployeeFileUploads { get; set; }
+        public virtual DbSet<OfficeDocDetails> OfficeDocDetails { get; set; }
+        public virtual DbSet<OfficeDocsFileUploads> OfficeDocsFileUploads { get; set; }
         public virtual DbSet<ErrorLog> ErrorLog { get; set; }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -315,6 +317,77 @@ namespace Aris.Data
                 entity.Property(e => e.ActualFileName)
                 .HasColumnName("ActualFileName");
             });
+            modelBuilder.Entity<OfficeDocsFileUploads>(entity => {
+                entity.HasKey(e => e.DocFileUploadId);
+
+                entity.Property(e => e.DocFileUploadId)
+                .HasColumnName("DocFileUploadId");
+
+                entity.Property(e => e.DocumentId)
+                .HasColumnName("DocumentId");
+
+                entity.Property(e => e.FileName)
+                .HasColumnName("FileName");
+
+                entity.Property(e => e.ActualFileName)
+              .HasColumnName("ActualFileName");
+
+                entity.Property(e => e.FileLocation)
+                .HasColumnName("FileLocation");
+
+                entity.Property(e => e.IsValid)
+                .HasColumnName("IsValid");
+
+                entity.Property(e => e.IsActive)
+                .HasColumnName("IsActive");
+
+                entity.Property(e => e.CreatedBy)
+               .HasColumnName("CreatedBy");
+
+                entity.Property(e => e.CreatedDate)
+               .HasColumnName("CreatedDate");
+
+                entity.Property(e => e.ModifiedBy)
+               .HasColumnName("ModifiedBy");
+
+                entity.Property(e => e.ModifiedDate)
+               .HasColumnName("ModifiedDate");
+                
+            });
+            modelBuilder.Entity<OfficeDocDetails>(entity => {
+                entity.HasKey(e => e.OfficeDocId);
+
+                entity.Property(e => e.OfficeDocId)
+                .HasColumnName("OfficeDocId");
+
+                entity.Property(e => e.DocumentId)
+                .HasColumnName("DocumentId");
+
+                entity.Property(e => e.DocIssueDate)
+                .HasColumnName("DocIssueDate");
+
+                entity.Property(e => e.DocExpiryDate)
+              .HasColumnName("DocExpiryDate");
+
+                entity.Property(e => e.OfficeDocDesc)
+                .HasColumnName("OfficeDocDesc");
+
+                entity.Property(e => e.IsActive)
+                .HasColumnName("IsActive");
+
+                entity.Property(e => e.CreatedBy)
+               .HasColumnName("CreatedBy");
+
+                entity.Property(e => e.CreatedDate)
+               .HasColumnName("CreatedDate");
+
+                entity.Property(e => e.ModifiedBy)
+               .HasColumnName("ModifiedBy");
+
+                entity.Property(e => e.ModifiedDate)
+               .HasColumnName("ModifiedDate");
+
+            });
             modelBuilder.Entity<ErrorLog>(entity =>
             {
                 entity.HasKey(e => e.ErrorId);
@@ -336,7 +409,6 @@ namespace Aris.Data
 
             });
 
-
-            }
+        }
     }
 }
