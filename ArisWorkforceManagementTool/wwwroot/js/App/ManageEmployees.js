@@ -506,7 +506,6 @@ $('.example-p-2').on('click', function () {
                 }
             },
             cancel: function () {
-                $.alert('you clicked on <strong>cancel</strong>');
             },
         }
     });
@@ -529,7 +528,6 @@ $('.example-p-1').on('click', function () {
                 }
             },
             cancel: function () {
-                $.alert('you clicked on <strong>cancel</strong>');
             },
         }
     });

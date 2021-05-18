@@ -11,7 +11,19 @@ $(document).ready(function () {
     getOfficeDocs();
     GetAllOfficeDocs();
     $("#ddlDocument").focusout(function() {
-        CheckNameExists();
+        
+    });
+
+    $("#ddlDocument").change(function () {
+        if ($("#ddlDocument option:selected").val()==0) {
+            $("#files").attr("disabled", "disabled");
+        }
+        else {
+            $("#files").attr("disabled", false);
+            CheckNameExists();
+
+        }
+
     });
    
 });
@@ -133,7 +145,7 @@ function SubmitRequest() {
     var docIssueDate = $("#dpDocIssueDate").val() != '' ? $("#dpDocIssueDate").datepicker('getDate').toLocaleString() : '';
     var docExpiryDate = $("#dpDocExpiryDate").val() != '' ? $("#dpDocExpiryDate").datepicker('getDate').toLocaleString() : '';
     var isActive = $("#ddlStatus option:selected").val();
-    //var fileName = $("#hdnEmployeePicturePath").val();
+    //var fileName = $("#hdnUploadedFileName").val();
     
     // employee image
     // file uploads
@@ -360,10 +372,42 @@ function ClearFields() {
         $("#dpDocIssueDate").attr("disabled", false);
         $('#dpDocExpiryDate').css('border-color', '');
         $("#ddlDocument").attr("disabled", false);
+        $("#hdnUploadedFileName").val('');
+        $("#files").val('');
         
     }
     catch (err) {
         console.log(err);
     }
 }
+
+
+
+function uploadDocuments(inputId) {
+    var docId = $("#ddlDocument option:selected").val();
+    var input = document.getElementById(inputId);
+    var files = input.files;
+    var formData = new FormData();
+    for (var i = 0; i != files.length; i++) {
+        formData.append("files", files[i]);
+    }
+    formData.append("docId", docId);
+
+
+    $.ajax(
+        {
+            url: "/MasterPages/ManageOfficeDocuments/UploadDocuments",
+            data: formData,
+            processData: false,
+            contentType: false,
+            type: "POST",
+            async: false,
+            success: function (data) {
+                $("#hdnUploadedFileName").val(data.docFileName);
+                console.log($("#hdnUploadedFileName").val());
+            }
+        }
+    );
+}
+
 
