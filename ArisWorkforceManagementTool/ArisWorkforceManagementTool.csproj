@@ -6,15 +6,10 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Remove="Areas\MasterPages\Views\Account\**" />
     <Compile Remove="Assets\**" />
-    <Content Remove="Areas\MasterPages\Views\Account\**" />
     <Content Remove="Assets\**" />
-    <EmbeddedResource Remove="Areas\MasterPages\Views\Account\**" />
     <EmbeddedResource Remove="Assets\**" />
-    <None Remove="Areas\MasterPages\Views\Account\**" />
     <None Remove="Assets\**" />
-    <TypeScriptCompile Remove="Areas\MasterPages\Views\Account\**" />
     <TypeScriptCompile Remove="Assets\**" />
   </ItemGroup>
 
@@ -48,6 +43,7 @@
     <Folder Include="wwwroot\lib\" />
     <Folder Include="wwwroot\plugins\loader\img\" />
     <Folder Include="wwwroot\plugins\confirmBox\" />
+    <Folder Include="wwwroot\plugins\login\" />
     <Folder Include="wwwroot\Uploads\EmployeeUploads\" />
     <Folder Include="wwwroot\Uploads\CompanyUploads\" />
     <Folder Include="wwwroot\Uploads\UserUploads\" />
@@ -55,6 +51,7 @@
 
 
   <ItemGroup>
+    <None Include="Areas\MasterPages\Views\Account\Login.cshtml" />
     <None Include="wwwroot\plugins\bootstrap-colorpicker\css\bootstrap-colorpicker.css.map" />
     <None Include="wwwroot\plugins\bootstrap-colorpicker\css\bootstrap-colorpicker.min.css.map" />
     <None Include="wwwroot\plugins\bootstrap-colorpicker\js\bootstrap-colorpicker.js" />
