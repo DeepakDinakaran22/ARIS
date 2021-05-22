@@ -33,7 +33,7 @@ namespace ArisWorkforceManagementTool.Areas.MasterPages.Controllers
                 return View(userModel);
             }
 
-            var user = unitOfWork.UserRepository.Get().Where(user => user.UserName == userModel.UserName).FirstOrDefault();
+            var user = unitOfWork.UserRepository.Get().Where(user => user.UserName.ToLower() == userModel.UserName.ToLower()).FirstOrDefault();
             if (user != null &&
                 new AuthHelper().VerifyHashedPassword(user.Password, userModel.Password))
             {
@@ -57,7 +57,7 @@ namespace ArisWorkforceManagementTool.Areas.MasterPages.Controllers
                     CookieAuthenticationDefaults.AuthenticationScheme,
                     new ClaimsPrincipal(claimsIdentity),
                     authProperties);
-
+                SetLayoutValues(user);
                 return RedirectToAction(nameof(HomeController.Index), "Home");
             }
             else
@@ -66,7 +66,7 @@ namespace ArisWorkforceManagementTool.Areas.MasterPages.Controllers
                 return View();
             }
         }
-       
+       [HttpPost]
         public async Task<IActionResult> Logout(string returnUrl = null)
         {
             await HttpContext.SignOutAsync(
@@ -81,5 +81,19 @@ namespace ArisWorkforceManagementTool.Areas.MasterPages.Controllers
             }
         }
 
+        protected void SetLayoutValues(Aris.Data.Entities.Users user)
+        {
+            try
+            {
+                TempData["LoggedInUser"] = user.FullName;
+                TempData["UserImage"] = user.UserImage;
+                TempData["UserId"] = user.UserId;
+               
+            }
+            catch (Exception ex)
+            {
+
+            }
+        }
     }
 }

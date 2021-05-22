@@ -9,7 +9,7 @@
 
     <link rel="stylesheet" href="~/plugins/fontawesome-free/css/all.min.css" />
     <link rel="stylesheet" href="https://code.ionicframework.com/ionicons/2.0.1/css/ionicons.min.css">
-    
+
     <link rel="stylesheet" href="~/plugins/tempusdominus-bootstrap-4/css/tempusdominus-bootstrap-4.min.css">
     <!-- iCheck -->
     <link rel="stylesheet" href="~/plugins/icheck-bootstrap/icheck-bootstrap.min.css">
@@ -25,6 +25,10 @@
     <link rel="stylesheet" href="~/plugins/summernote/summernote-bs4.css">
     <!-- Google Font: Source Sans Pro -->
     <link href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700" rel="stylesheet">
+    <link rel="stylesheet" href="~/plugins/confirmPassword/css/password.css">
+    <link rel="stylesheet" href="~/plugins/confirmBox/jquery-confirm.css" />
+
+
 </head>
 @*<body class="hold-transition sidebar-mini layout-fixed ">*@
 <body class="hold-transition sidebar-mini sidebar-collapse ">
@@ -62,11 +66,29 @@
             <ul class="navbar-nav ml-auto">
                 <!-- Messages Dropdown Menu -->
                 <li class="nav-item dropdown">
-                    <a class="nav-link" data-toggle="dropdown" href="test.html">
-                        <i class="fas fa-sign-out-alt"></i>
+                    @*<a class="nav-link" data-toggle="dropdown" href="test.html">
+                            <i class="fas fa-sign-out-alt"></i>
 
+                        </a>*@
+                <li class="nav-item dropdown">
+                    <a class="nav-link" data-toggle="dropdown" href="#">
+                        <i class="fas fa-cog"></i>
                     </a>
+                    <div class="dropdown-menu dropdown-menu-lg dropdown-menu-right">
+                        <form class="form-inline" asp-controller="Account" asp-action="Logout" asp-route-returnUrl="@Url.Page("/", new { area = "" })" method="post">
+                            <button type="submit" class="nav-link btn btn-link text-dark">
+                                <i class="fas fa-sign-out-alt"></i>
+                                Logout
 
+                            </button>
+                        </form>
+                        <div class="dropdown-divider"></div>
+                        <button type="submit" id="btnChangePassword" data-toggle="modal" data-target="#modal-password" class="nav-link btn btn-link text-dark">
+                            <i class="fas fa-lock"></i>
+                            Password Change
+                        </button>
+
+                    </div>
                 </li>
                 <!-- Notifications Dropdown Menu -->
                 <li class="nav-item dropdown">
@@ -97,7 +119,7 @@
         <aside class="main-sidebar sidebar-dark-primary elevation-4">
             <!-- Brand Logo -->
             <a href="index.html" class="brand-link">
-                <img src="~/img/AdminLTELogo.png" alt="AdminLTE Logo" class="brand-image img-circle elevation-3"
+                <img src="~/img/AdminLTELogo.png" alt="AMT Logo" class="brand-image img-circle elevation-3"
                      style="opacity: .8">
                 <span class="brand-text font-weight-light">ARIS</span>
             </a>
@@ -107,10 +129,12 @@
                 <!-- Sidebar user panel (optional) -->
                 <div class="user-panel mt-3 pb-3 mb-3 d-flex">
                     <div class="image">
-                        <img src="~/img/user2-160x160.jpg" class="img-circle elevation-2" alt="User Image">
+                        <img src="~/Uploads/UserUploads/@TempData.Peek("UserImage")" class="img-circle elevation-2" alt="User Image">
+                        @*<img src="~/img/user2-160x160.jpg" class="img-circle elevation-2" alt="User Image">*@
                     </div>
                     <div class="info">
-                        <a href="#" class="d-block">Admin</a>
+                        <a href="#" class="d-block">@TempData.Peek("LoggedInUser") </a>
+                        <input type="hidden" id="hdnUserId" value="@TempData.Peek("UserId")" />
                     </div>
                 </div>
 
@@ -128,7 +152,7 @@
                                 </a>
 
                             </li>
-                            <li class="nav-item"  style="visibility:@ViewBag.Role=="admin"?false:true" >
+                            <li class="nav-item" style="visibility:@ViewBag.Role==" admin"?false:true">
 
                                 <a href="../MasterPages/ManageEmployees" class="nav-link">
                                     <i class="nav-icon fas fa-user"></i>
@@ -165,15 +189,15 @@
                                         </a>
                                     </li>
                                     <li class="nav-item">
-                                        <a href="../MasterPages/ManageUsers" class="nav-link">
-                                            <i class="far fa-circle nav-icon"></i>
-                                            <p>Users</p>
-                                        </a>
-                                    </li>
-                                    <li class="nav-item">
                                         <a href="../MasterPages/ManageDocuments" class="nav-link">
                                             <i class="far fa-circle nav-icon"></i>
                                             <p>Documents</p>
+                                        </a>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a href="../MasterPages/ManageUsers" class="nav-link">
+                                            <i class="far fa-circle nav-icon"></i>
+                                            <p>Users</p>
                                         </a>
                                     </li>
 
@@ -218,15 +242,15 @@
 
                             </li>
                             @*<li class="nav-item has-treeview">
-            <a href="../MasterPages/ManageCompany" class="nav-link">
-                <i class="nav-icon fas fa-edit"></i>
-                <p>
-                    Manage Company
-                </p>
-            </a>
+                                    <a href="../MasterPages/ManageCompany" class="nav-link">
+                                        <i class="nav-icon fas fa-edit"></i>
+                                        <p>
+                                            Manage Company
+                                        </p>
+                                    </a>
 
 
-        </li>*@
+                                </li>*@
 
 
                         </ul>
@@ -252,7 +276,7 @@
         </div>
         <!-- /.content-wrapper -->
         <footer class="main-footer">
-            <strong>Copyright &copy; 2021-2022 <a href="http://adminlte.io">ARIS</a>.</strong>
+            <strong>Copyright &copy; 2021-2022 <a href="#">ARIS</a>.</strong>
             All rights reserved.
             <div class="float-right d-none d-sm-inline-block">
                 <b>Version</b> 1.0.0
@@ -265,6 +289,73 @@
         </aside>
         <!-- /.control-sidebar -->
     </div>
+
+
+    @* change password *@
+    <div class="modal fade" id="modal-password" role="dialog">
+        <div class="modal-dialog">
+            <!-- Modal content-->
+            <div class="modal-content alert-light" style="width:350px">
+                <div class="modal-header" style="background-color:darkseagreen">
+                    <h4 class="modal-title left">Change Password</h4>
+                    <button type="button" class="close" style="color:darkred" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-sm-12 ">
+                            <div class="col-md-12">
+                                <form class="password-strength form p-4">
+                                    <div class="form-group">
+                                        <label for="Oldpassword-input">Current Password</label>
+                                        <div class="input-group">
+                                            <input class="Oldpassword-strength__input form-control" type="password" id="Oldpassword-input" aria-describedby="passwordHelp" placeholder="Enter current password" />
+                                        </div>
+                                        <small class="password-strength__error text-danger js-hidden" id="incorrectPwd">Incorrect Password</small>
+
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="password-input">New Password</label>
+                                        <div class="input-group">
+                                            <input class="password-strength__input form-control" type="password" id="password-input" aria-describedby="passwordHelp" placeholder="Enter password" />
+                                            <div class="input-group-append">
+                                                <button class="password-strength__visibility btn btn-outline-secondary" type="button"><span class="password-strength__visibility-icon" data-visible="hidden"><i class="fas fa-eye-slash"></i></span><span class="password-strength__visibility-icon js-hidden" data-visible="visible"><i class="fas fa-eye"></i></span></button>
+                                            </div>
+                                        </div>
+                                        <small class="password-strength__error text-danger js-hidden" id="incorrectNewPwd">Shold not use current password as new</small>
+                                        <small class="password-strength__error text-danger js-hidden">This symbol is not allowed!</small>
+                                        <small class="form-text text-muted mt-2" id="passwordHelp">Add 9 charachters or more, lowercase letters, uppercase letters, numbers and symbols to make the password really strong!</small>
+                                    </div>
+                                    <div class="password-strength__bar-block progress mb-4">
+                                        <div class="password-strength__bar progress-bar bg-danger" id="pbar" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div>
+                                    </div>
+                                    @*<button class="password-strength__submit btn btn-success d-flex m-auto" type="button" disabled="disabled">Submit</button>*@
+                                    <div class="form-group">
+                                        <label for="password-input">Confirm Password</label>
+                                        <div class="input-group">
+                                            <input class="Confirmpassword-strength__input form-control" type="password" id="Confirmpassword-input" aria-describedby="passwordHelp" placeholder="Enter new password" />
+                                        </div>
+                                        <small class="password-strength__error text-danger js-hidden" id="incorrectConfirmPwd">Shold not use current password as new</small>
+
+                                    </div>
+                                </form>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="reset" id="btnResetPassword" class="btn btn-outline-warning">Reset</button>
+                    <button type="button" id="btnSavePassword" onclick="SubmitNewPassword()" class="btn btn-outline-success">Save</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+
+
     <!-- ./wrapper -->
     <!-- jQuery -->
     @*<script src="~/lib/jquery/dist/jquery.min.js" type="text/javascript"></script>*@
@@ -304,8 +395,11 @@
     @*<script src="~/js/pages/dashboard.js" type="text/javascript"></script>*@
     <!-- AdminLTE for demo purposes -->
     <script src="~/js/demo.js" type="text/javascript"></script>
-
-
+    @*<script src="~/js/Common/Common.js" type="text/javascript"></script>*@
+    <script src="~/js/App/Layout.js" type="text/javascript"></script>
+    <script src="~/plugins/confirmPassword/js/function.js" type="text/javascript"></script>
+    @* ConfirmBox *@
+    <script src="~/plugins/confirmBox/jquery-confirm.js" type="text/javascript"></script>
 
 
     <script src="~/plugins/datatables/jquery.dataTables.min.js" type="text/javascript"></script>

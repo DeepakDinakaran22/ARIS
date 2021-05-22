@@ -67,7 +67,7 @@
                                     </div>
                                     <br />
                                     <div class="text-center">
-                                        <input style="border-style:groove; border-color:black" id="files" type="file" size="1" onchange="uploadFiles('files');" />
+                                        <input  id="files" type="file" size="1" onchange="uploadFiles('files');" />
                                         <input type="hidden" id="hdnEmployeePicturePath" />
                                         <span id="file_error"></span>
                                     </div>
@@ -199,10 +199,17 @@
                                         <input type="text" class="form-control" id="txtAccountNumber" placeholder="Enter Account Number">
                                     </div>
                                 </div>
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label for="AccountNumber">Confirm Account No. </label>
+                                        <input type="password" class="form-control" id="txtConfirmAccountNumber" placeholder="Enter Account Number">
+                                        <span id="spanConfirmAccount" style="color:red"></span>
+                                    </div>
+                                </div>
                                 <div class="col-md-12">
                                     <div class="form-group">
                                         <label for="txtRemarks">Remarks </label>
-                                        <textarea class="form-control" rows="3" id="txtRemarks"></textarea>
+                                        <textarea class="form-control" rows="2" id="txtRemarks"></textarea>
                                     </div>
                                 </div>
                                 <div class="col-md-12">
@@ -229,11 +236,6 @@
                                         </div>
                                     </div>
                                 </div>
-                                @*<div class="col-sm-12">
-                                        <div class="card-body table-responsive p-0" style="overflow:hidden">
-                                            <table class="table table-head-fixed text-wrap" id="tblRemainingFiles"> </table>
-                                        </div>
-                                    </div>*@
 
                             </div>
                         </div>
@@ -313,7 +315,7 @@
                 </div>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-outline-success" data-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-outline-success" data-dismiss="modal">OK</button>
             </div>
         </div>
     </div>
@@ -343,7 +345,7 @@
 
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-outline-success" data-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-outline-success" data-dismiss="modal">OK</button>
             </div>
         </div>
     </div>
@@ -443,6 +445,7 @@
                 $("#txtDesignation").val(table.row(this).data()['designation']).attr('disabled', 'disabled');
                 $("#txtBankName").val(table.row(this).data()['bankName']).attr('disabled', 'disabled');
                 $("#txtAccountNumber").val(table.row(this).data()['bankAccountNumber']).attr('disabled', 'disabled');
+                $("#txtConfirmAccountNumber").val(table.row(this).data()['bankAccountNumber']).attr('disabled', 'disabled');
                 $("#txtRemarks").val(table.row(this).data()['remarks']).attr('disabled', 'disabled');
                 $("#imgUser").attr('src', "/Uploads/employeeUploads/" + $("#txtEmployeeNumber").val() + "/" + table.row(this).data()['employeeImage']).attr('disabled', 'disabled');
                 isUploadAllowed = false; // new for restrict uploads
@@ -478,6 +481,7 @@
                 $("#txtDesignation").val(table.row(this).data()['designation']).attr('disabled', false);
                 $("#txtBankName").val(table.row(this).data()['bankName']).attr('disabled', false);
                 $("#txtAccountNumber").val(table.row(this).data()['bankAccountNumber']).attr('disabled', false);
+                $("#txtConfirmAccountNumber").val(table.row(this).data()['bankAccountNumber']).attr('disabled', false);
                 $("#txtRemarks").val(table.row(this).data()['remarks']).attr('disabled', false);
                 $("#imgUser").attr('src', "/Uploads/employeeUploads/" + $("#txtEmployeeNumber").val() + "/" + table.row(this).data()['employeeImage']).attr('disabled', false);
                 isUploadAllowed = true;// new for restrict uploads
@@ -623,6 +627,13 @@
         else {
             $('#txtAccountNumber').css('border-color', '');
         }
+        if ($("#txtConfirmAccountNumber").val() == '') {
+            $('#txtConfirmAccountNumber').css('border-color', 'red');
+            valid = false;
+        }
+        else {
+            $('#txtConfirmAccountNumber').css('border-color', '');
+        }
 
 
         return valid;
@@ -655,6 +666,7 @@
         $('#txtBankName').val('');
 
         $('#txtAccountNumber').val('');
+        $('#txtConfirmAccountNumber').val('');
 
         $("#hdnEmployeePicturePath").val('');
         $("#imgUser").attr('src', "/img/avatar.png");

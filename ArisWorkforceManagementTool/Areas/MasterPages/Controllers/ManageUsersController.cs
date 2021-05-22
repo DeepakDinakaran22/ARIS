@@ -25,6 +25,8 @@ namespace ArisWorkforceManagementTool.Areas.MasterPages.Controllers
         private string imagePath = string.Empty;
         UnitOfWork UnitOfWork = new UnitOfWork();
         UnitOfWork objUnitOfWorkFetch = new UnitOfWork();
+
+
         public ManageUsersController(IWebHostEnvironment hostEnvironment)
         {
             this.webHostEnvironment = hostEnvironment;
@@ -146,7 +148,7 @@ namespace ArisWorkforceManagementTool.Areas.MasterPages.Controllers
             {
                 string filename = ContentDispositionHeaderValue.Parse(source.ContentDisposition).FileName.Trim('"');
 
-                filename = Guid.NewGuid().ToString() + "_" + this.EnsureCorrectFilename(filename);
+                filename = DateTime.Now.ToFileTime() + "_" + this.EnsureCorrectFilename(filename);
                 imagePath = filename;
 
                 using (FileStream output = System.IO.File.Create(this.GetPathAndFilename(filename)))
