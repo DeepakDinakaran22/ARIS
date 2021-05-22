@@ -44,25 +44,26 @@
                             <div class="row">
                                 <div class="col-md-4">
                                     <div class="form-group">
-                                        <label for="txtUserName">User Name</label>
+                                        <label for="txtUserName">User Name <span class="text-red text-bold">*</span> </label>
                                         <input type="text" class="form-control" id="txtUserName" placeholder="User Name">
                                     </div>
                                 </div>
                                 <div class="col-md-4">
                                     <div class="form-group">
-                                        <label for="exampleInputEmail1">User Full Name</label>
+                                        <label for="exampleInputEmail1">User Full Name <span class="text-red text-bold">*</span></label>
                                         <input type="text" class="form-control" id="txtUserFullName" placeholder="User Full Name">
                                     </div>
                                 </div>
                                 <div class="col-md-4">
                                     <div class="form-group">
-                                        <label for="exampleInputEmail1">User Email </label>
+                                        <label for="exampleInputEmail1">User Email <span class="text-red text-bold">*</span></label>
                                         <input type="email" class="form-control" id="txtUserEmail" placeholder="Email Address">
+                                        <span id="spanEmail" style="color:red"></span>
                                     </div>
                                 </div>
                                 <div class="col-md-4">
                                     <div class="form-group">
-                                        <label>Access Type</label>
+                                        <label>Access Type <span class="text-red text-bold">*</span></label>
                                         <select class="form-control select2bs4" id="ddlUserType" style="width: 100%;">
                                             <option value="0" selected>Select</option>
                                             <option value="1">Adminstrator</option>
@@ -75,8 +76,9 @@
 
                                 <div class="col-md-4">
                                     <div class="form-group">
-                                        <label>Status</label>
+                                        <label>Status <span class="text-red text-bold">*</span></label>
                                         <select class="form-control select2bs4" id="ddlStatus" style="width: 100%;">
+                                            <option value="-1" selected>Select</option>
                                             <option value="0">Disable</option>
                                             <option value="1">Active</option>
 
@@ -100,8 +102,8 @@
 
                         <div class="card-footer" style="text-align:right">
                             <button type="button" id="btnDelete" class="btn btn-danger btn-sm">Delete</button>
-                            <button type="reset" id="btnReset" onclick="Reset()" class="btn btn-primary btn-sm">Reset</button>
-                            <button type="button" id="btnUpdate" onclick="UpdateUser()" class="btn btn-warning btn-sm">Update</button>
+                            <button type="reset" id="btnReset" onclick="ResetFields()" class="btn btn-primary btn-sm">Reset</button>
+                            <button type="button" id="btnUpdate" onclick="UpdateUserRequest()" class="btn btn-warning btn-sm">Update</button>
                             <button type="button" id="btnSubmit" onclick="SubmitRequest()" class="btn btn-success btn-sm">Submit</button>
                         </div>
                     </form>
@@ -178,249 +180,6 @@
 <link rel="stylesheet" href="~/plugins/datatables-bs4/css/dataTables.bootstrap4.css">
 <link rel="stylesheet" href="~/plugins/datatables-responsive/css/responsive.bootstrap4.css">
 <script src="~/js/Common/Common.js" type="text/javascript"></script>
+<script src="~/js/App/MangeUsers.js" type="text/javascript"></script>
 
-<script>
-    var userId;
-    $(document).ready(function () {
-        $("#btnUpdate").hide();
-        $("#btnSubmit").show();
-        GetUsers();
-        $("#txtUserName").focusout(function () {
-            CheckNameExists();
-        });
-    });
-    function CheckNameExists() {
-        try {
-            if ($("#txtUserName").val().trim().indexOf(' ')>0) {
-                showAlert({ title: "Warning!", message: 'User Name should not contain spance!', type: "WARNING" });
-            }
-            else {
 
-                $.ajax({
-                    type: "GET",
-                    url: "/MasterPages/ManageUsers/IsUserNameExists",
-                    data: { UserName: $("#txtUserName").val().trim() },
-                    contentType: "application/json; charset=utf-8",
-                    dataType: "json",
-                    success: function (response) {
-                        if (response != null) {
-                            if (response.value == true) {
-                                $('#txtUserName').css('border-color', 'red');
-                                showAlert({ title: "Warning!", message: 'User Name is already added!', type: "WARNING" });
-                            }
-                            else {
-                                $('#txtUserName').css('border-color', 'green');
-
-                            }
-
-                        } else {
-                            alert("Something went wrong");
-                        }
-                    },
-                    failure: function (response) {
-                        alert(response.responseText);
-                    },
-                    error: function (response) {
-                        alert(response.responseText);
-                    }
-                });
-            }
-        }
-        catch (err) {
-
-        }
-    }
-
-    function SubmitRequest() {
-        var userName = $("#txtUserName").val().trim();
-        var emailAddress = $("#txtUserEmail").val().trim();
-        var userType = $("#ddlUserType option:selected").val();
-        var isActive = $("#ddlStatus option:selected").val();
-        var fullName = $("#txtUserFullName").val().trim();
-        var ProfileImage = $("#hdnProfilePicturePath").val();
-
-        var data = {
-            UserName: userName,
-            MailAddress: emailAddress,
-            UserTypeID: userType,
-            IsActive: isActive,
-            FullName: fullName,
-            ProfileImage: ProfileImage
-        };
-        callAjax('POST', '/MasterPages/ManageUsers/SubmitRequest', data);
-        GetUsers();
-        Reset();
-    }
-
-    $('#tblUsers').on('click', 'td.edit', function (e) {
-        e.preventDefault();
-        $("#txtUserName").val(table.row(this).data()['userName']).attr('disabled', 'true');
-        $("#txtUserFullName").val(table.row(this).data()['fullName']);
-        $("#txtUserEmail").val(table.row(this).data()['mailAddress']);
-
-        if (table.row(this).data()['isActive'] == 1) {
-            $("#ddlStatus").val(1);
-        }
-        else {
-            $("#ddlStatus").val(0);
-        }
-        $("#ddlUserType").val(table.row(this).data()['userTypeID']);
-        userId = table.row(this).data()['userId'];
-
-        $("#btnUpdate").show();
-        $("#btnSubmit").hide();
-    });
-
-    function GetUsers() {
-        $.ajax({
-            type: "GET",
-            url: "/MasterPages/ManageUsers/GetUsers",
-            contentType: "application/json; charset=utf-8",
-            dataType: "json",
-            success: function (response) {
-                if (response != null) {
-                    populateUsers(response);
-                } else {
-                    alert("Something went wrong");
-                }
-            },
-            failure: function (response) {
-                alert(response.responseText);
-            },
-            error: function (response) {
-                alert(response.responseText);
-            }
-        });
-    }
-    function Reset() {
-        $("#txtUserName").val('');
-        $("#txtUserFullName").val('');
-        $("#txtUserEmail").val('');
-        $("#ddlStatus").val(-1);
-        $("#ddlUserType").val(0);
-        $("#txtUserName").attr("disabled", false);
-        $('#txtUserName').css('border-color', '');
-        $("#hdnProfilePicturePath").val('');
-        $("#files").val('');
-         $("#btnUpdate").hide();
-        $("#btnSubmit").show();
-
-    }
-    function UpdateUser() {
-        try {
-            var userName = $("#txtUserName").val().trim();
-            var userFullName = $("#txtUserFullName").val().trim();
-            var Useremail = $("#txtUserEmail").val().trim();
-            var isActive = $("#ddlStatus option:selected").val();
-            var userTypeId = $("#ddlUserType option:selected").val();
-            var ProfileImage = $("#hdnProfilePicturePath").val();
-            if (ProfileImage == '') {
-                ProfileImage = null;
-
-            }
-
-            var data = {
-                UserName: userName,
-                FullName: userFullName,
-                MailAddress: Useremail,
-                IsActive: isActive,
-                UserTypeID: userTypeId,
-                UserId: userId
-            };
-            var status = callAjax('POST', '/MasterPages/ManageUsers/UpdateUser', data);
-
-            GetUsers();
-            Reset();
-        }
-        catch (err) {
-            console.log(err);
-        }
-    }
-
-    function populateUsers(response) {
-        table = $('#tblUsers').DataTable(
-            {
-                bLengthChange: true,
-                bFilter: true,
-                bSort: true,
-                bPaginate: true,
-                data: response,
-                scrollY: false,
-                crollX: false,
-                select: true,
-                //pageLength: 5,
-                destroy: true,
-                order: [[0, "desc"]],
-                columns: [
-                    {
-                        data: 'userId', title: 'User Id', visible: false,
-                    },
-                    {
-                        data: 'userName', title: 'User Name'
-                    },
-                    {
-                        data: 'fullName', title: 'Full Name'
-                    },
-                    {
-                        data: 'userTypeID', title: 'Access Type',
-                        render: function (data) {
-                            if (data == 1) {
-                                return 'Administrator';
-                            }
-                            else  if (data==2){
-                                return 'Manager';
-                            }
-                                else {
-                                return "Report Viewer";
-                            }
-                        }
-                    },
-                    {
-                        data: 'mailAddress', title: 'User Email'
-                    },
-                    {
-                        data: 'isActive', title: 'Status',
-                        render: function (data) {
-                            if (data == 1) {
-                                return 'Active';
-                            }
-                            else {
-                                return 'Inactive';
-                            }
-                        }
-
-                    },
-                    {
-                        data: null,
-                        title: 'View',
-                        class: 'edit',
-                        defaultContent: '<button type="button" class="btn btn-success"><i class="fas fa-edit"></i></button>',
-                        orderable: false
-                    }
-                ]
-            });
-
-    }
-
-    function uploadFiles(inputId) {
-        var input = document.getElementById(inputId);
-        var files = input.files;
-        var formData = new FormData();
-        for (var i = 0; i != files.length; i++) {
-            formData.append("files", files[i]);
-        }
-
-        $.ajax(
-            {
-                url: "/MasterPages/ManageUsers/UploadImage",
-                data: formData,
-                processData: false,
-                contentType: false,
-                type: "POST",
-                success: function (data) {
-                    $("#hdnProfilePicturePath").val(data.profileImagePath);
-                }
-            }
-        );
-    }
-</script>

@@ -45,6 +45,7 @@
     <Folder Include="wwwroot\plugins\loader\img\" />
     <Folder Include="wwwroot\plugins\confirmBox\" />
     <Folder Include="wwwroot\plugins\login\" />
+    <Folder Include="wwwroot\plugins\confirmPassword\" />
     <Folder Include="wwwroot\Uploads\EmployeeUploads\" />
     <Folder Include="wwwroot\Uploads\CompanyUploads\" />
     <Folder Include="wwwroot\Uploads\UserUploads\" />

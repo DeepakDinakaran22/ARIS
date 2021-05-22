@@ -337,10 +337,13 @@ function SubmitRequest() {
 
     isValid = isValidEntry();
     if (isValid) {
-        showLoader(true);
-        callAjax('POST', '/MasterPages/ManageEmployees/SubmitRequest', data);
-        GetAllEmployees();
-        ClearFields();
+        if ($("#txtConfirmAccountNumber").val().trim() == $("#txtAccountNumber").val().trim()) {
+
+            showLoader(true);
+            callAjax('POST', '/MasterPages/ManageEmployees/SubmitRequest', data);
+            GetAllEmployees();
+            ClearFields();
+        }
     }
     else {
     }
@@ -590,6 +593,38 @@ function clearValidationCSS() {
     $('#txtDesignation').css('border-color', '').attr('disabled', false);
     $('#txtBankName').css('border-color', '').attr('disabled', false);
     $('#txtAccountNumber').css('border-color', '').attr('disabled', false);
+    $('#txtConfirmAccountNumber').css('border-color', '').attr('disabled', false);
     $('#txtRemarks').css('border-color', '').attr('disabled', false);
 
 }
+
+$("#txtConfirmAccountNumber").keyup(function () {
+    try {
+        if ($("#txtAccountNumber").val().trim() != '') {
+            if ($("#txtAccountNumber").val().trim() == $("#txtConfirmAccountNumber").val().trim()) {
+                $("#spanConfirmAccount").text('').css('color', '');
+            }
+            else {
+                $("#spanConfirmAccount").text('Account number is not matching').css('color', 'red');
+            }
+        }
+    }
+    catch (err) {
+        console.log(err);
+    }
+});
+$("#txtAccountNumber").keyup(function () {
+    try {
+        if ($("#txtConfirmAccountNumber").val().trim() != '') {
+            if ($("#txtAccountNumber").val().trim() == $("#txtConfirmAccountNumber").val().trim()) {
+                $("#spanConfirmAccount").text('').css('color', '');
+            }
+            else {
+                $("#spanConfirmAccount").text('Account number is not matching').css('color', 'red');
+            }
+        }
+    }
+    catch (err) {
+        console.log(err);
+    }
+});

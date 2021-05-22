@@ -17,6 +17,8 @@ namespace ArisWorkforceManagementTool.Controllers
     {
         private readonly ILogger<HomeController> _logger;
         UnitOfWork UnitOfWork = new UnitOfWork();
+        UnitOfWork objUnitOfWorkFetch = new UnitOfWork();
+
 
         public HomeController(ILogger<HomeController> logger)
         {
@@ -92,6 +94,64 @@ namespace ArisWorkforceManagementTool.Controllers
                 }
             }
         }
+        [HttpGet]
+        public JsonResult CheckCurrentPassword(int userId,string pwd)
+        {
+            bool existingPassword = false;
 
+            var allUsers = UnitOfWork.UserRepository.Get(x => x.UserId == userId);
+           foreach(var item in allUsers)
+            {
+                existingPassword = new Aris.Models.AuthHelper().VerifyHashedPassword(item.Password, pwd);
+            }
+
+            if (existingPassword)
+            {
+                return Json(new { value = true, responseText = "Password is correct" });
+            }
+            else
+            {
+                return Json(new { value = false, responseText = "Please enter correct password" });
+            }
+
+        }
+        [HttpGet]
+        public JsonResult UpdateNewPassword(int userId, string pwd)
+        {
+            if (userId != 0)
+            {
+                var fetchedUser = objUnitOfWorkFetch.UserRepository.Get(x => x.UserId == userId).ToList();
+               
+                DateTime createdDate = Convert.ToDateTime(fetchedUser[0].CreatedDate);
+                int createdBy = Convert.ToInt32(fetchedUser[0].CreatedBy);
+
+                var user = new Aris.Data.Entities.Users
+                {
+                    UserId = fetchedUser[0].UserId,
+                    UserName = fetchedUser[0].UserName,
+                    FullName = fetchedUser[0].FullName,
+                    UserTypeID = fetchedUser[0].UserTypeID,
+                    MailAddress = fetchedUser[0].MailAddress,
+                    IsActive = fetchedUser[0].IsActive,
+                    CreatedBy = createdBy,
+                    CreatedDate = createdDate,
+                    ModifiedBy = userId,
+                    ModifiedDate = DateTime.Now,
+                    UserImage = fetchedUser[0].UserImage,
+                    Password = new Aris.Models.AuthHelper().GetHashPassword(pwd),
+                    
+                };
+
+                UnitOfWork.UserRepository.Update(user);
+                UnitOfWork.Save();
+
+                return Json(new { success = true, responseText = "User Password updated." });
+            }
+            else
+            {
+                return Json(new { success = false, responseText = "Something went wrong." });
+            }
+
+        }
     }
 }

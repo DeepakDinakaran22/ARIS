@@ -39,7 +39,28 @@ namespace Aris.Models
             Buffer.BlockCopy(subkey, 0, outputBytes, 13 + saltSize, subkey.Length);
             return Convert.ToBase64String(outputBytes);
         }
+        public string GetHashPassword(string password)
+        {
+            var prf = KeyDerivationPrf.HMACSHA256;
+            var rng = RandomNumberGenerator.Create();
+            const int iterCount = 10000;
+            const int saltSize = 128 / 8;
+            const int numBytesRequested = 256 / 8;
 
+            // Produce a version 3 (see comment above) text hash.
+            var salt = new byte[saltSize];
+            rng.GetBytes(salt);
+            var subkey = KeyDerivation.Pbkdf2(password, salt, prf, iterCount, numBytesRequested);
+
+            var outputBytes = new byte[13 + salt.Length + subkey.Length];
+            outputBytes[0] = 0x01; // format marker
+            WriteNetworkByteOrder(outputBytes, 1, (uint)prf);
+            WriteNetworkByteOrder(outputBytes, 5, iterCount);
+            WriteNetworkByteOrder(outputBytes, 9, saltSize);
+            Buffer.BlockCopy(salt, 0, outputBytes, 13, salt.Length);
+            Buffer.BlockCopy(subkey, 0, outputBytes, 13 + saltSize, subkey.Length);
+            return Convert.ToBase64String(outputBytes);
+        }
         public bool VerifyHashedPassword(string hashedPassword, string providedPassword)
         {
             var decodedHashedPassword = Convert.FromBase64String(hashedPassword);
