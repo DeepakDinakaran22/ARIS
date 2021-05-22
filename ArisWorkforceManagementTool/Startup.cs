@@ -28,7 +28,7 @@ namespace ArisWorkforceManagementTool
         {
             services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
                 .AddCookie();
-            services.AddControllersWithViews();
+            services.AddControllersWithViews().AddRazorRuntimeCompilation();
             services.AddDbContext<ArisContext>(options => options.UseSqlServer(Configuration.GetConnectionString("ArisConnection")));
         }
 
