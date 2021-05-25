@@ -3,6 +3,8 @@
     ViewData["Title"] = "Index";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
+
+<link rel="stylesheet" href="~/plugins/confirmBox/jquery-confirm.css" />
 <div class="content-header">
     <div class="container-fluid">
         <div class="row mb-2">
@@ -38,8 +40,15 @@
                             <div class="row">
                                 <div class="col-md-3">
                                     <div class="form-group">
-                                        <label for="txtDocumentName">Document Name</label>
+                                        <label for="txtDocumentName">Document Name <span class="text-red text-bold">*</span></label>
                                         <input type="text" name="documentName" required class="form-control" id="txtDocumentName" placeholder="Document Name">
+                                    </div>
+                                </div>
+
+                                <div class="col-md-3">
+                                    <div class="form-group">
+                                        <label>Document Type <span class="text-red text-bold">*</span></label>
+                                        <select class="form-control select2bs4" id="ddlDocumentType" required style="width: 100%;"> </select>
                                     </div>
                                 </div>
                                 <div class="col-md-3">
@@ -50,13 +59,7 @@
                                 </div>
                                 <div class="col-md-3">
                                     <div class="form-group">
-                                        <label>Document Type</label>
-                                        <select class="form-control select2bs4" id="ddlDocumentType" required style="width: 100%;"> </select>
-                                    </div>
-                                </div>
-                                <div class="col-md-3">
-                                    <div class="form-group">
-                                        <label>Status</label>
+                                        <label>Status <span class="text-red text-bold">*</span></label>
                                         <select class="form-control select2bs4" id="ddlStatus" required style="width: 100%;">
                                             <option value="-1" selected="selected">Select</option>
                                             <option value="1">Active</option>
@@ -69,8 +72,8 @@
                         <!-- /.card-body -->
 
                         <div class="card-footer" style="text-align:right">
-                            <button type="button" id="btnDelete" class="btn btn-danger btn-sm">Delete</button>
-                            <button type="reset" id="btnReset" onclick="Reset()" class="btn btn-primary btn-sm">Reset</button>
+                            <button type="button" hidden id="btnDelete" class="btn btn-danger btn-sm">Delete</button>
+                            <button type="reset" id="btnReset" onclick="ResetFields()" class="btn btn-primary btn-sm">Reset</button>
                             <button type="button" id="btnUpdate" onclick="UpdateRequest()" class="btn btn-warning btn-sm">Update</button>
                             <button type="button" id="btnSubmit" onclick="SubmitRequest()" class="btn btn-success btn-sm">Submit</button>
                         </div>
@@ -154,6 +157,7 @@
     var row;
     var table;
     var documentID;
+    var isValidDoc = false;
     $(document).ready(function () {
         getCategories();
         $("#btnUpdate").hide();
@@ -162,22 +166,22 @@
         GetAllDocuments();
 
         $("#txtDocumentName").focusout(function () {
-            if ($("#txtDocumentName").val() != '') {
+            if ($("#txtDocumentName").val() != '' && $("#ddlDocumentType option:selected").val() != 0) {
                 CheckNameExists();
             }
         });
         $("#ddlDocumentType").focusout(function () {
-            if ($("#ddlDocumentType option:selected").val != 0) {
+            if ($("#ddlDocumentType option:selected").val() != 0 && $("#txtDocumentName").val() != '') {
                 CheckNameExists();
             }
         });
 
         $('#tblDocuments').on('click', 'td.edit', function (e) {
             e.preventDefault();
-            $("#txtDocumentName").val(table.row(this).data()['documentName']);
-            $("#txtDocumentName").attr("disabled", "disabled");
+            ResetFields();
+            $("#txtDocumentName").val(table.row(this).data()['documentName']).attr("disabled", "disabled");;
             $("#txtDocumentDesc").val(table.row(this).data()['documentDescription']);
-            $("#ddlDocumentType").val(table.row(this).data()['documentCategoryID']);
+            $("#ddlDocumentType").val(table.row(this).data()['documentCategoryID']).attr("disabled", "disabled");;
             if (table.row(this).data()['isActive'] == 1) {
                 $("#ddlStatus").val(1);
             }
@@ -188,6 +192,8 @@
 
             $("#btnUpdate").show();
             $("#btnSubmit").hide();
+                                    $(window).scrollTop(0);
+
         });
 
         //validation
@@ -207,11 +213,14 @@
                 success: function (response) {
                     if (response != null) {
                         if (response.value == true) {
+                            isValidDoc = false;
                             $('#txtDocumentName').css('border-color', 'red');
                             $('#ddlDocumentType').css('border-color', 'red');
-                            showAlert({ title: "Warning!", message: 'Document Name is already added!', type: "WARNING" });
+                            //showAlert({ title: "Warning!", message: 'Document Name is already added!', type: "WARNING" });
+                            MessageBox('Exists!', 'fa fa-file', 'Document is already added!', 'orange', 'btn btn-warning', 'Okey');
                         }
                         else {
+                            isValidDoc = true;
                             $('#txtDocumentName').css('border-color', '');
                             $('#ddlDocumentType').css('border-color', '');
 
@@ -223,10 +232,10 @@
                     }
                 },
                 failure: function (response) {
-                   // alert(response.responseText);
+                    // alert(response.responseText);
                 },
                 error: function (response) {
-                   // alert(response.responseText);
+                    // alert(response.responseText);
                 }
             });
         }
@@ -235,7 +244,6 @@
         }
     }
     function SubmitRequest() {
-        var isValid = true;
         var docName = $("#txtDocumentName").val().trim();
         var docDesc = $("#txtDocumentDesc").val().trim();
         var docType = $("#ddlDocumentType option:selected").val();
@@ -243,29 +251,17 @@
         var data = {
             DocumentName: docName,
             DocumentDescription: docDesc,
-            DocumentCategoryID : docType,
+            DocumentCategoryID: docType,
             IsActive: isActive,
         };
 
-        if ($('#txtDocumentName').val() == '') {
-            $('#txtDocumentName').css('border-color', 'red');
-            isValid = false;
-        }
-        if ($("#ddlStatus").val() == -1) {
-            $('#ddlStatus').css('border-color', 'red');
-            isValid = false;
-        }
-         if ($("#ddlDocumentType").val() == 0) {
-            $('#ddlDocumentType').css('border-color', 'red');
-            isValid = false;
-        }
-        
 
-        if (isValid) {
+
+        if (isValidEntry()) {
 
             callAjax('POST', '/MasterPages/ManageDocuments/SubmitRequest', data);
             GetAllDocuments();
-            Reset();
+            ResetFields();
         }
         else {
 
@@ -275,42 +271,29 @@
 
     }
     function UpdateRequest() {
-        var isValid = true;
-
         try {
-        var docName = $("#txtDocumentName").val().trim();
-        var docDesc = $("#txtDocumentDesc").val().trim();
-        var docType = $("#ddlDocumentType option:selected").val();
-        var isActive = $("#ddlStatus option:selected").val();
+            var docName = $("#txtDocumentName").val().trim();
+            var docDesc = $("#txtDocumentDesc").val().trim();
+            var docType = $("#ddlDocumentType option:selected").val();
+            var isActive = $("#ddlStatus option:selected").val();
 
             var data = {
                 DocumentName: docName,
                 DocumentDescription: docDesc,
-                DocumentCategoryID :docType,
+                DocumentCategoryID: docType,
                 IsActive: isActive,
                 DocumentId: documentID
             };
 
 
-            if ($('#txtDocumentName').val().trim() == '') {
-                $('#txtDocumentName').css('border-color', 'red');
-                isValid = false;
-            }
-            else if ($("#ddlStatus").val() == -1) {
-                $('#ddlStatus').css('border-color', 'red');
-                isValid = false;
-            }
-            if ($("#ddlDocumentType").val() == 0) {
-                $('#ddlDocumentType').css('border-color', 'red');
-                isValid = false;
-            }
-          
+            
 
-            if (isValid) {
+            isValidDoc = true;
+            if (isValidEntry()) {
 
                 callAjax('POST', '/MasterPages/ManageDocuments/UpdateRequest', data);
                 GetAllDocuments();
-                Reset();
+                ResetFields();
             }
 
         }
@@ -349,6 +332,7 @@
         });
     }
     function populateDocuments(response) {
+
         table = $('#tblDocuments').DataTable(
             {
                 bLengthChange: true,
@@ -360,8 +344,15 @@
                 select: true,
                 pageLength: 10,
                 destroy: true,
-                order: [[0, "desc"]],
+                order: [[1, "desc"]],
                 columns: [
+                    {
+                        data: null,
+                        title: 'View',
+                        class: 'edit',
+                        defaultContent: '<button type="button" class="btn btn-success"><i class="fas fa-edit"></i></button>',
+                        orderable: false
+                    },
                     {
                         data: 'documentId', title: 'Document ID', visible: false,
                     },
@@ -373,7 +364,7 @@
                     },
                     {
                         data: 'documentCategoryId', title: 'Document Type',
-                         render: function (data) {
+                        render: function (data) {
                             if (data == 1) {
                                 return 'Employee Documents';
                             }
@@ -394,26 +385,24 @@
                         }
 
                     },
-                    {
-                        data: null,
-                        title: 'View',
-                        class: 'edit',
-                        defaultContent: '<button type="button" class="btn btn-success"><i class="fas fa-edit"></i></button>',
-                        orderable: false
-                    }
+                    
                 ]
             });
 
     }
 
-    function Reset() {
+    function ResetFields() {
         try {
             $("#txtDocumentName").val('');
             $("#txtDocumentDesc").val('');
             $("#ddlStatus").val(-1);
             $("#ddlDocumentType").val(0);
             $("#txtDocumentName").attr("disabled", false);
+            $("#ddlDocumentType").attr("disabled", false);
             $('#txtDocumentName').css('border-color', '');
+            $('#ddlDocumentType').css('border-color', '');
+            $('#ddlStatus').css('border-color', '');
+
             $("#btnUpdate").hide();
             $("#btnSubmit").show();
         }
@@ -429,6 +418,82 @@
         catch (err) {
             console.log(err);
         }
+    }
+    
+function MessageBox(title,icon,content,type,btnClass,btnText) {
+    $.confirm({
+        title: title,
+        icon: icon,
+        content: content,
+        type: type,
+      //  theme:'dark',
+        buttons: {
+            omg: {
+                text: btnText,
+                btnClass: btnClass,
+            },
+        }
+    });
+    }
+
+   
+
+    function isValidEntry() {
+        var valid = true;
+        var message = '';
+        var count = 0;
+
+        if ($('#txtDocumentName').val() == '') {
+            $('#txtDocumentName').css('border-color', 'red');
+            valid = false;
+            count = count + 1;
+            message += count + '. Document Name </br>';
+        }
+        else {
+            $('#txtDocumentName').css('border-color', '');
+        }
+        if ($("#ddlDocumentType").val() == 0) {
+            $('#ddlDocumentType').css('border-color', 'red');
+            valid = false;
+            count = count + 1;
+            message += count + '. Document Type </br>';
+        }
+        else {
+            $('#ddlDocumentType').css('border-color', '');
+        }
+        if ($("#ddlStatus").val() == -1) {
+            $('#ddlStatus').css('border-color', 'red');
+            valid = false;
+            count = count + 1;
+            message += count + '. Status </br>';
+        }
+        else {
+            $('#ddlStatus').css('border-color', '');
+        }
+
+        if (!isValidDoc) {
+            valid = false;
+            count = count + 1;
+            message += count + '. Valid Document Name & Doc Type </br>';
+            $('#txtDocumentName').css('border-color', 'red');
+            $('#ddlDocumentType').css('border-color', 'red');
+        }
+        else {
+             $('#txtDocumentName').css('border-color', '');
+            $('#ddlDocumentType').css('border-color', '');
+
+        }
+
+        if (message != '') {
+            MessageBox('Required!', 'fa fa-warning', message, 'red', 'btn btn-danger', 'Okey');
+            valid = false;
+            message = '';
+            count = 0;
+        }
+        else {
+            valid = true;
+        }
+        return valid;
     }
 
 </script>

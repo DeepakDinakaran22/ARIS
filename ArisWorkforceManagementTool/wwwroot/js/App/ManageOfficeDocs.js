@@ -42,6 +42,8 @@ $('#tblOfficeDoc').on('click', 'td.edit', function(e) {
     officeDocId = table.row(this).data()['officeDocId'];
     $("#btnUpdate").show();
     $("#btnSubmit").hide();
+    $(window).scrollTop(0);
+
 });
 function uploadFiles(inputId) {
     var input = document.getElementById(inputId);
@@ -83,10 +85,18 @@ function populateOfficeDocs(response) {
             scrollY: false,
             sScrollX: false,
             //scrollCollapse: true,
+            order: [[1, "desc"]],
             select: true,
             pageLength: 10,
             destroy: true,
             columns: [
+                {
+                    data: null,
+                    title: 'View',
+                    class: 'edit',
+                    defaultContent: '<button type="button" class="btn btn-sm btn-success"><i class="fas fa-edit"></i></button>',
+                    orderable: false
+                },
                 {
                     data: 'officeDocId', title: 'Document ID', visible: false,
                     render: function (data) {
@@ -127,13 +137,7 @@ function populateOfficeDocs(response) {
                         }
                     }
                 },
-                {
-                    data: null,
-                    title: 'View',
-                    class: 'edit',
-                    defaultContent: '<button type="button" class="btn btn-success"><i class="fas fa-edit"></i></button>',
-                    orderable: false
-                }
+               
             ]
         });
 

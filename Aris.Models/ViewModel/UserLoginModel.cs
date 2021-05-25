@@ -7,10 +7,10 @@ namespace Aris.Models.ViewModel
 {
     public class UserLoginModel
     {
-        [Required]
+        [Required(ErrorMessage ="Required")]
         public string UserName { get; set; }
 
-        [Required]
+        [Required(ErrorMessage = "Required")]
         [DataType(DataType.Password)]
         public string Password { get; set; }
 

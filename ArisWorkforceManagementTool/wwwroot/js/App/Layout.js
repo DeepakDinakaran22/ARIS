@@ -3,6 +3,7 @@ var isConfirmPasswordMatch = false;
 var isCurrentPasswordCorrect = false;
 $(document).ready(function () {
     $("#btnSavePassword").hide();
+
 });
 $("#btnChangePassword").click(function () {
 
@@ -12,10 +13,34 @@ $("#Oldpassword-input").focusout(function () {
 });
 $("#password-input").focusout(function () {
     CheckPreviousPassword();
+    if ($("#Confirmpassword-input").val().trim() != '') {
+        CheckConfirmPassword();
+    }
 });
 $("#Confirmpassword-input").focusout(function () {
     CheckConfirmPassword();
 });
+
+$("#Confirmpassword-input").keyup(function () {
+    var newPassword = $("#password-input").val().trim();
+    var ConfirmPassword = $("#Confirmpassword-input").val().trim();
+    if (newPassword == ConfirmPassword) {
+        $("#btnSavePassword").show();
+
+    }
+    else {
+        $("#btnSavePassword").hide();
+    }
+});
+
+function ResetFields() {
+    $("#password-input").val('');
+    $("#Confirmpassword-input").val('');
+    $("#Oldpassword-input").val('');
+    $("#incorrectConfirmPwd").hide();
+    $("#incorrectNewPwd").hide();
+    $("#incorrectPwd").hide();
+}
 
 function CheckConfirmPassword() {
     try {
@@ -131,11 +156,16 @@ function UpdateNewPassword() {
                 if (response != null) {
                     if (response.success == false) {
                         $('#modal-password').modal('hide');
-                        BackgoudnDismissAlert('Failed!', 'Something Went Wrong');
+                        //BackgoudnDismissAlert('Failed!', 'Something Went Wrong');
+                        MessageBox('Error!', 'fa fa-times', 'Something went wrong! Please try later', 'red', 'btn btn-danger', 'Okey');
+
+
                     }
                     else {
                         $('#modal-password').modal('hide');
-                        BackgoudnDismissAlert('Success!', 'Password has been changed');
+                        //BackgoudnDismissAlert('Success!', 'Password has been changed');
+                        MessageBox('Success!', 'fa fa-check', 'Password has been changed', 'green', 'btn btn-success', 'Okey');
+
                     }
 
                 } else {
@@ -169,6 +199,22 @@ function Reset() {
 
 }
 
+
+function MessageBox(title, icon, content, type, btnClass, btnText) {
+    $.confirm({
+        title: title,
+        icon: icon,
+        content: content,
+        type: type,
+        //  theme:'dark',
+        buttons: {
+            omg: {
+                text: btnText,
+                btnClass: btnClass,
+            },
+        }
+    });
+}
 
 function BackgoudnDismissAlert(title,message,) {
     try {

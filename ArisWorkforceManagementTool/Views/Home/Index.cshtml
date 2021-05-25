@@ -22,14 +22,14 @@
         <div class="row">
             <div class="col-lg-3 col-6">
                 <!-- small box -->
-                <div class="small-box bg-info">
+                <div class="small-box bg-success">
                     <div class="inner">
-                        <h3 id="lblPendingReq">0</h3>
+                        <h3 id="lblActiveEmployees">0</h3>
 
-                        <p>Total Employees</p>
+                        <p>Active Employees</p>
                     </div>
                     <div class="icon">
-                        <i class="fas fa-user-cog"></i>
+                        <i class="fas  fa-users"></i>
                     </div>
                     <a href="#" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
                 </div>
@@ -37,14 +37,14 @@
             <!-- ./col -->
             <div class="col-lg-3 col-6">
                 <!-- small box -->
-                <div class="small-box bg-success">
+                <div class="small-box bg-info">
                     <div class="inner">
-                        <h3>0</h3>
+                        <h3 id="lblPendingRequests">0</h3>
 
-                        <p>Employees In Work</p>
+                        <p>Pending Req.</p>
                     </div>
                     <div class="icon">
-                        <i class="fas fa-cogs"></i>
+                        <i class="fas  fa-hourglass-end"></i>
 
                     </div>
                     <a href="#" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
@@ -55,12 +55,11 @@
                 <!-- small box -->
                 <div class="small-box bg-secondary">
                     <div class="inner">
-                        <h3>0</h3>
-
-                        <p>Employees On Leave</p>
+                        <h3 id="lblSentBackReq">0</h3>
+                        <p>Sent Back Req.</p>
                     </div>
                     <div class="icon">
-                        <i class="fas fa-user-alt-slash"></i>
+                        <i class="fas  fa-reply-all"></i>
                     </div>
                     <a href="#" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
                 </div>
@@ -70,12 +69,11 @@
                 <!-- small box -->
                 <div class="small-box bg-danger">
                     <div class="inner">
-                        <h3>0</h3>
-
-                        <p>Current Month Passport Expiry</p>
+                        <h3 id="lblModificationReq">0</h3>
+                        <p>Mdification Req.</p>
                     </div>
                     <div class="icon">
-                        <i class="fas fa-bell"></i>
+                        <i class="fas fa-edit"></i>
                     </div>
                     <a href="#" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
                 </div>
@@ -106,7 +104,12 @@
             dataType: "json",
             success: function (response) {
                
-                $("#lblPendingReq").text( response.pendingRequests );
+                $("#lblActiveEmployees").text(response.active);
+                $("#lblPendingRequests").text(response.pending);
+                $("#lblSentBackReq").text(response.sendBack);
+                $("#lblModificationReq").text(response.modificaiton);
+
+
             },
             failure: function (response) {
                 alert(response.responseText);

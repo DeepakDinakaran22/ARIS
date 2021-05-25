@@ -75,7 +75,7 @@
                         <i class="fas fa-cog"></i>
                     </a>
                     <div class="dropdown-menu dropdown-menu-lg dropdown-menu-right">
-                        <form class="form-inline" asp-controller="Account" asp-action="Logout" asp-route-returnUrl="@Url.Page("/", new { area = "" })" method="post">
+                        <form class="form-inline" asp-area="" asp-controller="Account" asp-action="Logout" asp-route-returnUrl="@Url.Page("/", new { area = "" })" method="post">
                             <button type="submit" class="nav-link btn btn-link text-dark">
                                 <i class="fas fa-sign-out-alt"></i>
                                 Logout
@@ -152,7 +152,7 @@
                                 </a>
 
                             </li>
-                            <li class="nav-item" style="visibility:@ViewBag.Role==" admin"?false:true">
+                            <li class="nav-item" >
 
                                 <a href="../MasterPages/ManageEmployees" class="nav-link">
                                     <i class="nav-icon fas fa-user"></i>
@@ -194,7 +194,7 @@
                                             <p>Documents</p>
                                         </a>
                                     </li>
-                                    <li class="nav-item">
+                                    <li class="nav-item" style="display:@TempData.Peek("Visibility")">
                                         <a href="../MasterPages/ManageUsers" class="nav-link">
                                             <i class="far fa-circle nav-icon"></i>
                                             <p>Users</p>
@@ -336,7 +336,7 @@
                                         <div class="input-group">
                                             <input class="Confirmpassword-strength__input form-control" type="password" id="Confirmpassword-input" aria-describedby="passwordHelp" placeholder="Enter new password" />
                                         </div>
-                                        <small class="password-strength__error text-danger js-hidden" id="incorrectConfirmPwd">Shold not use current password as new</small>
+                                        <small class="password-strength__error text-danger js-hidden" id="incorrectConfirmPwd">Password mismatch</small>
 
                                     </div>
                                 </form>
@@ -346,13 +346,15 @@
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button type="reset" id="btnResetPassword" class="btn btn-outline-warning">Reset</button>
+                    <button type="reset" id="btnResetPassword" onclick="ResetFields()" class="btn btn-outline-warning">Reset</button>
                     <button type="button" id="btnSavePassword" onclick="SubmitNewPassword()" class="btn btn-outline-success">Save</button>
                 </div>
             </div>
         </div>
     </div>
 
+    @* hidden Variables *@
+    <input type="hidden" id="hdnUserTypeId" value="@TempData.Peek("UserTypeId")" />
 
 
 

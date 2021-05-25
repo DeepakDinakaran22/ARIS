@@ -5,8 +5,9 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-@* Styles for modal - to be replaced to new file *@
+<link rel="stylesheet" href="~/plugins/confirmBox/jquery-confirm.css" />
 
+@*<link rel="stylesheet" href="~/plugins/confirmBox/bundled.css" />*@
 
 <section class="content-header">
     <div class="container-fluid">
@@ -68,7 +69,6 @@
                                             <option value="0" selected>Select</option>
                                             <option value="1">Adminstrator</option>
                                             <option value="2">Manager</option>
-                                            <option value="3">Report Viewer</option>
 
                                         </select>
                                     </div>
@@ -101,7 +101,7 @@
                         <!-- /.card-body -->
 
                         <div class="card-footer" style="text-align:right">
-                            <button type="button" id="btnDelete" class="btn btn-danger btn-sm">Delete</button>
+                            <button type="button" id="btnDelete" hidden class="btn btn-danger btn-sm">Delete</button>
                             <button type="reset" id="btnReset" onclick="ResetFields()" class="btn btn-primary btn-sm">Reset</button>
                             <button type="button" id="btnUpdate" onclick="UpdateUserRequest()" class="btn btn-warning btn-sm">Update</button>
                             <button type="button" id="btnSubmit" onclick="SubmitRequest()" class="btn btn-success btn-sm">Submit</button>
@@ -127,7 +127,8 @@
                             <div class="row">
                                 <div class="col-sm-12">
                                     <div class="card-body table-responsive p-0">
-                                        <table class="table table-head-fixed text-nowrap" id="tblUsers">
+                                        @*class="table table-bordered table-head-fixed text-nowrap table-hover table-striped"*@
+                                        <table class="table table-bordered table-head-fixed text-nowrap table-hover table-striped" id="tblUsers">
                                         </table>
                                     </div>
                                 </div>
@@ -181,5 +182,8 @@
 <link rel="stylesheet" href="~/plugins/datatables-responsive/css/responsive.bootstrap4.css">
 <script src="~/js/Common/Common.js" type="text/javascript"></script>
 <script src="~/js/App/MangeUsers.js" type="text/javascript"></script>
+@* ConfirmBox *@
+<script src="~/plugins/confirmBox/jquery-confirm.js" type="text/javascript"></script>
 
+@*<script src="~/plugins/confirmBox/bundled.js" type="text/javascript"></script>*@
 

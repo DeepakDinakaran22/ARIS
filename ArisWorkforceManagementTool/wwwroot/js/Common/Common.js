@@ -14,11 +14,13 @@
             success: function (response) {
                 if (response.success == true) {
                     showLoader(false);
-                    showAlert({ title: "SUCCESS!", message: response.responseText, type: "SUCCESS" });
+                    // showAlert({ title: "SUCCESS!", message: response.responseText, type: "SUCCESS" });
+                    MessageBox('Congratulations!', 'fa fa-check', response.responseText, 'green', 'btn btn-success','Okey');
 
                 } else {
                     showLoader(false);
-                    showAlert({ title: "ERROR!", message: response.responseText, type: "ERROR" });
+                    MessageBox('Congratulations!', 'fa fa-times', response.responseText, 'red', 'btn btn-danger','Okey');
+                   // showAlert({ title: "ERROR!", message: response.responseText, type: "ERROR" });
                 }
                 
             },
