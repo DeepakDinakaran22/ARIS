@@ -2,6 +2,7 @@
 var isConfirmPasswordMatch = false;
 var isCurrentPasswordCorrect = false;
 $(document).ready(function () {
+    ResetPwd();
     $("#btnSavePassword").hide();
 
 });
@@ -26,21 +27,16 @@ $("#Confirmpassword-input").keyup(function () {
     var ConfirmPassword = $("#Confirmpassword-input").val().trim();
     if (newPassword == ConfirmPassword) {
         $("#btnSavePassword").show();
+        $("#incorrectConfirmPwd").hide();
 
     }
     else {
         $("#btnSavePassword").hide();
+        $("#incorrectConfirmPwd").show().val('Password Mismatch').css('color', 'red');
+
     }
 });
 
-function ResetFields() {
-    $("#password-input").val('');
-    $("#Confirmpassword-input").val('');
-    $("#Oldpassword-input").val('');
-    $("#incorrectConfirmPwd").hide();
-    $("#incorrectNewPwd").hide();
-    $("#incorrectPwd").hide();
-}
 
 function CheckConfirmPassword() {
     try {
@@ -187,7 +183,7 @@ function UpdateNewPassword() {
 
     }
 }
-function Reset() {
+function ResetPwd() {
     $("#Oldpassword-input").val('');
     $("#password-input").val('');
     $("#Confirmpassword-input").val('');
@@ -196,6 +192,7 @@ function Reset() {
     isCurrentPasswordCorrect = false;
     $("#incorrectConfirmPwd").hide();
     $("#incorrectNewPwd").hide();
+    $("#incorrectPwd").hide();
 
 }
 

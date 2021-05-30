@@ -72,13 +72,13 @@ function SubmitRequest() {
     };
     if (isValidEntry()) {
         callAjax('POST', '/MasterPages/ManageUsers/SubmitRequest', data);
-        ResetFields();
+        ResetFlds();
         GetUsers();
     }
 }
 $('#tblUsers').on('click', 'td.edit', function (e) {
-    e.preventDefault();
-    ResetFields();
+   // e.preventDefault();
+    ResetFlds();
     $("#txtUserName").val(table.row(this).data()['userName']).attr('disabled', 'true');
     $("#txtUserFullName").val(table.row(this).data()['fullName']);
     $("#txtUserEmail").val(table.row(this).data()['mailAddress']);
@@ -118,13 +118,13 @@ function GetUsers() {
         }
     });
 }
-function ResetFields() {
-    $("#txtUserName").val('');
+function ResetFlds() {
+    $("#txtUserName").val('').attr('disabled', false);
     $("#txtUserFullName").val('');
     $("#txtUserEmail").val('');
     $("#ddlStatus").val(-1);
     $("#ddlUserType").val(0);
-    $("#txtUserName").attr("disabled", false);
+    //$("#txtUserName");
     $('#txtUserName').css('border-color', '');
     $("#hdnProfilePicturePath").val('');
     $("#files").val('');
@@ -163,7 +163,7 @@ function UpdateUserRequest() {
         isValidUser = true;
         if (isValidEntry()) {
             callAjax('POST', '/MasterPages/ManageUsers/UpdateUser', data);
-            ResetFields();
+            ResetFlds();
             GetUsers();
         }
     }

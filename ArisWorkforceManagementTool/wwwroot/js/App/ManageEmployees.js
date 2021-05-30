@@ -8,8 +8,9 @@ var table;
 var empNO;
 var approvalStatusId;
 var isUploadAllowed = true;
+var cnt = 0;
 $(document).ready(function () {
-
+    $(".expiry").datepicker({ minDate: 0 }); //maxDate: "+1M +15D" });
     showLoader(true);
     userRole = $("#hdnUserRole").val();
     
@@ -19,6 +20,7 @@ $(document).ready(function () {
     $("#dpJoiningDate").datepicker({ minDate: 0 });
     $("#dpResidentExpiryDate").datepicker({ minDate: 0 });
     $("#dpPassportExpiryDate").datepicker({ minDate: 0 });
+    
 
     $("#btnUpdate").hide();
     $("#btnSubmit").show();
@@ -272,6 +274,7 @@ function populateRemaining(response) {
                 {
                     data: 'filePath', title: 'File Path', visible: false,
                 },
+                
                 {
                     data: 'documentName', title: 'Document Name',
                 },
@@ -288,6 +291,12 @@ function populateRemaining(response) {
                     }
                 },
                 {
+                    data: 'fileName', title: 'Expiry', visible: true,  
+                    render: function (data) {
+                        return '<input type="date" class="form-control expiry" id="dp_' + docId + '" style="width:132px;font-size:smaller;" >';
+                    }
+                },
+                {
                     data: null,
                     title: 'Upload',
                     class: 'upload',
@@ -300,6 +309,7 @@ function populateRemaining(response) {
                         }
                     }
                 }
+               
             ]
         });
 
