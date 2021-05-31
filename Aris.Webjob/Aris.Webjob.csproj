@@ -1,0 +1,23 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Remove="EmailJob.cs" />
+    <Compile Remove="Helpers\JObScheduler.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+  <PackageReference Include="Hangfire.Core" Version="1.7.22" />
+  <PackageReference Include="Hangfire.SqlServer" Version="1.7.22" />
+  <PackageReference Include="Hangfire.AspNetCore" Version="1.7.22" />
+</ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Aris.Data\Aris.Data.csproj" />
+    <ProjectReference Include="..\Aris.Models\Aris.Models.csproj" />
+  </ItemGroup>
+
+</Project>
