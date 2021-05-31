@@ -23,5 +23,6 @@ namespace Aris.Data.Entities
         public int? ModifiedBy { get; set; }
 
         public DateTime? ModifiedDate { get; set; }
+        public int? IsExpiryRequired { get; set; }
     }
 }

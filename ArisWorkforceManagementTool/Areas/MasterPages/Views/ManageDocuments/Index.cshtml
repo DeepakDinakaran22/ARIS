@@ -1,6 +1,6 @@
 ﻿
 @{
-    ViewData["Title"] = "Index";
+    ViewData["Title"] = "Documents";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
@@ -71,7 +71,7 @@
                                         </select>
                                     </div>
                                 </div>
-                                <div class="col-md-9">
+                                <div class="col-md-12">
                                     <div class="form-group">
                                         <label for="txtDocumentDesc">Document Description</label>
                                         <textarea  multiple  name="documentDescription" required class="form-control" id="txtDocumentDesc" placeholder="Document Description"></textarea>
@@ -104,7 +104,7 @@
                             <div class="row">
                                 <div class="col-sm-12">
                                     <div class="card-body table-responsive p-0">
-                                        <table class="table table-head-fixed text-nowrap" id="tblDocuments"> </table>
+                                        <table class="table table-bordered table-head-fixed text-nowrap table-hover table-striped" id="tblDocuments"> </table>
                                     </div>
                                 </div>
 

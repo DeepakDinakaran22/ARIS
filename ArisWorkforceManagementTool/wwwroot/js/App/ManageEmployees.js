@@ -9,8 +9,10 @@ var empNO;
 var approvalStatusId;
 var isUploadAllowed = true;
 var cnt = 0;
+var today;
 $(document).ready(function () {
-    $(".expiry").datepicker({ minDate: 0 }); //maxDate: "+1M +15D" });
+    var d = new Date();
+    today = moment(new Date()).add(30, 'days').format('YYYY-MM-DD');
     showLoader(true);
     userRole = $("#hdnUserRole").val();
     
@@ -68,6 +70,7 @@ function uploadFiles(inputId) {
     );
 }
 function uploadDocuments(inputId) {
+
     var docId = inputId.split("_")[1];
     var input = document.getElementById(inputId);
     var files = input.files;
@@ -78,23 +81,28 @@ function uploadDocuments(inputId) {
     }
     formData.append("empNo", empNo);
     formData.append("docId", parseInt(docId));
-
-
-    $.ajax(
-        {
-            url: "/MasterPages/ManageEmployees/UploadDocuments",
-            data: formData,
-            processData: false,
-            contentType: false,
-            type: "POST",
-            async: false,
-            success: function (data) {
-                GetAllUploads("PASSPORT", empNo.replace('ARIS-',''));  // testing is in progress
-                GetAllUploads("RESIDENT", empNo.replace('ARIS-', ''));
-                GetAllUploads("REMAINING", empNo.replace('ARIS-', ''));
+    var dpName = 'dp_' + docId;
+    if ($("#" + dpName + "").val().trim() == 'No Expiry Required' || $("#" + dpName + "").val().trim() != '') {
+        $.ajax(
+            {
+                url: "/MasterPages/ManageEmployees/UploadDocuments",
+                data: formData,
+                processData: false,
+                contentType: false,
+                type: "POST",
+                async: false,
+                success: function (data) {
+                    GetAllUploads("PASSPORT", empNo.replace('ARIS-', ''));  // testing is in progress
+                    GetAllUploads("RESIDENT", empNo.replace('ARIS-', ''));
+                    GetAllUploads("REMAINING", empNo.replace('ARIS-', ''));
+                }
             }
-        }
-    );
+        );
+    }
+    else {
+        MessageBox('Exists!', 'fa fa-calendar', 'Document is already added!', 'orange', 'btn btn-warning', 'Okey');
+
+    }
 }
 
 function GetAllUploads(uType,empNo) {
@@ -115,6 +123,7 @@ function GetAllUploads(uType,empNo) {
                 }
                 else {
                     populateRemaining(response);
+
                 }
 
             } else {
@@ -248,7 +257,9 @@ function populateResident(response) {
 
 }
 function populateRemaining(response) {
+    console.log(response);
     var docId = 0;
+    var isExpReq = 0;
     table_remaining = $("#tblRemainingFiles").DataTable(
         {
             bLengthChange: false,
@@ -272,6 +283,13 @@ function populateRemaining(response) {
 
                 },
                 {
+                    data: 'isExpiryRequired', title: 'test', visible: false,
+                    render: function (data) {
+                        isExpReq = data;
+                        return data;
+                    }
+                },
+                {
                     data: 'filePath', title: 'File Path', visible: false,
                 },
                 
@@ -291,9 +309,15 @@ function populateRemaining(response) {
                     }
                 },
                 {
-                    data: 'fileName', title: 'Expiry', visible: true,  
+                    data: 'fileName', title: 'Expiry', visible: true, class:'text-center',
                     render: function (data) {
-                        return '<input type="date" class="form-control expiry" id="dp_' + docId + '" style="width:132px;font-size:smaller;" >';
+                        if (isExpReq == 1) {
+                            return '<input type="date"  class="form-control expiry" id="dp_' + docId + '" style="width:132px;font-size:smaller;" >';
+                        }
+                        else {
+                            return '<input type="text" value="No Expiry Required" disabled class="form-control expiry" id="dp_' + docId + '" style="width:132px;font-size:smaller;" >';
+                            //return 'No Expiry';
+                        }
                     }
                 },
                 {

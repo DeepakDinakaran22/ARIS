@@ -154,6 +154,8 @@ namespace Aris.Data
 
                 entity.Property(e => e.ModifiedDate)
                .HasColumnName("ModifiedDate");
+                entity.Property(e => e.IsExpiryRequired)
+              .HasColumnName("IsExpiryRequired");
 
             });
             modelBuilder.Entity<EmployeeDetails>(entity =>

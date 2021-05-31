@@ -32,6 +32,12 @@ $(document).ready(function () {
         else {
             $("#ddlStatus").val(0);
         }
+        if (table.row(this).data()['isExpiryRequired'] == 1) {
+            $("#ddlIsExpiry").val(1);
+        }
+        else {
+            $("#ddlIsExpiry").val(0);
+        }
         documentID = table.row(this).data()['documentId'];
 
         $("#btnUpdate").show();
@@ -92,11 +98,13 @@ function SubmitRequest() {
     var docDesc = $("#txtDocumentDesc").val().trim();
     var docType = $("#ddlDocumentType option:selected").val();
     var isActive = $("#ddlStatus option:selected").val();
+    var IsExpiryRequired = $("#ddlIsExpiry option:selected").val();
     var data = {
         DocumentName: docName,
         DocumentDescription: docDesc,
         DocumentCategoryID: docType,
         IsActive: isActive,
+        IsExpiryRequired: IsExpiryRequired
     };
 
 
@@ -120,13 +128,15 @@ function UpdateRequest() {
         var docDesc = $("#txtDocumentDesc").val().trim();
         var docType = $("#ddlDocumentType option:selected").val();
         var isActive = $("#ddlStatus option:selected").val();
+        var IsExpiryRequired = $("#ddlIsExpiry option:selected").val();
 
         var data = {
             DocumentName: docName,
             DocumentDescription: docDesc,
             DocumentCategoryID: docType,
             IsActive: isActive,
-            DocumentId: documentID
+            DocumentId: documentID,
+            IsExpiryRequired: IsExpiryRequired
         };
 
 
@@ -157,6 +167,7 @@ function GetAllDocuments() {
         },
         success: function (response) {
             if (response != null) {
+                console.log(response);
                 populateDocuments(response);
                 // $('#modal-Loader').modal('hide');
             } else {
@@ -194,7 +205,7 @@ function populateDocuments(response) {
                     data: null,
                     title: 'View',
                     class: 'edit',
-                    defaultContent: '<button type="button" class="btn btn-success"><i class="fas fa-edit"></i></button>',
+                    defaultContent: '<button type="button" class="btn btn-sm btn-success"><i class="fas fa-edit"></i></button>',
                     orderable: false
                 },
                 {
@@ -207,12 +218,24 @@ function populateDocuments(response) {
                     data: 'documentDescription', title: 'Document Description'
                 },
                 {
-                    data: 'documentCategoryId', title: 'Document Type',
+                    data: 'isExpiryRequired', title: 'Expiry Date?',
                     render: function (data) {
                         if (data == 1) {
-                            return 'Employee Documents';
+                            return 'Yes';
                         }
                         else {
+                            return 'No';
+                        }
+                    }
+                },
+                {
+                    data: 'documentCategoryID', title: 'Document Type',
+                    render: function (data) {
+                        console.log(data);
+                        if (data == '1') {
+                            return 'Employee Documents';
+                        }
+                        else if(data=='2') {
                             return 'Office Documents';
                         }
                     }
@@ -245,6 +268,10 @@ function ResetFields() {
         $('#txtDocumentName').css('border-color', '');
         $('#ddlDocumentType').css('border-color', '');
         $('#ddlStatus').css('border-color', '');
+        $('#ddlIsExpiry').css('border-color', '');
+        $("#ddlIsExpiry").val(-1);
+
+
 
         $("#btnUpdate").hide();
         $("#btnSubmit").show();
@@ -309,6 +336,15 @@ function isValidEntry() {
     else {
         $('#ddlStatus').css('border-color', '');
     }
+    if ($("#ddlIsExpiry").val() == -1) {
+        $('#ddlIsExpiry').css('border-color', 'red');
+        valid = false;
+        count = count + 1;
+        message += count + '. Is Expiry Required </br>';
+    }
+    else {
+        $('#ddlIsExpiry').css('border-color', '');
+    }
 
     if (!isValidDoc) {
         valid = false;
@@ -335,16 +371,16 @@ function isValidEntry() {
     return valid;
 }
 //Expiry date checkbox enabler
-$("#ddlDocumentType").change(function () {
-    try {
-        if ($("#ddlDocumentType option:selected").val() != 0 && $("#ddlDocumentType option:selected").val() == 1) {
-            $("#divExpiry").show();
-        }
-        else {
-            $("#divExpiry").hide();
-        }
-    }
-    catch (err) {
-        console.log(err);
-    }
-});
+//$("#ddlDocumentType").change(function () {
+//    try {
+//        if ($("#ddlDocumentType option:selected").val() != 0 && $("#ddlDocumentType option:selected").val() == 1) {
+//            $("#divExpiry").show();
+//        }
+//        else {
+//            $("#divExpiry").hide();
+//        }
+//    }
+//    catch (err) {
+//        console.log(err);
+//    }
+//});

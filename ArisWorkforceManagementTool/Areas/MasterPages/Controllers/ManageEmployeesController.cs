@@ -511,7 +511,7 @@ namespace ArisWorkforceManagementTool.Areas.MasterPages.Controllers
                    on d.DocumentId equals f.DocumentId into eGroup
                    where d.DocumentCategoryID == 1 && !(d.DocumentName.ToLower().Contains("passport")) &&!(d.DocumentName.ToLower().Contains("resident"))
                    from f in eGroup.DefaultIfEmpty()
-                   select new { FileName = f == null ? "No Files" : f.ActualFileName, FilePath = f == null ? "No Path" : f.FileLocation+f.FileName, DocumentName = d.DocumentName, DocumentId = d.DocumentId };
+                   select new { FileName = f == null ? "No Files" : f.ActualFileName, FilePath = f == null ? "No Path" : f.FileLocation+f.FileName, DocumentName = d.DocumentName, DocumentId = d.DocumentId, isExpiryRequired = d.IsExpiryRequired };
             switch (uploadType)
             {
                 case "PASSPORT":
@@ -520,7 +520,7 @@ namespace ArisWorkforceManagementTool.Areas.MasterPages.Controllers
                                on d.DocumentId equals f.DocumentId into eGroup
                                where d.DocumentCategoryID == 1 && d.DocumentName.ToLower().Contains("passport")
                                from f in eGroup.DefaultIfEmpty()
-                               select new { FileName = f == null ? "No Files" : f.ActualFileName, FilePath = f == null ? "No Path" : f.FileLocation + f.FileName, DocumentName = d.DocumentName, DocumentId = d.DocumentId };
+                               select new { FileName = f == null ? "No Files" : f.ActualFileName, FilePath = f == null ? "No Path" : f.FileLocation + f.FileName, DocumentName = d.DocumentName, DocumentId = d.DocumentId, isExpiryRequired = d.IsExpiryRequired };
 
                     break;
                 case "RESIDENT":
@@ -529,7 +529,7 @@ namespace ArisWorkforceManagementTool.Areas.MasterPages.Controllers
                                on d.DocumentId equals f.DocumentId into eGroup
                                where d.DocumentCategoryID == 1 && d.DocumentName.ToLower().Contains("resident")
                                from f in eGroup.DefaultIfEmpty()
-                               select new { FileName = f == null ? "No Files" : f.ActualFileName , FilePath = f == null ? "No Path" : f.FileLocation + f.FileName, DocumentName = d.DocumentName, DocumentId = d.DocumentId };
+                               select new { FileName = f == null ? "No Files" : f.ActualFileName , FilePath = f == null ? "No Path" : f.FileLocation + f.FileName, DocumentName = d.DocumentName, DocumentId = d.DocumentId, isExpiryRequired = d.IsExpiryRequired };
 
                     break;
                 
