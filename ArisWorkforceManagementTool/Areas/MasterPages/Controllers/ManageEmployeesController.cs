@@ -24,6 +24,7 @@ namespace ArisWorkforceManagementTool.Areas.MasterPages.Controllers
         UnitOfWork uploadUnitOfWork = new UnitOfWork();
         private readonly IWebHostEnvironment webHostEnvironment;
         private string imagePath = string.Empty;
+        public int UserTypeId { get; set; } 
         public ManageEmployeesController(IWebHostEnvironment hostEnvironment)
         {
             this.webHostEnvironment = hostEnvironment;
@@ -32,6 +33,7 @@ namespace ArisWorkforceManagementTool.Areas.MasterPages.Controllers
         // GET: ManageEmployees
         public ActionResult Index()
         {
+            UserTypeId = Convert.ToInt32(TempData.Peek("UserRole"));
             return View();
         }
 
@@ -250,7 +252,103 @@ namespace ArisWorkforceManagementTool.Areas.MasterPages.Controllers
             }
 
         }
+        [HttpPost]
+        public JsonResult ApproveRequest(EmployeeDetailsViewModel obj)
+        {
+            try
+            {
+                var empExistingData = objUnitOfWorkFetched.EmployeeDetailsRepository.Get(x => x.EmployeeNo == obj.EmployeeNo).ToList();
 
+                var employee = new EmployeeDetails()
+                {
+                    EmployeeNo = empExistingData[0].EmployeeNo,
+                    EmployeeName = empExistingData[0].EmployeeName,
+                    CompanyId = empExistingData[0].CompanyId,
+                    Nationality = empExistingData[0].Nationality,
+                    PassportNumber = empExistingData[0].PassportNumber,
+                    PassportExpiryDate = empExistingData[0].PassportExpiryDate,
+                    ResidentNumber = empExistingData[0].ResidentNumber,
+                    ResidentExpiryDate = empExistingData[0].ResidentExpiryDate,
+                    JoiningDate = empExistingData[0].JoiningDate,
+                    ContractStartDate = empExistingData[0].ContractStartDate,
+                    ContractEndDate = empExistingData[0].ContractEndDate,
+                    Gsm = empExistingData[0].Gsm,
+                    AccomodationDetails = empExistingData[0].AccomodationDetails,
+                    MaritalStatus = empExistingData[0].MaritalStatus,
+                    IDProfession = empExistingData[0].IDProfession,
+                    Designation = empExistingData[0].Designation,
+                    BankName = empExistingData[0].BankName,
+                    BankAccountNumber = empExistingData[0].BankAccountNumber,
+                    ApprovalStatus = 2,
+                    Remarks = obj.Remarks,
+                    IsActive = 1,
+                    ModifiedDate = DateTime.Now,
+                    ModifiedBy = Convert.ToInt32(TempData.Peek("UserId")),
+                    CreatedDate = empExistingData[0].CreatedDate,
+                    CreatedBy = empExistingData[0].CreatedBy,
+                    EmployeeReferenceNo = empExistingData[0].EmployeeReferenceNo,
+                    EmployeeImage =  empExistingData[0].EmployeeImage 
+                };
+                UnitOfWork.EmployeeDetailsRepository.Update(employee);
+                UnitOfWork.Save();
+                return Json(new { success = true, responseText = "Employee details Approved and Saved to the system successfully." });
+
+            }
+            catch (Exception ex)
+            {
+                return Json(new { success = false, responseText = "Something went wrong." });
+            }
+
+        }
+
+        [HttpPost]
+        public JsonResult SendBackRequest(EmployeeDetailsViewModel obj)
+        {
+            try
+            {
+                var empExistingData = objUnitOfWorkFetched.EmployeeDetailsRepository.Get(x => x.EmployeeNo == obj.EmployeeNo).ToList();
+
+                var employee = new EmployeeDetails()
+                {
+                    EmployeeNo = empExistingData[0].EmployeeNo,
+                    EmployeeName = empExistingData[0].EmployeeName,
+                    CompanyId = empExistingData[0].CompanyId,
+                    Nationality = empExistingData[0].Nationality,
+                    PassportNumber = empExistingData[0].PassportNumber,
+                    PassportExpiryDate = empExistingData[0].PassportExpiryDate,
+                    ResidentNumber = empExistingData[0].ResidentNumber,
+                    ResidentExpiryDate = empExistingData[0].ResidentExpiryDate,
+                    JoiningDate = empExistingData[0].JoiningDate,
+                    ContractStartDate = empExistingData[0].ContractStartDate,
+                    ContractEndDate = empExistingData[0].ContractEndDate,
+                    Gsm = empExistingData[0].Gsm,
+                    AccomodationDetails = empExistingData[0].AccomodationDetails,
+                    MaritalStatus = empExistingData[0].MaritalStatus,
+                    IDProfession = empExistingData[0].IDProfession,
+                    Designation = empExistingData[0].Designation,
+                    BankName = empExistingData[0].BankName,
+                    BankAccountNumber = empExistingData[0].BankAccountNumber,
+                    ApprovalStatus = 1,
+                    Remarks = obj.Remarks,
+                    IsActive = 1,
+                    ModifiedDate = DateTime.Now,
+                    ModifiedBy = Convert.ToInt32(TempData.Peek("UserId")),
+                    CreatedDate = empExistingData[0].CreatedDate,
+                    CreatedBy = empExistingData[0].CreatedBy,
+                    EmployeeReferenceNo = empExistingData[0].EmployeeReferenceNo,
+                    EmployeeImage = empExistingData[0].EmployeeImage
+                };
+                UnitOfWork.EmployeeDetailsRepository.Update(employee);
+                UnitOfWork.Save();
+                return Json(new { success = true, responseText = "Employee details has been sent back to admin." });
+
+            }
+            catch (Exception ex)
+            {
+                return Json(new { success = false, responseText = "Something went wrong." });
+            }
+
+        }
         [HttpGet]
         public JsonResult GetEmployeeReferenceNo()
         {

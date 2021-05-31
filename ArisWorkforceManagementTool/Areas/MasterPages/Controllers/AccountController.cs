@@ -14,7 +14,6 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace ArisWorkforceManagementTool.Areas.MasterPages.Controllers
 {
-
     public class AccountController : Controller
     {
         UnitOfWork unitOfWork = new UnitOfWork();
@@ -62,7 +61,7 @@ namespace ArisWorkforceManagementTool.Areas.MasterPages.Controllers
             }
             else
             {
-                ModelState.AddModelError("", "Invalid UserName or Password");
+                ModelState.AddModelError("CustomError", "Invalid UserName or Password");
                 return View();
             }
         }
@@ -71,14 +70,15 @@ namespace ArisWorkforceManagementTool.Areas.MasterPages.Controllers
         {
             await HttpContext.SignOutAsync(
                 CookieAuthenticationDefaults.AuthenticationScheme);
-            if (returnUrl != null)
-            {
-                return LocalRedirect(returnUrl);
-            }
-            else
-            {
-                return RedirectToAction("Login", "Account");
-            }
+            //if (returnUrl != null)
+            //{
+            //    return LocalRedirect(returnUrl);
+            //}
+            //else
+            //{
+            //    return RedirectToAction("Login", "Account");
+            //}
+            return RedirectToAction("Login", "Account");
         }
 
         protected void SetLayoutValues(Aris.Data.Entities.Users user)
@@ -88,7 +88,10 @@ namespace ArisWorkforceManagementTool.Areas.MasterPages.Controllers
                 TempData["LoggedInUser"] = user.FullName;
                 TempData["UserImage"] = user.UserImage;
                 TempData["UserId"] = user.UserId;
-               
+                TempData["UserRole"] = user.UserTypeID;
+                TempData["Visibility"] = user.UserTypeID==1?"none":"block";
+
+
             }
             catch (Exception ex)
             {

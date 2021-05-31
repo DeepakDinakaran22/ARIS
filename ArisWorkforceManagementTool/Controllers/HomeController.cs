@@ -78,19 +78,21 @@ namespace ArisWorkforceManagementTool.Controllers
         {
             try
             {
-                var employees = UnitOfWork.EmployeeDetailsRepository.Get(x => x.ApprovalStatus == 1);
-                var pendingReq = Convert.ToInt32(employees.Count());
-                return Json(new { pendingRequests = pendingReq });
+                var active = UnitOfWork.EmployeeDetailsRepository.Get(x => x.IsActive== 1 && x.ApprovalStatus==2);
+                var pending = UnitOfWork.EmployeeDetailsRepository.Get(x => x.IsActive == 1 && x.ApprovalStatus == 0);
+                var sendBack = UnitOfWork.EmployeeDetailsRepository.Get(x => x.IsActive == 1 && x.ApprovalStatus == 1);
+                var Modification = UnitOfWork.EmployeeDetailsRepository.Get(x => x.IsActive == 1 && x.ApprovalStatus == 3);
+                return Json(new { active = active.Count(),pending = pending.Count(),sendBack = sendBack.Count(),Modification=Modification.Count() });
             }
             catch (Exception ex)
             {
                 if (ex.Message == "Sequence contains no elements")
                 {
-                    return Json(new { pendingRequests = 0 });
+                    return Json(new { active  = 0, pending = 0, sendBack = 0, Modification =0 });
                 }
                 else
                 {
-                    return Json(new { pendingRequests = 0 });
+                    return Json(new { active = 0, pending = 0, sendBack = 0, Modification = 0 });
                 }
             }
         }

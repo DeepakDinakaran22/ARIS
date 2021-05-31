@@ -37,7 +37,6 @@
                     <!-- form start -->
 
                     <form role="form" id="companyForm">
-
                         <div class="card-body">
                             <div class="row">
                                 <div class="col-md-4">
@@ -45,12 +44,6 @@
                                         <label>Document</label>
                                         <select class="form-control select2bs4" id="ddlDocument" style="width: 100%;">
                                         </select>
-                                    </div>
-                                </div>
-                                <div class="col-md-4">
-                                    <div class="form-group">
-                                        <label for="txtOfficeDocDesc">Document Description</label>
-                                        <input type="text" name="OfficeDocDesc"  class="form-control" id="txtOfficeDocDesc" placeholder="Document Description">
                                     </div>
                                 </div>
                                 <div class="col-md-4">
@@ -63,6 +56,12 @@
                                     <div class="form-group">
                                         <label>Expiry Date</label>
                                         <input type="text" class="form-control date" id="dpDocExpiryDate">
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="form-group">
+                                        <label for="txtOfficeDocDesc">Document Description</label>
+                                        <input type="text" name="OfficeDocDesc" class="form-control" id="txtOfficeDocDesc" placeholder="Document Description">
                                     </div>
                                 </div>
                                 <div class="col-md-4">
@@ -114,7 +113,7 @@
                             <div class="row">
                                 <div class="col-sm-12">
                                     <div class="card-body table-responsive p-0">
-                                        <table class="table table-head-fixed text-nowrap" id="tblOfficeDoc"> </table>
+                                        <table class="table table-bordered table-head-fixed text-nowrap table-hover table-striped" id="tblOfficeDoc"> </table>
                                     </div>
                                 </div>
                             </div>
@@ -176,3 +175,8 @@
 @* ConfirmBox *@
 <script src="~/plugins/confirmBox/jquery-confirm.js" type="text/javascript"></script>
 
+<script>
+    $(document).ready(function () {
+
+    });
+</script>

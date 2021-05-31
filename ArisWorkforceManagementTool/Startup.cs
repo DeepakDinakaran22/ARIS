@@ -66,7 +66,7 @@ namespace ArisWorkforceManagementTool
                     pattern: "{controller=Home}/{action=Index}/{id?}");
                 endpoints.MapControllerRoute(
                     name: "Account",
-                    pattern: "{controller=Account}/{action=Login}/{id?}");
+                    pattern: "{area:exists}/{controller=Account}/{action=Login}/{id?}");
             });
         }
     }
