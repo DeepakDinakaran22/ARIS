@@ -156,6 +156,8 @@ namespace Aris.Data
                .HasColumnName("ModifiedDate");
                 entity.Property(e => e.IsExpiryRequired)
               .HasColumnName("IsExpiryRequired");
+                entity.Property(e => e.IsMandatory)
+            .HasColumnName("IsMandatory");
 
             });
             modelBuilder.Entity<EmployeeDetails>(entity =>
@@ -318,6 +320,8 @@ namespace Aris.Data
 
                 entity.Property(e => e.ActualFileName)
                 .HasColumnName("ActualFileName");
+                entity.Property(e => e.ExpiryDate)
+                .HasColumnName("ExpiryDate");
             });
             modelBuilder.Entity<OfficeDocsFileUploads>(entity => {
                 entity.HasKey(e => e.DocFileUploadId);

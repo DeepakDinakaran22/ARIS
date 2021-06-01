@@ -170,7 +170,7 @@ namespace ArisWorkforceManagementTool.Areas.MasterPages.Controllers
                     Remarks=obj.Remarks,
                     IsActive = 1,
                     CreatedDate = DateTime.Now,
-                    CreatedBy = 1,
+                    CreatedBy = Convert.ToInt32(TempData.Peek("UserId")),
                     EmployeeImage = obj.EmployeeImage
                 };
 
@@ -181,7 +181,7 @@ namespace ArisWorkforceManagementTool.Areas.MasterPages.Controllers
                 foreach (var item in uploadedData)
                 {
                     item.IsValid = 1;
-                    item.ModifiedBy = 1;
+                    item.ModifiedBy = Convert.ToInt32(TempData.Peek("UserId"));
                     item.ModifiedDate = DateTime.Now;
                     UnitOfWork.EmployeeFileUploadsRepository.Update(item);
                     UnitOfWork.Save();
@@ -235,7 +235,7 @@ namespace ArisWorkforceManagementTool.Areas.MasterPages.Controllers
                     Remarks = obj.Remarks,
                     IsActive = 1,
                     ModifiedDate = DateTime.Now,
-                    ModifiedBy = 1,
+                    ModifiedBy = Convert.ToInt32(TempData.Peek("UserId")),
                     CreatedDate = empExistingData[0].CreatedDate,
                     CreatedBy = empExistingData[0].CreatedBy,
                     EmployeeReferenceNo = obj.EmployeeReferenceNo,
@@ -243,6 +243,18 @@ namespace ArisWorkforceManagementTool.Areas.MasterPages.Controllers
                 };
                 UnitOfWork.EmployeeDetailsRepository.Update(employee);
                 UnitOfWork.Save();
+
+                var uploadedData = UnitOfWork.EmployeeFileUploadsRepository.Get(f => f.IsValid == 0 && f.EmployeeReferenceNo == obj.EmployeeReferenceNo);
+                foreach (var item in uploadedData)
+                {
+                    item.IsValid = 1;
+                    item.ModifiedBy = Convert.ToInt32(TempData.Peek("UserId"));
+                    item.ModifiedDate = DateTime.Now;
+                    UnitOfWork.EmployeeFileUploadsRepository.Update(item);
+                    UnitOfWork.Save();
+                }
+
+
                 return Json(new { success = true, responseText = "Employee details updated successfully." });
 
             }
@@ -396,6 +408,7 @@ namespace ArisWorkforceManagementTool.Areas.MasterPages.Controllers
             {
                 string filename = string.Empty;
                 string actualFileName = string.Empty;
+                
                 var uploadedData = UnitOfWork.EmployeeFileUploadsRepository.Get(f => f.IsValid == 1 && f.EmployeeReferenceNo == Convert.ToInt32(empNo.Replace("ARIS-", "")) && f.DocumentId ==docId);
                
                 if (uploadedData.Count() == 0)
@@ -414,7 +427,7 @@ namespace ArisWorkforceManagementTool.Areas.MasterPages.Controllers
                         {
                             EmployeeReferenceNo = Convert.ToInt32(empNo.Replace("ARIS-", "")),
                             IsActive = 1,
-                            CreatedBy = 1,
+                            CreatedBy = Convert.ToInt32(TempData.Peek("UserId")),
                             CreatedDate = DateTime.Now,
                             IsValid = 0,
                             DocumentId = docId,
@@ -452,6 +465,9 @@ namespace ArisWorkforceManagementTool.Areas.MasterPages.Controllers
                             item.ActualFileName = item.ActualFileName == actualFileName ? item.ActualFileName : actualFileName;
                             item.FileName = item.ActualFileName == filename ? item.FileName : filename;
                             item.FileLocation = GetFullDocumentPathWithoutFileName(empNo);
+                            item.ModifiedBy = item.CreatedBy;
+                            item.ModifiedDate = DateTime.Now;
+                              
                             UnitOfWork.EmployeeFileUploadsRepository.Update(item);
                             UnitOfWork.Save();
                         }
@@ -464,6 +480,94 @@ namespace ArisWorkforceManagementTool.Areas.MasterPages.Controllers
             catch(Exception ex)
             {
                 return Json(new { success = false, responseText = "Something went wrong. Please try again !"});
+
+            }
+        }
+        [HttpPost]
+        public async Task<IActionResult> UploadDocumentsRemaining(IList<IFormFile> files, string empNo, int docId, string expdate)
+        {
+            try
+            {
+                string filename = string.Empty;
+                string actualFileName = string.Empty;
+
+                var uploadedData = UnitOfWork.EmployeeFileUploadsRepository.Get(f => f.IsValid == 1 && f.EmployeeReferenceNo == Convert.ToInt32(empNo.Replace("ARIS-", "")) && f.DocumentId == docId);
+
+                if (uploadedData.Count() == 0)
+                {
+                    if(expdate== "No Expiry Required")
+                    {
+                        expdate = null;
+                    }
+                    foreach (IFormFile source in files)
+                    {
+                        filename = ContentDispositionHeaderValue.Parse(source.ContentDisposition).FileName.Trim('"');
+                        actualFileName = this.EnsureCorrectFilename(filename);
+                        filename = DateTime.Now.ToFileTime() + "_" + actualFileName;
+                        imagePath = filename;
+
+                        using (FileStream output = System.IO.File.Create(this.GetPathAndFilename(filename, empNo)))
+                            await source.CopyToAsync(output);
+
+                        var fileDetails = new EmployeeFileUploads()
+                        {
+                            EmployeeReferenceNo = Convert.ToInt32(empNo.Replace("ARIS-", "")),
+                            IsActive = 1,
+                            CreatedBy = Convert.ToInt32(TempData.Peek("UserId")),
+                            CreatedDate = DateTime.Now,
+                            IsValid = 0,
+                            DocumentId = docId,
+                            ActualFileName = actualFileName,
+                            FileName = filename,
+                            FileLocation = GetFullDocumentPathWithoutFileName(empNo),
+                            ExpiryDate = expdate==null?DateTime.MinValue:Convert.ToDateTime(expdate)
+
+                        };
+
+                        var uploadedDataGet = UnitOfWork.EmployeeFileUploadsRepository.Get(f => f.IsValid == 0 && f.DocumentId == docId);
+                        foreach (var item in uploadedDataGet)
+                        {
+                            UnitOfWork.EmployeeFileUploadsRepository.Delete(item.EmpFileUploadId);
+                            UnitOfWork.Save();
+                        }
+
+                        UnitOfWork.EmployeeFileUploadsRepository.Insert(fileDetails);
+                        UnitOfWork.Save();
+                    }
+                }
+                else
+                {
+                    foreach (IFormFile source in files)
+                    {
+                        filename = ContentDispositionHeaderValue.Parse(source.ContentDisposition).FileName.Trim('"');
+                        actualFileName = this.EnsureCorrectFilename(filename);
+                        filename = DateTime.Now.ToFileTime() + "_" + actualFileName;
+                        imagePath = filename;
+
+                        using (FileStream output = System.IO.File.Create(this.GetPathAndFilename(filename, empNo)))
+                            await source.CopyToAsync(output);
+
+                        foreach (var item in uploadedData)
+                        {
+                            item.ActualFileName = item.ActualFileName == actualFileName ? item.ActualFileName : actualFileName;
+                            item.FileName = item.ActualFileName == filename ? item.FileName : filename;
+                            item.FileLocation = GetFullDocumentPathWithoutFileName(empNo);
+                            item.ExpiryDate = item.ExpiryDate == Convert.ToDateTime(expdate) ? item.ExpiryDate : Convert.ToDateTime(expdate);
+                            item.ModifiedBy = item.CreatedBy;
+                            item.ModifiedDate = DateTime.Now;
+
+                            UnitOfWork.EmployeeFileUploadsRepository.Update(item);
+                            UnitOfWork.Save();
+                        }
+                    }
+
+                }
+
+                return Json(new { success = true, responseText = "Employee Image updated successfully.", profileImagePath = imagePath, imageFullPath = this.GetFullImagePathAndFilename(filename, empNo) });
+            }
+            catch (Exception ex)
+            {
+                return Json(new { success = false, responseText = "Something went wrong. Please try again !" });
 
             }
         }
@@ -511,7 +615,15 @@ namespace ArisWorkforceManagementTool.Areas.MasterPages.Controllers
                    on d.DocumentId equals f.DocumentId into eGroup
                    where d.DocumentCategoryID == 1 && !(d.DocumentName.ToLower().Contains("passport")) &&!(d.DocumentName.ToLower().Contains("resident"))
                    from f in eGroup.DefaultIfEmpty()
-                   select new { FileName = f == null ? "No Files" : f.ActualFileName, FilePath = f == null ? "No Path" : f.FileLocation+f.FileName, DocumentName = d.DocumentName, DocumentId = d.DocumentId, isExpiryRequired = d.IsExpiryRequired };
+                   select new { 
+                       FileName = f == null ? "No Files" : f.ActualFileName, 
+                       FilePath = f == null ? "No Path" : f.FileLocation+f.FileName, 
+                       DocumentName = d.DocumentName, 
+                       DocumentId = d.DocumentId, 
+                       isExpiryRequired = d.IsExpiryRequired,
+                       expiryDate = f==null?null : Convert.ToDateTime(f.ExpiryDate).ToString("yyyy-MM-dd") ,
+                       isMandatory = d==null?0:d.IsMandatory
+                   };
             switch (uploadType)
             {
                 case "PASSPORT":
@@ -520,7 +632,14 @@ namespace ArisWorkforceManagementTool.Areas.MasterPages.Controllers
                                on d.DocumentId equals f.DocumentId into eGroup
                                where d.DocumentCategoryID == 1 && d.DocumentName.ToLower().Contains("passport")
                                from f in eGroup.DefaultIfEmpty()
-                               select new { FileName = f == null ? "No Files" : f.ActualFileName, FilePath = f == null ? "No Path" : f.FileLocation + f.FileName, DocumentName = d.DocumentName, DocumentId = d.DocumentId, isExpiryRequired = d.IsExpiryRequired };
+                               select new { FileName = f == null ? "No Files" : f.ActualFileName, 
+                                   FilePath = f == null ? "No Path" : f.FileLocation + f.FileName, 
+                                   DocumentName = d.DocumentName, 
+                                   DocumentId = d.DocumentId, 
+                                   isExpiryRequired = d.IsExpiryRequired, 
+                                   expiryDate = f == null ? null : Convert.ToDateTime(f.ExpiryDate).ToString("yyyy-MM-dd"),
+                                   isMandatory = d == null ? 0 : d.IsMandatory
+                               };
 
                     break;
                 case "RESIDENT":
@@ -529,7 +648,14 @@ namespace ArisWorkforceManagementTool.Areas.MasterPages.Controllers
                                on d.DocumentId equals f.DocumentId into eGroup
                                where d.DocumentCategoryID == 1 && d.DocumentName.ToLower().Contains("resident")
                                from f in eGroup.DefaultIfEmpty()
-                               select new { FileName = f == null ? "No Files" : f.ActualFileName , FilePath = f == null ? "No Path" : f.FileLocation + f.FileName, DocumentName = d.DocumentName, DocumentId = d.DocumentId, isExpiryRequired = d.IsExpiryRequired };
+                               select new { FileName = f == null ? "No Files" : f.ActualFileName , 
+                                   FilePath = f == null ? "No Path" : f.FileLocation + f.FileName, 
+                                   DocumentName = d.DocumentName, 
+                                   DocumentId = d.DocumentId, 
+                                   isExpiryRequired = d.IsExpiryRequired, 
+                                   expiryDate = f == null ? null : Convert.ToDateTime(f.ExpiryDate).ToString("yyyy-MM-dd"),
+                                   isMandatory = d == null ? 0 : d.IsMandatory
+                               };
 
                     break;
                 

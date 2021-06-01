@@ -38,6 +38,12 @@ $(document).ready(function () {
         else {
             $("#ddlIsExpiry").val(0);
         }
+        if (table.row(this).data()['isMandatory'] == 1) {
+            $("#ddlMandatory").val(1);
+        }
+        else {
+            $("#ddlMandatory").val(0);
+        }
         documentID = table.row(this).data()['documentId'];
 
         $("#btnUpdate").show();
@@ -99,12 +105,15 @@ function SubmitRequest() {
     var docType = $("#ddlDocumentType option:selected").val();
     var isActive = $("#ddlStatus option:selected").val();
     var IsExpiryRequired = $("#ddlIsExpiry option:selected").val();
+    var isMandatory = $("#ddlMandatory option:selected").val();
+
     var data = {
         DocumentName: docName,
         DocumentDescription: docDesc,
         DocumentCategoryID: docType,
         IsActive: isActive,
-        IsExpiryRequired: IsExpiryRequired
+        IsExpiryRequired: IsExpiryRequired,
+        IsMandatory: isMandatory
     };
 
 
@@ -129,6 +138,8 @@ function UpdateRequest() {
         var docType = $("#ddlDocumentType option:selected").val();
         var isActive = $("#ddlStatus option:selected").val();
         var IsExpiryRequired = $("#ddlIsExpiry option:selected").val();
+        var isMandatory = $("#ddlMandatory option:selected").val();
+
 
         var data = {
             DocumentName: docName,
@@ -136,7 +147,9 @@ function UpdateRequest() {
             DocumentCategoryID: docType,
             IsActive: isActive,
             DocumentId: documentID,
-            IsExpiryRequired: IsExpiryRequired
+            IsExpiryRequired: IsExpiryRequired,
+            IsMandatory: isMandatory
+
         };
 
 
@@ -167,7 +180,6 @@ function GetAllDocuments() {
         },
         success: function (response) {
             if (response != null) {
-                console.log(response);
                 populateDocuments(response);
                 // $('#modal-Loader').modal('hide');
             } else {
@@ -195,7 +207,9 @@ function populateDocuments(response) {
             bSort: true,
             bPaginate: true,
             data: response,
-            scrollY: false,
+            //scrollY: true,
+            ScrollX: false,//"100%",
+            //scrollCollapse: true,
             select: true,
             pageLength: 10,
             destroy: true,
@@ -229,9 +243,19 @@ function populateDocuments(response) {
                     }
                 },
                 {
+                    data: 'isMandatory', title: 'Mandatory?',
+                    render: function (data) {
+                        if (data == 1) {
+                            return 'Yes';
+                        }
+                        else {
+                            return 'No';
+                        }
+                    }
+                },
+                {
                     data: 'documentCategoryID', title: 'Document Type',
                     render: function (data) {
-                        console.log(data);
                         if (data == '1') {
                             return 'Employee Documents';
                         }
@@ -270,6 +294,8 @@ function ResetFields() {
         $('#ddlStatus').css('border-color', '');
         $('#ddlIsExpiry').css('border-color', '');
         $("#ddlIsExpiry").val(-1);
+        $('#ddlMandatory').css('border-color', '');
+        $("#ddlMandatory").val(-1);
 
 
 
@@ -345,6 +371,15 @@ function isValidEntry() {
     else {
         $('#ddlIsExpiry').css('border-color', '');
     }
+    if ($("#ddlMandatory").val() == -1) {
+        $('#ddlMandatory').css('border-color', 'red');
+        valid = false;
+        count = count + 1;
+        message += count + '. Is Mandatory </br>';
+    }
+    else {
+        $('#ddlMandatory').css('border-color', '');
+    }
 
     if (!isValidDoc) {
         valid = false;
@@ -370,17 +405,3 @@ function isValidEntry() {
     }
     return valid;
 }
-//Expiry date checkbox enabler
-//$("#ddlDocumentType").change(function () {
-//    try {
-//        if ($("#ddlDocumentType option:selected").val() != 0 && $("#ddlDocumentType option:selected").val() == 1) {
-//            $("#divExpiry").show();
-//        }
-//        else {
-//            $("#divExpiry").hide();
-//        }
-//    }
-//    catch (err) {
-//        console.log(err);
-//    }
-//});
