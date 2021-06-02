@@ -3,6 +3,7 @@ var table_passport;
 var table_resident;
 var table_remaining;
 var userRole;
+var loggedInUserId;
 var row;
 var table;
 var empNO;
@@ -15,6 +16,8 @@ $(document).ready(function () {
     today = moment(new Date()).format('YYYY-MM-DD');
     showLoader(true);
     userRole = $("#hdnUserRole").val();
+    loggedInUserId = $("#hdnUserId").val();
+
     
 
     $("#dpContractEndDate").datepicker({ minDate: 0 }); //maxDate: "+1M +15D" });
@@ -535,7 +538,7 @@ function UpdateRequest() {
 }
 ///code to remove unwanted files from table
 function deleteInvalidUploads() {
-    var userId = 1; //need to automate it
+    var userId = loggedInUserId; 
     var empNo = $("#txtEmployeeNumber").val().trim();
     $.ajax({
         type: "GET",
@@ -1473,3 +1476,113 @@ function CheckMandatoryUploads() {
 function DisableExpiry() {
     $(".expiry").attr('disabled', true);
 }
+
+//Keyup validations
+$("#txtEmployeeName").keyup(function () {
+    if ($("#txtEmployeeName").val().trim() != '') {
+        $('#txtEmployeeName').css('border-color', '');
+
+    }
+});
+$("#ddlCompany").change(function () {
+    if ($("#ddlCompany option:selected").val() != 0) {
+        $('#ddlCompany').css('border-color', '');
+
+    }
+});
+$("#ddlCountry").change(function () {
+    if ($("#ddlCountry option:selected").val() != 0) {
+        $('#ddlCountry').css('border-color', '');
+
+    }
+});
+$("#txtPassportNumber").keyup(function () {
+    if ($("#txtPassportNumber").val().trim() != '') {
+        $('#txtPassportNumber').css('border-color', '');
+
+    }
+});
+$("#dpPassportExpiryDate").change(function () {
+    if ($("#dpPassportExpiryDate").val().trim() != '') {
+        $('#dpPassportExpiryDate').css('border-color', '');
+
+    }
+});
+$("#txtResidentNumber").keyup(function () {
+    if ($("#txtResidentNumber").val().trim() != '') {
+        $('#txtResidentNumber').css('border-color', '');
+
+    }
+});
+$("#dpResidentExpiryDate").change(function () {
+    if ($("#dpResidentExpiryDate").val().trim() != '') {
+        $('#dpResidentExpiryDate').css('border-color', '');
+
+    }
+});
+$("#dpJoiningDate").change(function () {
+    if ($("#dpJoiningDate").val().trim() != '') {
+        $('#dpJoiningDate').css('border-color', '');
+
+    }
+});
+$("#dpContractStartDate").change(function () {
+    if ($("#dpContractStartDate").val().trim() != '') {
+        $('#dpContractStartDate').css('border-color', '');
+
+    }
+});
+$("#dpContractEndDate").change(function () {
+    if ($("#dpContractEndDate").val().trim() != '') {
+        $('#dpContractEndDate').css('border-color', '');
+
+    }
+});
+$("#txtGsm").keyup(function () {
+    if ($("#txtGsm").val().trim() != '') {
+        $('#txtGsm').css('border-color', '');
+
+    }
+});
+$("#txtAccomodationDetails").keyup(function () {
+    if ($("#txtAccomodationDetails").val().trim() != '') {
+        $('#txtAccomodationDetails').css('border-color', '');
+
+    }
+});
+$("#txtIdProfession").keyup(function () {
+    if ($("#txtIdProfession").val().trim() != '') {
+        $('#txtIdProfession').css('border-color', '');
+
+    }
+});
+$("#txtDesignation").keyup(function () {
+    if ($("#txtDesignation").val().trim() != '') {
+        $('#txtDesignation').css('border-color', '');
+
+    }
+});
+$("#txtBankName").keyup(function () {
+    if ($("#txtBankName").val().trim() != '') {
+        $('#txtBankName').css('border-color', '');
+
+    }
+});
+$("#txtAccountNumber").keyup(function () {
+    if ($("#txtAccountNumber").val().trim() != '') {
+        $('#txtAccountNumber').css('border-color', '');
+
+    }
+});
+$("#txtConfirmAccountNumber").keyup(function () {
+    if ($("#txtConfirmAccountNumber").val().trim() != '') {
+        $('#txtConfirmAccountNumber').css('border-color', '');
+
+    }
+});
+$("#txtRemarks").keyup(function () {
+    if ($("#txtRemarks").val().trim() != '') {
+        $('#txtRemarks').css('border-color', '');
+
+    }
+});

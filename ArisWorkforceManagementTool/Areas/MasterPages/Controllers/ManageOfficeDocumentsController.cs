@@ -110,12 +110,25 @@ namespace ArisWorkforceManagementTool.Areas.MasterPages.Controllers
                     DocIssueDate = obj.DocIssueDate,
                     DocExpiryDate = obj.DocExpiryDate,
                     IsActive = obj.IsActive,
-                    CreatedBy = 1,
+                    CreatedBy = Convert.ToInt32(TempData.Peek("UserId")),
                     CreatedDate = DateTime.Now
                 };
 
                 UnitOfWork.OfficeDocDetailsRepository.Insert(officeDoc);
                 UnitOfWork.Save();
+
+
+                var uploadedData = UnitOfWork.OfficeDocsFileUploadsRepository.Get(f => f.IsValid == 0 && f.DocumentId==obj.DocumentId);
+                foreach (var item in uploadedData)
+                {
+                    item.IsValid = 1;
+                    item.ModifiedBy = Convert.ToInt32(TempData.Peek("UserId"));
+                    item.ModifiedDate = DateTime.Now;
+                    UnitOfWork.OfficeDocsFileUploadsRepository.Update(item);
+                    UnitOfWork.Save();
+                }
+
+
                 return Json(new { success = true, responseText = "Document added successfully." });
             }
             catch
@@ -139,7 +152,7 @@ namespace ArisWorkforceManagementTool.Areas.MasterPages.Controllers
                     IsActive = obj.IsActive,
                     CreatedBy = fetchedDocs[0].CreatedBy,
                     CreatedDate = fetchedDocs[0].CreatedDate,
-                    ModifiedBy = 1,
+                    ModifiedBy = Convert.ToInt32(TempData.Peek("UserId")),
                     ModifiedDate = DateTime.Now
                 };
 
@@ -173,9 +186,9 @@ namespace ArisWorkforceManagementTool.Areas.MasterPages.Controllers
                         {
                             DocumentId = Convert.ToInt32(docId),
                             IsActive = 1,
-                            CreatedBy = 1,
+                            CreatedBy = Convert.ToInt32(TempData.Peek("UserId")),
                             CreatedDate = DateTime.Now,
-                            IsValid = 1,
+                            IsValid = 0,
                             ActualFileName = actualFileName,
                             FileName = filename,
                             FileLocation = GetFullDocumentPathWithoutFileName()
@@ -211,6 +224,54 @@ namespace ArisWorkforceManagementTool.Areas.MasterPages.Controllers
         private string GetFullImagePathAndFilename(string filename)
         {
             return "\\Uploads\\EmployeeUploads\\" + filename;
+        }
+        [HttpGet]
+        public JsonResult DeleteInValidDocUploads(int userID)
+        {
+            try
+            {
+
+                var uploadedData = UnitOfWork.OfficeDocsFileUploadsRepository.Get(f => f.IsValid == 0 && f.CreatedBy == userID );
+                foreach (var item in uploadedData)
+                {
+                    UnitOfWork.OfficeDocsFileUploadsRepository.Delete(item.DocFileUploadId);
+                    UnitOfWork.Save();
+                }
+
+                return Json(new { success = true, responseText = "success" });
+
+
+            }
+            catch (Exception ex)
+            {
+                return Json(new { success = false, responseText = "Something went wrong. Please try again !" });
+
+            }
+        }
+
+        [HttpGet]
+        public JsonResult GetAllUploads(int docId)
+        {
+
+            List<DocumentType> documents = UnitOfWork.DocumentTypeRepository.Get(x => x.IsActive == 1).ToList();
+            List<OfficeDocsFileUploads> files = UnitOfWork.OfficeDocsFileUploadsRepository.Get(x => x.IsActive == 1 && x.DocumentId == docId).ToList();
+            var data = from d in documents
+                       join f in files
+                       on d.DocumentId equals f.DocumentId into eGroup
+                       where d.DocumentCategoryID == 2 && d.DocumentId==docId
+                       from f in eGroup.DefaultIfEmpty()
+                       select new
+                       {
+                           FileName = f == null ? "No Files" : f.ActualFileName,
+                           FilePath = f == null ? "No Path" : f.FileLocation + f.FileName,
+                           DocumentName = d.DocumentName,
+                           DocumentId = d.DocumentId,
+                           isExpiryRequired = d.IsExpiryRequired,
+                           isMandatory = d == null ? 0 : d.IsMandatory
+                       };
+           
+            return Json(data);
+
         }
     }
 }

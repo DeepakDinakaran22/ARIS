@@ -385,3 +385,35 @@ function MessageBox(title,icon,content,type,btnClass,btnText) {
         }
     });
 }
+
+
+$("#txtUserName").keyup(function () {
+    if ($("#txtUserName").val() != '') {
+        $('#txtUserName').css('border-color', '');
+
+    }
+});
+$("#txtUserFullName").keyup(function () {
+    if ($("#txtUserFullName").val() != '') {
+        $('#txtUserFullName').css('border-color', '');
+
+    }
+});
+$("#txtUserEmail").keyup(function () {
+    if ($("#txtUserEmail").val() != '') {
+        $('#txtUserEmail').css('border-color', '');
+
+    }
+});
+$("#ddlUserType").change(function () {
+    if ($("#ddlUserType option:selected").val() != 0) {
+        $('#ddlUserType').css('border-color', '');
+
+    }
+});
+$("#ddlStatus").change(function () {
+    if ($("#ddlStatus option:selected").val() != -1) {
+        $('#ddlStatus').css('border-color', '');
+
+    }
+});

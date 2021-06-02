@@ -672,26 +672,17 @@ namespace ArisWorkforceManagementTool.Areas.MasterPages.Controllers
         {
             try
             {
-                string filename = string.Empty;
-                string actualFileName = string.Empty;
-
-               
-
                     var uploadedData = UnitOfWork.EmployeeFileUploadsRepository.Get(f => f.IsValid == 0 && f.CreatedBy == userID && f.EmployeeReferenceNo== Convert.ToInt32(empNo.Replace("ARIS-", "")));
                     foreach (var item in uploadedData)
                     {
                         UnitOfWork.EmployeeFileUploadsRepository.Delete(item.EmpFileUploadId);
                         UnitOfWork.Save();
                     }
-
                 return Json(new { success = true, responseText = "success" });
-
-
             }
             catch (Exception ex)
             {
                 return Json(new { success = false, responseText = "Something went wrong. Please try again !" });
-
             }
         }
         #endregion

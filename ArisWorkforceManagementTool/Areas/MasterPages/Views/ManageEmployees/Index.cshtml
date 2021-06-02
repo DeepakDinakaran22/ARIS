@@ -10,8 +10,6 @@
 <link rel="stylesheet" href="~/plugins/confirmBox/jquery-confirm.css" />
 
 <style>
-
-   
 </style>
 <div class="content-header">
     <div class="container-fluid">
@@ -98,7 +96,7 @@
                                 <div class="col-md-4">
                                     <div class="form-group">
                                         <label>Passport Expiry Date</label>
-                                        <input type="text" class="form-control date" id="dpPassportExpiryDate">
+                                        <input type="text" class="form-control date" id="dpPassportExpiryDate" placeholder="Passport Expiry Date">
                                     </div>
                                 </div>
                                 <div class="col-md-2">
@@ -119,7 +117,7 @@
                                 <div class="col-md-4">
                                     <div class="form-group">
                                         <label>Resident Expiry Date</label>
-                                        <input type="text" class="form-control date" id="dpResidentExpiryDate">
+                                        <input type="text" class="form-control date" id="dpResidentExpiryDate" placeholder="Resident Expiry Date">
                                     </div>
                                 </div>
                                 <div class="col-md-2">
@@ -134,21 +132,21 @@
                                 <div class="col-md-6">
                                     <div class="form-group">
                                         <label>Joining Date</label>
-                                        <input type="text" class="form-control date" id="dpJoiningDate">
+                                        <input type="text" class="form-control date" id="dpJoiningDate" placeholder="Joining Date">
 
                                     </div>
                                 </div>
                                 <div class="col-md-6">
                                     <div class="form-group">
                                         <label>Contract Start Date</label>
-                                        <input type="text" class="form-control date" id="dpContractStartDate">
+                                        <input type="text" class="form-control date" id="dpContractStartDate" placeholder="Contract Start Date">
 
                                     </div>
                                 </div>
                                 <div class="col-md-6">
                                     <div class="form-group">
                                         <label>Contract End Date</label>
-                                        <input type="text" class="form-control date" id="dpContractEndDate">
+                                        <input type="text" class="form-control date" id="dpContractEndDate" placeholder="Contract End Date">
                                     </div>
                                 </div>
                                 <div class="col-md-6">
@@ -412,8 +410,8 @@
 
 <!--<div class="modal fade " id="modal-remaining" role="dialog">
     <div class="modal-dialog">-->
-        <!-- Modal content-->
-        <!--<div class="modal-content alert-light " style="width:850px;align-content:center">
+<!-- Modal content-->
+<!--<div class="modal-content alert-light " style="width:850px;align-content:center">
             <div class="modal-header" style="background-color:darkseagreen">
                 <h4 class="modal-title left">Upload Files</h4>
                 <button type="button" class="close" style="color:darkred" data-dismiss="modal" aria-label="Close">
@@ -434,14 +432,13 @@
         </div>
     </div>
 </div>-->
-
-
-
 <!-- /.modal -->
 @* loader *@
 <div class="overlay"></div>
 @* hidden Variables *@
 <input type="hidden" id="hdnUserRole" value="@TempData.Peek("UserRole")" />
+<input type="hidden" id="hdnUserId" value="@TempData.Peek("UserId")" />
+
 
 
 

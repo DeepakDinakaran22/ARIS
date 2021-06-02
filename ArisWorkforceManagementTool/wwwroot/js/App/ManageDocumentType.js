@@ -405,3 +405,34 @@ function isValidEntry() {
     }
     return valid;
 }
+
+$("#txtDocumentName").keyup(function () {
+    if ($("#txtDocumentName").val() != '') {
+        $('#txtDocumentName').css('border-color', '');
+
+    }
+});
+$("#ddlDocumentType").change(function () {
+    if ($("#ddlDocumentType option:selected").val() != 0) {
+        $('#ddlDocumentType').css('border-color', '');
+
+    }
+});
+$("#ddlStatus").change(function () {
+    if ($("#ddlStatus option:selected").val() != -1) {
+        $('#ddlStatus').css('border-color', '');
+
+    }
+});
+$("#ddlIsExpiry").change(function () {
+    if ($("#ddlIsExpiry option:selected").val() != -1) {
+        $('#ddlIsExpiry').css('border-color', '');
+
+    }
+});
+$("#ddlMandatory").change(function () {
+    if ($("#ddlMandatory option:selected").val() != -1) {
+        $('#ddlMandatory').css('border-color', '');
+
+    }
+});
