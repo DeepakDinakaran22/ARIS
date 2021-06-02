@@ -14,6 +14,8 @@ using Hangfire.SqlServer;
 using Aris.Webjob.Extensions;
 using Aris.Data;
 using Microsoft.EntityFrameworkCore;
+using Aris.Common;
+using Aris.Common.Interfaces;
 
 namespace Aris.Webjob
 {
@@ -22,6 +24,7 @@ namespace Aris.Webjob
         public Startup(IConfiguration configuration)
         {
             Configuration = configuration;
+            ConnectionService.Set(configuration);
         }
 
         public IConfiguration Configuration { get; }
@@ -41,6 +44,9 @@ namespace Aris.Webjob
             UseRecommendedIsolationLevel = true,
             DisableGlobalLocks = true
         }));
+            services.AddScoped(typeof(IExpiryRemainderServiceProvider), typeof(ExpiryRemainderServiceProvider));
+            services.AddScoped(typeof(IEmailService), typeof(EmailService));
+            services.Configure<AppSettings>(Configuration.GetSection("SmtpSettings"));
             services.AddHangfireServer();
             services.AddControllers();
             services.AddDbContext<ArisContext>(options => options.UseSqlServer(Configuration.GetConnectionString("ArisConnection")));

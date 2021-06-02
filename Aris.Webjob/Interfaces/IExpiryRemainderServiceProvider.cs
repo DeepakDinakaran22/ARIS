@@ -2,7 +2,7 @@
 
 namespace Aris.Webjob
 {
-    public interface IRemainderServiceProvider
+    public interface IExpiryRemainderServiceProvider
     {
         void RemainderWorker(IJobCancellationToken jobCancellationToken);
     }

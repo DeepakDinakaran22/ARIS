@@ -13,11 +13,17 @@
   <PackageReference Include="Hangfire.Core" Version="1.7.22" />
   <PackageReference Include="Hangfire.SqlServer" Version="1.7.22" />
   <PackageReference Include="Hangfire.AspNetCore" Version="1.7.22" />
+  <PackageReference Include="MailKit" Version="2.12.0" />
 </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\Aris.Common\Aris.Common.csproj" />
     <ProjectReference Include="..\Aris.Data\Aris.Data.csproj" />
     <ProjectReference Include="..\Aris.Models\Aris.Models.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Helpers\" />
   </ItemGroup>
 
 </Project>
