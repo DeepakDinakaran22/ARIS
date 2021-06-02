@@ -1,9 +1,16 @@
 ﻿var table;
 var officeDocId;
-
+var userRole;
+var loggedInUserId;
+var tbl_docUpload;
+var counter = 1000;
+var isValidName = false;
 $(document).ready(function () {
 
     showLoader(true);
+    userRole = $("#hdnUserRole").val();
+    loggedInUserId = $("#hdnUserId").val();
+    $("#divUploadFile").hide();
     $("#dpDocIssueDate").datepicker({ minDate: 0 }); //maxDate: "+1M +15D" });
     $("#dpDocExpiryDate").datepicker({ minDate: 0 });
     $("#btnUpdate").hide();
@@ -17,18 +24,24 @@ $(document).ready(function () {
     $("#ddlDocument").change(function () {
         if ($("#ddlDocument option:selected").val()==0) {
             $("#files").attr("disabled", "disabled");
+            $("#divUploadFile").hide();
         }
         else {
+            GetAllUploads();
             $("#files").attr("disabled", false);
             CheckNameExists();
-
+            $("#divUploadFile").show();
         }
 
     });
+    deleteInvalidDocUploads();// delete invalidUploads
    
 });
 $('#tblOfficeDoc').on('click', 'td.edit', function(e) {
     e.preventDefault();
+    ClearFields();
+    $("#divUploadFile").show();
+
     $("#ddlDocument").val(table.row(this).data()['documentId']).attr("disabled", "disabled");;
     $("#txtOfficeDocDesc").val(table.row(this).data()['officeDocDesc']).attr("disabled", false);
     $("#dpDocIssueDate").datepicker("setDate", $.datepicker.parseDate("yy-mm-dd", table.row(this).data()['docIssueDate'].replace('T00:00:00', '')));
@@ -42,35 +55,38 @@ $('#tblOfficeDoc').on('click', 'td.edit', function(e) {
     officeDocId = table.row(this).data()['officeDocId'];
     $("#btnUpdate").show();
     $("#btnSubmit").hide();
+    GetAllUploads();
+
     $(window).scrollTop(0);
 
 });
-function uploadFiles(inputId) {
-    var input = document.getElementById(inputId);
-    var files = input.files;
-    var formData = new FormData();
-    var empNo = $("#txtEmployeeNumber").val().trim();
-    for (var i = 0; i != files.length; i++) {
-        formData.append("files", files[i]);
-    }
-    formData.append("empNo", empNo);
-    $.ajax(
-        {
-            url: "/MasterPages/ManageEmployees/UploadImage",
-            //data: formData,
-            data:  formData ,
-            processData: false,
-            contentType: false,
-            type: "POST",
-            async: false,
-            success: function (data) {
-                $("#hdnEmployeePicturePath").val(data.profileImagePath);
-                $("#imgUser").attr('src', data.imageFullPath);
+//
+//function uploadFiles(inputId) {
+//    var input = document.getElementById(inputId);
+//    var files = input.files;
+//    var formData = new FormData();
+//    var empNo = $("#txtEmployeeNumber").val().trim();
+//    for (var i = 0; i != files.length; i++) {
+//        formData.append("files", files[i]);
+//    }
+//    formData.append("empNo", empNo);
+//    $.ajax(
+//        {
+//            url: "/MasterPages/ManageEmployees/UploadImage",
+//            //data: formData,
+//            data:  formData ,
+//            processData: false,
+//            contentType: false,
+//            type: "POST",
+//            async: false,
+//            success: function (data) {
+//                $("#hdnEmployeePicturePath").val(data.profileImagePath);
+//                $("#imgUser").attr('src', data.imageFullPath);
                
-            }
-        }
-    );
-}
+//            }
+//        }
+//    );
+//}
 function populateOfficeDocs(response) {
     var docId = 0;
     table = $("#tblOfficeDoc").DataTable(
@@ -174,7 +190,7 @@ function SubmitRequest() {
 }
 function UpdateRequest() {
     var isValid = true;
-    var isValid = true;
+    
     var documentId = $("#ddlDocument option:selected").val();
     var officeDocDesc = $("#txtOfficeDocDesc").val().trim();
     var docIssueDate = $("#dpDocIssueDate").val() != '' ? $("#dpDocIssueDate").datepicker('getDate').toLocaleString() : '';
@@ -189,7 +205,7 @@ function UpdateRequest() {
         DocExpiryDate: docExpiryDate,
         IsActive: isActive,
     };
-
+    isValidName = true;
     isValid = isValidEntry();
     if (isValid) {
         showLoader(true);
@@ -270,9 +286,12 @@ function CheckNameExists() {
                 if (response != null) {
                     if (response.value == true) {
                         $('#ddlDocument').css('border-color', 'red');
-                        showAlert({ title: "Warning!", message: 'Document name exists!', type: "WARNING" });
+                       // showAlert({ title: "Warning!", message: 'Document name exists!', type: "WARNING" });
+                        MessageBox('Exists!', 'fa fa-file', 'Document is already added!', 'orange', 'btn btn-warning', 'Okey');
+                        isValidName = false;
                     }
                     else {
+                        isValidName = true;
                         $('#ddlDocument').css('border-color', '');
 
                     }
@@ -333,10 +352,22 @@ function getOfficeDocs() {
 }
 function isValidEntry() {
     var valid = true;
-
+    var message = '';
+    var count = 0;
+    if (!isValidName) {
+        $('#ddlDocument').css('border-color', 'red');
+        valid = false;
+        count = count + 1;
+        message += count + '. Document Name </br>';
+    }
+    else {
+        $('#ddlDocument').css('border-color', '');
+    }
     if ($("#ddlDocument").val() == 0) {
         $('#ddlDocument').css('border-color', 'red');
         valid = false;
+        count = count + 1;
+        message += count + '. Document Name </br>';
     }
     else {
         $('#ddlDocument').css('border-color', '');
@@ -345,6 +376,8 @@ function isValidEntry() {
     if ($("#dpDocIssueDate").val() == '') {
         $('#dpDocIssueDate').css('border-color', 'red');
         valid = false;
+        count = count + 1;
+        message += count + '. Issue Date </br>';
     }
     else {
         $('#dpDocIssueDate').css('border-color', '');
@@ -352,6 +385,8 @@ function isValidEntry() {
     if ($("#dpDocExpiryDate").val() == '') {
         $('#dpDocExpiryDate').css('border-color', 'red');
         valid = false;
+        count = count + 1;
+        message += count + '. Expiry Date </br>';
     }
     else {
         $('#dpDocExpiryDate').css('border-color', '');
@@ -359,25 +394,63 @@ function isValidEntry() {
     if ($("#ddlStatus").val() == -1) {
         $('#ddlStatus').css('border-color', 'red');
         isValid = false;
+        count = count + 1;
+        message += count + '. Status </br>';
     }
     else {
         $('#ddlStatus').css('border-color', '');
 
     }
 
+    if (!CheckMandatoryUploads()) {
+        valid = false;
+        count = count + 1;
+        message += count + '. Upload All Mandatory Documents  </br>';
+        $("#btnUploadDocs").css('border-color', 'red');
+    }
+    else {
+        $("#btnUploadDocs").css('border-color', '');
 
+    }
+    
+    var idate = new Date($("#dpDocIssueDate").val());
+    var edate = new Date($("#dpDocExpiryDate").val());
+    if (idate > edate) {
+        valid = false;
+        count = count + 1;
+        message += count+ '. Expiry date should not be older that issue date';
+    }
+    
+
+    if (message != '') {
+        MessageBox('Required!', 'fa fa-warning', message, 'red', 'btn btn-danger', 'Okey');
+        valid = false;
+        message = '';
+        count = 0;
+    }
+    else {
+        valid = true;
+    }
     return valid;
 }
 function ClearFields() {
     try {
         $("#txtOfficeDocDesc").val('');
-        $("#ddlDocument").val(0);
+        $("#ddlDocument").val(0).attr('disabled',false);
         $("#ddlStatus").val(-1);
-        $("#dpDocIssueDate").attr("disabled", false);
-        $('#dpDocExpiryDate').css('border-color', '');
+        $("#dpDocIssueDate").val('').attr("disabled", false);
+        $('#dpDocExpiryDate').val('').css('border-color', '');
         $("#ddlDocument").attr("disabled", false);
         $("#hdnUploadedFileName").val('');
         $("#files").val('');
+        $('#ddlDocument').css('border-color', '');
+        $('#dpDocIssueDate').css('border-color', '');
+        $('#dpDocExpiryDate').css('border-color', '');
+        $('#ddlStatus').css('border-color', '');
+        $("#btnUploadDocs").css('border-color', '');
+        $("#divUploadFile").hide();
+
+
         
     }
     catch (err) {
@@ -407,11 +480,230 @@ function uploadDocuments(inputId) {
             type: "POST",
             async: false,
             success: function (data) {
+                GetAllUploads();
+
                 $("#hdnUploadedFileName").val(data.docFileName);
-                console.log($("#hdnUploadedFileName").val());
+                
             }
         }
     );
 }
+function MessageBox(title, icon, content, type, btnClass, btnText) {
+    $.confirm({
+        title: title,
+        icon: icon,
+        content: content,
+        type: type,
+        //  theme:'dark',
+        buttons: {
+            omg: {
+                text: btnText,
+                btnClass: btnClass,
+            },
+        }
+    });
+}
+
+function deleteInvalidDocUploads() {
+    var userId = loggedInUserId; 
+    $.ajax({
+        type: "GET",
+        url: "/MasterPages/ManageOfficeDocuments/DeleteInValidDocUploads",
+        contentType: "application/json; charset=utf-8",
+        data: { userId: userId },
+        dataType: "json",
+        success: function (response) {
+            if (response != null) {
+
+                //GetAllUploads("PASSPORT", empNo.replace('ARIS-', ''));
+                //GetAllUploads("RESIDENT", empNo.replace('ARIS-', ''));
+                //GetAllUploads("REMAINING", empNo.replace('ARIS-', ''));
+
+
+            } else {
+                // alert("Something went wrong");
+            }
+        },
+        failure: function (response) {
+            console.log(response.responseText);
+        },
+        error: function (response) {
+            console.log(response.responseText);
+        }
+    });
+}
+
+function GetAllUploads() {
+
+    $.ajax({
+        type: "GET",
+        url: "/MasterPages/ManageOfficeDocuments/GetAllUploads",
+        contentType: "application/json; charset=utf-8",
+        data: { docId: $("#ddlDocument option:selected").val()},
+        dataType: "json",
+        success: function (response) {
+            if (response != null) {
+                pupulateUploadDocs(response);
+            } else {
+                // alert("Something went wrong");
+            }
+        },
+        failure: function (response) {
+            console.log(response.responseText);
+        },
+        error: function (response) {
+            console.log(response.responseText);
+        }
+    });
+}
+function pupulateUploadDocs(response) {
+    var docId = 0;
+    tbl_docUpload = $("#tblUploadDocs").DataTable(
+        {
+            bLengthChange: false,
+            bFilter: false,
+            bSort: false,
+            bPaginate: false,
+            bInfo: false,
+            data: response,
+            ScrollX: false,
+            select: false,
+            pageLength: 10,
+            destroy: true,
+            columns: [
+                {
+                    data: 'documentId', title: 'Document ID', visible: false,
+                    render: function (data) {
+                        if (data != null) {
+                            docId = data;
+                        }
+                        return data;
+                    }
+
+                },
+                {
+                    data: 'filePath', title: 'File Path', visible: false,
+                },
+                {
+                    data: 'documentName', title: 'Document Name', visible: false,
+                },
+
+                {
+                    data: 'fileName', title: 'File Name', visible:true,
+                    class: 'download',
+                    render: function (data) {
+                        if (data == "No Files") {
+                            return data;
+                        }
+                        else {
+                            return '<a href="#" id="download_' + docId + '">' + data + '</a>';
+                        }
+                    }
+                },
+                {
+                    data: 'isMandatory', title: 'Mandatory', visible: true,
+                    render: function (data) {
+                        if (data == 1) {
+                            return 'Yes';
+                        }
+                        else {
+                            return 'No';
+                        }
+                    }
+                },
+                {
+                    data: null,
+                    title: 'Upload',
+                    class: 'upload',
+                    render: function (data) {
+                        if (true) {
+                            return '<input type="file" multiple id="upload_' + docId + '" onchange="uploadDocuments(\'upload_' + docId + '\');">';
+                        }
+                        else {
+                            return '<input type="file" id="upload_' + docId + '" disabled onchange="uploadDocuments(\'upload_' + docId + '\');">';
+
+                        }
+                    }
+                }
+            ]
+        });
+
+}
+//download function for passport files
+$('#tblUploadDocs').on('click', 'td.download', function (e) {
+    e.preventDefault();
+    try {
+        var filePath = tbl_docUpload.row(this).data()['filePath'];
+        if (filePath != 'No Path') {
+            var link = document.createElement('a');
+            link.href = filePath;
+            link.download = filePath.substr(filePath.lastIndexOf('/') + 1);
+            link.click();
+        }
+    }
+    catch (err) {
+        console.log(err);
+    }
+});
+
+//add new row to the table
+$('#btnAddRow').on('click', function () {
+    var tables= $('#tblUploadDocs').DataTable();
+    tables.row.add({
+        'documentId': counter,
+        'filePath': 'a',
+        'documentName': 'b',
+        'fileName': 'No File',
+        'isMandatory': 'No',
+        '': '<input type="file" multiple id="upload_' + 123 + '" onchange="uploadDocuments(\'upload_' + $("#ddlDocument option:selected").val() + '\');">',
+
+    }).draw(false);
+    counter = counter + 1;
+    
+});
+
+function CheckMandatoryUploads() {
+    try {
+        var value = false;
+        tbl_docUpload.rows().every(function () {
+            var Row = this.data();//store every row data in a variable
+            if (Row['isMandatory'] == 1 && Row['fileName'] == 'No Files') {
+                value = true;
+                //return false
+            }
+        });
+      
+        if (value) {
+            return false;
+        }
+        else {
+            return true;
+        }
+
+    }
+    catch (err) {
+        console.log(err);
+    }
+}
+// Validation additional effects
+$("#dpDocIssueDate").change(function () {
+    if ($("#dpDocIssueDate").val().trim() != '') {
+        $('#dpDocIssueDate').css('border-color', '');
+
+    }
+});
+$("#dpDocExpiryDate").change(function () {
+    if ($("#dpDocExpiryDate").val().trim() != '') {
+        $('#dpDocExpiryDate').css('border-color', '');
+
+    }
+});
+$("#ddlStatus").change(function () {
+    if ($("#ddlStatus option:selected").val() != -1) {
+        $('#ddlStatus').css('border-color', '');
+
+    }
+
+});
 
 

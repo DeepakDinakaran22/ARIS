@@ -3,16 +3,21 @@ var table_passport;
 var table_resident;
 var table_remaining;
 var userRole;
+var loggedInUserId;
 var row;
 var table;
 var empNO;
 var approvalStatusId;
 var isUploadAllowed = true;
 var cnt = 0;
+var today;
 $(document).ready(function () {
-    $(".expiry").datepicker({ minDate: 0 }); //maxDate: "+1M +15D" });
+    var d = new Date();
+    today = moment(new Date()).format('YYYY-MM-DD');
     showLoader(true);
     userRole = $("#hdnUserRole").val();
+    loggedInUserId = $("#hdnUserId").val();
+
     
 
     $("#dpContractEndDate").datepicker({ minDate: 0 }); //maxDate: "+1M +15D" });
@@ -33,13 +38,14 @@ $(document).ready(function () {
     GetAllUploads("PASSPORT", $("#txtEmployeeNumber").val().replace('ARIS-',''));
     GetAllUploads("RESIDENT", $("#txtEmployeeNumber").val().replace('ARIS-', ''));
     GetAllUploads("REMAINING", $("#txtEmployeeNumber").val().replace('ARIS-', ''));
+
     if (userRole == '2') {
         DisableFileldsForManager();
     }
     $("#txtPassportNumber").focusout(function () {
         CheckNameExists();
     });
-   
+    $("#btnUploadRemainingFiles").val("Upload Files/ Documents");
 });
 function uploadFiles(inputId) {
     var input = document.getElementById(inputId);
@@ -68,33 +74,72 @@ function uploadFiles(inputId) {
     );
 }
 function uploadDocuments(inputId) {
+
     var docId = inputId.split("_")[1];
     var input = document.getElementById(inputId);
-    var files = input.files;
-    var formData = new FormData();
-    var empNo = $("#txtEmployeeNumber").val().trim();
-    for (var i = 0; i != files.length; i++) {
-        formData.append("files", files[i]);
-    }
-    formData.append("empNo", empNo);
-    formData.append("docId", parseInt(docId));
-
-
-    $.ajax(
-        {
-            url: "/MasterPages/ManageEmployees/UploadDocuments",
-            data: formData,
-            processData: false,
-            contentType: false,
-            type: "POST",
-            async: false,
-            success: function (data) {
-                GetAllUploads("PASSPORT", empNo.replace('ARIS-',''));  // testing is in progress
-                GetAllUploads("RESIDENT", empNo.replace('ARIS-', ''));
-                GetAllUploads("REMAINING", empNo.replace('ARIS-', ''));
-            }
+    
+        var files = input.files;
+        var formData = new FormData();
+        var empNo = $("#txtEmployeeNumber").val().trim();
+        for (var i = 0; i != files.length; i++) {
+            formData.append("files", files[i]);
         }
-    );
+        formData.append("empNo", empNo);
+        formData.append("docId", parseInt(docId));
+        $.ajax(
+            {
+                url: "/MasterPages/ManageEmployees/UploadDocuments",
+                data: formData,
+                processData: false,
+                contentType: false,
+                type: "POST",
+                async: false,
+                success: function (data) {
+                    GetAllUploads("PASSPORT", empNo.replace('ARIS-', ''));  // testing is in progress
+                    GetAllUploads("RESIDENT", empNo.replace('ARIS-', ''));
+                    GetAllUploads("REMAINING", empNo.replace('ARIS-', ''));
+                }
+            }
+        );
+   
+}
+function uploadDocuments_remaining(inputId) {
+
+    var docId = inputId.split("_")[1];
+    var input = document.getElementById(inputId);
+
+    var dpName = 'dp_' + docId;
+    if ($("#" + dpName + "").val().trim() == 'No Expiry Required' || $("#" + dpName + "").val().trim() != '') {
+        var files = input.files;
+        var formData = new FormData();
+        var empNo = $("#txtEmployeeNumber").val().trim();
+        for (var i = 0; i != files.length; i++) {
+            formData.append("files", files[i]);
+        }
+        formData.append("empNo", empNo);
+        formData.append("docId", parseInt(docId));
+        formData.append("expDate", $("#" + dpName + "").val().trim());
+        $.ajax(
+            {
+                url: "/MasterPages/ManageEmployees/UploadDocumentsRemaining",
+                data: formData,
+                processData: false,
+                contentType: false,
+                type: "POST",
+                async: false,
+                success: function (data) {
+                    GetAllUploads("PASSPORT", empNo.replace('ARIS-', ''));  // testing is in progress
+                    GetAllUploads("RESIDENT", empNo.replace('ARIS-', ''));
+                    GetAllUploads("REMAINING", empNo.replace('ARIS-', ''));
+                }
+            }
+        );
+    }
+    else {
+        $("#" + inputId + "").val(null);
+        MessageBox('Required!', 'fa fa-times', 'Expiry date!', 'red', 'btn btn-danger', 'Okey');
+
+    }
 }
 
 function GetAllUploads(uType,empNo) {
@@ -115,6 +160,7 @@ function GetAllUploads(uType,empNo) {
                 }
                 else {
                     populateRemaining(response);
+
                 }
 
             } else {
@@ -138,6 +184,9 @@ function populatePassport(response) {
             bSort: true,
             bPaginate: true,
             data: response,
+            response: true,
+            scrollY: true,
+            sScrollX: true,
             //scrollY: "650px",
            // sScrollX: "100%",
            // scrollCollapse: true,
@@ -159,6 +208,7 @@ function populatePassport(response) {
                 {
                     data: 'documentName', title: 'Document Name',
                 },
+
                 {
                     data: 'fileName', title: 'File Name',
                     class:'download',
@@ -168,6 +218,17 @@ function populatePassport(response) {
                         }
                         else {
                             return '<a href="#" id="download_' + docId + '">' + data + '</a>';
+                        }
+                    }
+                },
+                {
+                    data: 'isMandatory', title: 'Mandatory', visible: true,
+                    render: function (data) {
+                        if (data == 1) {
+                            return 'Yes';
+                        }
+                        else {
+                            return 'No';
                         }
                     }
                 },
@@ -231,6 +292,17 @@ function populateResident(response) {
                     }
                 },
                 {
+                    data: 'isMandatory', title: 'Mandatory', visible: true,
+                    render: function (data) {
+                        if (data == 1) {
+                            return 'Yes';
+                        }
+                        else {
+                            return 'No';
+                        }
+                    }
+                },
+                {
                     data: null,
                     title: 'Upload',
                     class: 'upload',
@@ -249,17 +321,17 @@ function populateResident(response) {
 }
 function populateRemaining(response) {
     var docId = 0;
+    var isExpReq = 0;
     table_remaining = $("#tblRemainingFiles").DataTable(
         {
             bLengthChange: false,
             bFilter: false,
             bSort: false,
             bPaginate: false,
+            bInfo:false,
             data: response,
-            scrollY: "650px",
-            sScrollX: "100%",
-            scrollCollapse: true,
-            select: true,
+            ScrollX: false,
+            select: false,
             pageLength: 10,
             destroy: true,
             columns: [
@@ -272,11 +344,29 @@ function populateRemaining(response) {
 
                 },
                 {
+                    data: 'isExpiryRequired', title: 'test', visible: false,
+                    render: function (data) {
+                        isExpReq = data;
+                        return data;
+                    }
+                },
+                {
                     data: 'filePath', title: 'File Path', visible: false,
                 },
-                
+               
                 {
-                    data: 'documentName', title: 'Document Name',
+                    data: 'documentName', title: 'Document Name'
+                },
+                {
+                    data: 'isMandatory', title: 'Mandatory', visible: true,
+                    render: function (data) {
+                        if (data == 1) {
+                            return 'Yes';
+                        }
+                        else {
+                            return 'No';
+                        }
+                    }
                 },
                 {
                     data: 'fileName', title: 'File Name',
@@ -286,14 +376,25 @@ function populateRemaining(response) {
                             return data;
                         }
                         else {
-                            return '<a href="#" id="download_' + docId + '">' + data + '</a>';
+                            return '<a href="#"  id="download_' + docId + '">' + data + '</a>';
                         }
                     }
                 },
+                
                 {
-                    data: 'fileName', title: 'Expiry', visible: true,  
+                    data: 'expiryDate', title: 'Expiry', visible: true, class:'text-center',
                     render: function (data) {
-                        return '<input type="date" class="form-control expiry" id="dp_' + docId + '" style="width:132px;font-size:smaller;" >';
+                        var eDate;
+                        if (isExpReq == 1) {
+                            if (data != null) {
+                                 eDate = data;
+                            }
+                            return '<input type="date"  value="' + eDate + '"  class="form - control expiry" id="dp_' + docId + '" style="width: 132px; font - size: smaller; " >';
+                        }
+                        else {
+                            return '<input type="text" value="No Expiry Required" disabled class="form-control expiry" id="dp_' + docId + '" style="width:132px;font-size:smaller;" >';
+                            //return 'No Expiry';
+                        }
                     }
                 },
                 {
@@ -302,16 +403,18 @@ function populateRemaining(response) {
                     class: 'upload',
                     render: function (data) {
                         if (isUploadAllowed) {
-                            return '<input type="file" id="upload_' + docId + '" onchange="uploadDocuments(\'upload_' + docId + '\');">';
+                            return '<input type="file" id="upload_' + docId + '" onchange="uploadDocuments_remaining(\'upload_' + docId + '\');">';
                         }
                         else {
-                            return '<input type="file" id="upload_' + docId + '" disabled onchange="uploadDocuments(\'upload_' + docId + '\');">';
+                            return '<input type="file" id="upload_' + docId + '" disabled onchange="uploadDocuments_remaining(\'upload_' + docId + '\');">';
                         }
                     }
                 }
                
             ]
         });
+
+
 
 }
 function SubmitRequest() {
@@ -435,7 +538,7 @@ function UpdateRequest() {
 }
 ///code to remove unwanted files from table
 function deleteInvalidUploads() {
-    var userId = 1; //need to automate it
+    var userId = loggedInUserId; 
     var empNo = $("#txtEmployeeNumber").val().trim();
     $.ajax({
         type: "GET",
@@ -468,10 +571,12 @@ $('#tblPassportFiles').on('click', 'td.download', function(e) {
     e.preventDefault();
     try {
         var filePath = table_passport.row(this).data()['filePath'];
-        var link = document.createElement('a');
-        link.href = filePath;
-        link.download = filePath.substr(filePath.lastIndexOf('/') + 1);
-        link.click();
+        if (filePath != 'No Path') {
+            var link = document.createElement('a');
+            link.href = filePath;
+            link.download = filePath.substr(filePath.lastIndexOf('/') + 1);
+            link.click();
+        }
     }
     catch (err) {
         console.log(err);
@@ -482,10 +587,12 @@ $('#tblResidentFiles').on('click', 'td.download', function(e) {
     e.preventDefault();
     try {
         var filePath = table_resident.row(this).data()['filePath'];
-        var link = document.createElement('a');
-        link.href = filePath;
-        link.download = filePath.substr(filePath.lastIndexOf('/') + 1);
-        link.click();
+        if (filePath != 'No Path') {
+            var link = document.createElement('a');
+            link.href = filePath;
+            link.download = filePath.substr(filePath.lastIndexOf('/') + 1);
+            link.click();
+        }
     }
     catch (err) {
         console.log(err);
@@ -496,10 +603,12 @@ $('#tblRemainingFiles').on('click', 'td.download', function(e) {
     e.preventDefault();
     try {
         var filePath = table_remaining.row(this).data()['filePath'];
-        var link = document.createElement('a');
-        link.href = filePath;
-        link.download = filePath.substr(filePath.lastIndexOf('/') + 1);
-        link.click();
+        if (filePath != 'No Path') {
+            var link = document.createElement('a');
+            link.href = filePath;
+            link.download = filePath.substr(filePath.lastIndexOf('/') + 1);
+            link.click();
+        }
     }
     catch (err) {
         console.log(err);
@@ -542,9 +651,16 @@ $('.example-p-2').on('click', function () {
     });
 });
 $('.example-p-1').on('click', function () {
+    var content;
+    if ($("#btnUpdate").text() == 'Re-Submit') {
+        content = 'Are you sure to Re-Submit the application?';
+    }
+    else {
+        content = 'Are you sure to modify the Existing application?';
+    }
     $.confirm({
         title: 'Are you sure?',
-        content: 'Are you sure that you want to submit the details to next level',
+        content: content,
         icon: 'fa fa-question-circle',
         animation: 'scale',
         closeAnimation: 'scale',
@@ -719,10 +835,14 @@ function getCompanies() {
 }
 function isValidEntry() {
     var valid = true;
+    var message = '';
+    var count = 0;
 
     if ($('#txtEmployeeName').val() == '') {
         $('#txtEmployeeName').css('border-color', 'red');
         valid = false;
+        count = count + 1;
+        message += count + '. Employee Name </br>';
     }
     else {
         $('#txtEmployeeName').css('border-color', '');
@@ -730,6 +850,8 @@ function isValidEntry() {
     if ($("#ddlCompany").val() == 0) {
         $('#ddlCompany').css('border-color', 'red');
         valid = false;
+        count = count + 1;
+        message += count + '. Client </br>';
     }
     else {
         $('#ddlCompany').css('border-color', '');
@@ -737,6 +859,8 @@ function isValidEntry() {
     if ($("#ddlCountry").val() == 0) {
         $('#ddlCountry').css('border-color', 'red');
         valid = false;
+        count = count + 1;
+        message += count + '. Country </br>';
     }
     else {
         $('#ddlCountry').css('border-color', '');
@@ -744,6 +868,8 @@ function isValidEntry() {
     if ($("#txtPassportNumber").val() == '') {
         $('#txtPassportNumber').css('border-color', 'red');
         valid = false;
+        count = count + 1;
+        message += count + '. Passport Number </br>';
     }
     else {
         $('#txtPassportNumber').css('border-color', '');
@@ -751,6 +877,8 @@ function isValidEntry() {
     if ($("#dpPassportExpiryDate").val() == '') {
         $('#dpPassportExpiryDate').css('border-color', 'red');
         valid = false;
+        count = count + 1;
+        message += count + '. Passport Expiry Date </br>';
     }
     else {
         $('#dpPassportExpiryDate').css('border-color', '');
@@ -758,6 +886,8 @@ function isValidEntry() {
     if ($("#txtResidentNumber").val() == '') {
         $('#txtResidentNumber').css('border-color', 'red');
         valid = false;
+        count = count + 1;
+        message += count + '. Resident Number </br>';
     }
     else {
         $('#txtResidentNumber').css('border-color', '');
@@ -765,6 +895,8 @@ function isValidEntry() {
     if ($("#dpResidentExpiryDate").val() == '') {
         $('#dpResidentExpiryDate').css('border-color', 'red');
         valid = false;
+        count = count + 1;
+        message += count + '. Resident Expiry date </br>';
     }
     else {
         $('#dpResidentExpiryDate').css('border-color', '');
@@ -772,6 +904,8 @@ function isValidEntry() {
     if ($("#dpJoiningDate").val() == '') {
         $('#dpJoiningDate').css('border-color', 'red');
         valid = false;
+        count = count + 1;
+        message += count + '. Joining Date </br>';
     }
     else {
         $('#dpJoiningDate').css('border-color', '');
@@ -779,6 +913,8 @@ function isValidEntry() {
     if ($("#dpContractStartDate").val() == '') {
         $('#dpContractStartDate').css('border-color', 'red');
         valid = false;
+        count = count + 1;
+        message += count + '. Contract Start Date </br>';
     }
     else {
         $('#dpContractStartDate').css('border-color', '');
@@ -786,6 +922,8 @@ function isValidEntry() {
     if ($("#dpContractEndDate").val() == '') {
         $('#dpContractEndDate').css('border-color', 'red');
         valid = false;
+        count = count + 1;
+        message += count + '. Contract End Date </br>';
     }
     else {
         $('#dpContractEndDate').css('border-color', '');
@@ -793,6 +931,8 @@ function isValidEntry() {
     if ($("#txtGsm").val() == '') {
         $('#txtGsm').css('border-color', 'red');
         valid = false;
+        count = count + 1;
+        message += count + '. GSM </br>';
     }
     else {
         $('#txtGsm').css('border-color', '');
@@ -800,6 +940,8 @@ function isValidEntry() {
     if ($("#txtAccomodationDetails").val() == '') {
         $('#txtAccomodationDetails').css('border-color', 'red');
         valid = false;
+        count = count + 1;
+        message += count + '. Accomodation Details </br>';
     }
     else {
         $('#txtAccomodationDetails').css('border-color', '');
@@ -808,6 +950,8 @@ function isValidEntry() {
     if ($("#txtIdProfession").val() == '') {
         $('#txtIdProfession').css('border-color', 'red');
         valid = false;
+        count = count + 1;
+        message += count + '. ID Profession </br>';
     }
     else {
         $('#txtIdProfession').css('border-color', '');
@@ -816,6 +960,8 @@ function isValidEntry() {
     if ($("#txtDesignation").val() == '') {
         $('#txtDesignation').css('border-color', 'red');
         valid = false;
+        count = count + 1;
+        message += count + '. Designation </br>';
     }
     else {
         $('#txtDesignation').css('border-color', '');
@@ -823,6 +969,8 @@ function isValidEntry() {
     if ($("#txtBankName").val() == '') {
         $('#txtBankName').css('border-color', 'red');
         valid = false;
+        count = count + 1;
+        message += count + '. Bank Name </br>';
     }
     else {
         $('#txtBankName').css('border-color', '');
@@ -831,6 +979,8 @@ function isValidEntry() {
     if ($("#txtAccountNumber").val() == '') {
         $('#txtAccountNumber').css('border-color', 'red');
         valid = false;
+        count = count + 1;
+        message += count + '. Account Number </br>';
     }
     else {
         $('#txtAccountNumber').css('border-color', '');
@@ -838,12 +988,38 @@ function isValidEntry() {
     if ($("#txtConfirmAccountNumber").val() == '') {
         $('#txtConfirmAccountNumber').css('border-color', 'red');
         valid = false;
+        count = count + 1;
+        message += count + '. Confirm Account Number </br>';
     }
     else {
         $('#txtConfirmAccountNumber').css('border-color', '');
     }
+    if ($("#txtRemarks").val() == '') {
+        $('#txtRemarks').css('border-color', 'red');
+        valid = false;
+        count = count + 1;
+        message += count + '. Remarks </br>';
+    }
+    else {
+        $('#txtRemarks').css('border-color', '');
+    }
+
+    if (!CheckMandatoryUploads()) {
+        valid = false;
+        count = count + 1;
+        message += count + '. Upload All Mandatory Documents  </br>';
+    }
 
 
+    if (message != '') {
+        MessageBox('Required!', 'fa fa-warning', message, 'red', 'btn btn-danger', 'Okey');
+        valid = false;
+        message = '';
+        count = 0;
+    }
+    else {
+        valid = true;
+    }
     return valid;
 }
 function ClearFields() {
@@ -866,6 +1042,8 @@ function ClearFields() {
 
     $('#txtGsm').val('');
     $('#txtAccomodationDetails').val('');
+    $("input[name='radioMarital']").prop('checked', false).attr('disabled', false);
+
 
     $('#txtIdProfession').val('');
 
@@ -884,6 +1062,18 @@ function ClearFields() {
     $("#btnSubmit").show();
     GetEmployeeReferenceNo();
     clearValidationCSS();
+
+    if (userRole == '2') {
+        $("#btnUpdate").hide();
+        $("#btnSubmit").hide();
+        $("#btnSendBack").hide();
+        $("#btnApprove").hide();
+        $("#btnReset").hide();
+
+    }
+    else {
+
+    }
 }
 function GetAllEmployees() {
     showLoader(true);
@@ -921,11 +1111,13 @@ function populateEmployees(response) {
             bPaginate: true,
             data: response,
             scrollX: true,
-            sScrollXInner: "100%",
-            //scrollY: false,
-            scrollY: "650px",
-            //sScrollX: "100%",
-            scrollCollapse: true,
+            //sScrollXInner: "100%",
+            ////scrollY: false,
+            //scrollY: "650px",
+            ////sScrollX: "100%",
+            //scrollCollapse: true,
+            ScrollX: false,
+
             select: true,
             pageLength: 10,
             destroy: true,
@@ -984,6 +1176,7 @@ function populateEmployees(response) {
 }
 function GetEmployeeReferenceNo() {
     showLoader(true);
+
     if (userRole!='2')
     $.ajax({
         type: "GET",
@@ -1012,7 +1205,9 @@ function GetEmployeeReferenceNo() {
 }
 $('#tblEmployees').on('click', 'td.edit', function (e) {
     e.preventDefault();
+
     clearValidationCSS();
+    DisableExpiry();
     approvalStatusId = parseInt(table.row(this).data()['approvalStatus']);
     if (approvalStatusId == 0 && userRole == '1') {
         empNO = parseInt(table.row(this).data()['employeeNo']);
@@ -1045,6 +1240,8 @@ $('#tblEmployees').on('click', 'td.edit', function (e) {
         $("#btnSubmit").hide();
         disableRadioButtonGroup(true);
         $("#files").attr("disabled", "disabled");
+        $(".expiry").attr("disabled", "disabled");
+
     }
     else if ((approvalStatusId == 1 || approvalStatusId == 2) && userRole == '1') {
 
@@ -1068,16 +1265,24 @@ $('#tblEmployees').on('click', 'td.edit', function (e) {
         $("#txtBankName").val(table.row(this).data()['bankName']).attr('disabled', false);
         $("#txtAccountNumber").val(table.row(this).data()['bankAccountNumber']).attr('disabled', false);
         $("#txtConfirmAccountNumber").val(table.row(this).data()['bankAccountNumber']).attr('disabled', false);
-        $("#txtRemarks").val(table.row(this).data()['remarks']).attr('disabled', false);
+       // $("#txtRemarks").val(table.row(this).data()['remarks']).attr('disabled', false);
+        $("#txtRemarks").val('').attr('disabled', false);
         $("#imgUser").attr('src', "/Uploads/employeeUploads/" + $("#txtEmployeeNumber").val() + "/" + table.row(this).data()['employeeImage']).attr('disabled', false);
         isUploadAllowed = true;// new for restrict uploads
         GetAllUploads("PASSPORT", table.row(this).data()['employeeReferenceNo']);  // testing is in progress
         GetAllUploads("RESIDENT", table.row(this).data()['employeeReferenceNo']);
         GetAllUploads("REMAINING", table.row(this).data()['employeeReferenceNo']);
-        $("#btnUpdate").show();
+        if (userRole == '1' && approvalStatusId == 1) {
+            $("#btnUpdate").text('Re-Submit').show();
+
+        }
+        else if (userRole == '1' && approvalStatusId == 2) {
+            $("#btnUpdate").text('Modify').show();
+        }
         $("#btnSubmit").hide();
         disableRadioButtonGroup(false);
         $("#files").attr("disabled", false);
+        $(".expiry").attr('disabled', false);
 
 
 
@@ -1114,8 +1319,11 @@ $('#tblEmployees').on('click', 'td.edit', function (e) {
         $("#btnSubmit").hide();
         disableRadioButtonGroup(true);
         $("#files").attr("disabled", "disabled");
+        $(".expiry").attr('disabled', 'disabled');
+
         $("#btnSendBack").show();
         $("#btnApprove").show();
+        $("#btnUploadRemainingFiles").val("Uploaded Files/ Documents");
 
         
     }
@@ -1151,6 +1359,8 @@ $('#tblEmployees').on('click', 'td.edit', function (e) {
         $("#btnSubmit").hide();
         disableRadioButtonGroup(true);
         $("#files").attr("disabled", "disabled");
+        $(".expiry").attr('disabled', 'disabled');
+
         $("#btnSendBack").hide();
         $("#btnApprove").hide();
 
@@ -1186,6 +1396,8 @@ function DisableFileldsForManager() {
     $("#btnReset").hide();
     disableRadioButtonGroup(true);
     $("#files").attr("disabled", "disabled");
+    $(".expiry").attr('disabled', 'disabled');
+
 }
 function ApproveRequest() {
     var remarks = $("#txtRemarks").val();
@@ -1222,3 +1434,155 @@ function isValidEntryApproveOrSendBack() {
         return true;
     }
 }
+
+function CheckMandatoryUploads() {
+    try {
+        var value = false;
+        table_remaining.rows().every(function () {
+            var Row = this.data();//store every row data in a variable
+            if (Row['isMandatory'] == 1 && Row['fileName'] == 'No Files') {
+                value = true;
+                //return false
+            }
+        });
+
+        table_passport.rows().every(function () {
+            var Row = this.data();//store every row data in a variable
+            if (Row['isMandatory'] == 1 && Row['fileName'] == 'No Files') {
+                value = true;
+            }
+        });
+
+        table_resident.rows().every(function () {
+            var Row = this.data();//store every row data in a variable
+            if (Row['isMandatory'] == 1 && Row['fileName'] == 'No Files') {
+                value = true;
+            }
+        });
+
+        if (value) {
+            return false;
+        }
+        else {
+            return true;
+        }
+
+    }
+    catch (err) {
+        console.log(err);
+    }
+}
+
+function DisableExpiry() {
+    $(".expiry").attr('disabled', true);
+}
+
+//Keyup validations
+$("#txtEmployeeName").keyup(function () {
+    if ($("#txtEmployeeName").val().trim() != '') {
+        $('#txtEmployeeName').css('border-color', '');
+
+    }
+});
+$("#ddlCompany").change(function () {
+    if ($("#ddlCompany option:selected").val() != 0) {
+        $('#ddlCompany').css('border-color', '');
+
+    }
+});
+$("#ddlCountry").change(function () {
+    if ($("#ddlCountry option:selected").val() != 0) {
+        $('#ddlCountry').css('border-color', '');
+
+    }
+});
+$("#txtPassportNumber").keyup(function () {
+    if ($("#txtPassportNumber").val().trim() != '') {
+        $('#txtPassportNumber').css('border-color', '');
+
+    }
+});
+$("#dpPassportExpiryDate").change(function () {
+    if ($("#dpPassportExpiryDate").val().trim() != '') {
+        $('#dpPassportExpiryDate').css('border-color', '');
+
+    }
+});
+$("#txtResidentNumber").keyup(function () {
+    if ($("#txtResidentNumber").val().trim() != '') {
+        $('#txtResidentNumber').css('border-color', '');
+
+    }
+});
+$("#dpResidentExpiryDate").change(function () {
+    if ($("#dpResidentExpiryDate").val().trim() != '') {
+        $('#dpResidentExpiryDate').css('border-color', '');
+
+    }
+});
+$("#dpJoiningDate").change(function () {
+    if ($("#dpJoiningDate").val().trim() != '') {
+        $('#dpJoiningDate').css('border-color', '');
+
+    }
+});
+$("#dpContractStartDate").change(function () {
+    if ($("#dpContractStartDate").val().trim() != '') {
+        $('#dpContractStartDate').css('border-color', '');
+
+    }
+});
+$("#dpContractEndDate").change(function () {
+    if ($("#dpContractEndDate").val().trim() != '') {
+        $('#dpContractEndDate').css('border-color', '');
+
+    }
+});
+$("#txtGsm").keyup(function () {
+    if ($("#txtGsm").val().trim() != '') {
+        $('#txtGsm').css('border-color', '');
+
+    }
+});
+$("#txtAccomodationDetails").keyup(function () {
+    if ($("#txtAccomodationDetails").val().trim() != '') {
+        $('#txtAccomodationDetails').css('border-color', '');
+
+    }
+});
+$("#txtIdProfession").keyup(function () {
+    if ($("#txtIdProfession").val().trim() != '') {
+        $('#txtIdProfession').css('border-color', '');
+
+    }
+});
+$("#txtDesignation").keyup(function () {
+    if ($("#txtDesignation").val().trim() != '') {
+        $('#txtDesignation').css('border-color', '');
+
+    }
+});
+$("#txtBankName").keyup(function () {
+    if ($("#txtBankName").val().trim() != '') {
+        $('#txtBankName').css('border-color', '');
+
+    }
+});
+$("#txtAccountNumber").keyup(function () {
+    if ($("#txtAccountNumber").val().trim() != '') {
+        $('#txtAccountNumber').css('border-color', '');
+
+    }
+});
+$("#txtConfirmAccountNumber").keyup(function () {
+    if ($("#txtConfirmAccountNumber").val().trim() != '') {
+        $('#txtConfirmAccountNumber').css('border-color', '');
+
+    }
+});
+$("#txtRemarks").keyup(function () {
+    if ($("#txtRemarks").val().trim() != '') {
+        $('#txtRemarks').css('border-color', '');
+
+    }
+});

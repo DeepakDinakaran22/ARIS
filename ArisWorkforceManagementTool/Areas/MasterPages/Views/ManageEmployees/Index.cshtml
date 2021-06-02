@@ -9,8 +9,8 @@
 @* Confirm Box *@
 <link rel="stylesheet" href="~/plugins/confirmBox/jquery-confirm.css" />
 
-
-
+<style>
+</style>
 <div class="content-header">
     <div class="container-fluid">
         <div class="row mb-2">
@@ -96,7 +96,7 @@
                                 <div class="col-md-4">
                                     <div class="form-group">
                                         <label>Passport Expiry Date</label>
-                                        <input type="text" class="form-control date" id="dpPassportExpiryDate">
+                                        <input type="text" class="form-control date" id="dpPassportExpiryDate" placeholder="Passport Expiry Date">
                                     </div>
                                 </div>
                                 <div class="col-md-2">
@@ -117,7 +117,7 @@
                                 <div class="col-md-4">
                                     <div class="form-group">
                                         <label>Resident Expiry Date</label>
-                                        <input type="text" class="form-control date" id="dpResidentExpiryDate">
+                                        <input type="text" class="form-control date" id="dpResidentExpiryDate" placeholder="Resident Expiry Date">
                                     </div>
                                 </div>
                                 <div class="col-md-2">
@@ -132,21 +132,21 @@
                                 <div class="col-md-6">
                                     <div class="form-group">
                                         <label>Joining Date</label>
-                                        <input type="text" class="form-control date" id="dpJoiningDate">
+                                        <input type="text" class="form-control date" id="dpJoiningDate" placeholder="Joining Date">
 
                                     </div>
                                 </div>
                                 <div class="col-md-6">
                                     <div class="form-group">
                                         <label>Contract Start Date</label>
-                                        <input type="text" class="form-control date" id="dpContractStartDate">
+                                        <input type="text" class="form-control date" id="dpContractStartDate" placeholder="Contract Start Date">
 
                                     </div>
                                 </div>
                                 <div class="col-md-6">
                                     <div class="form-group">
                                         <label>Contract End Date</label>
-                                        <input type="text" class="form-control date" id="dpContractEndDate">
+                                        <input type="text" class="form-control date" id="dpContractEndDate" placeholder="Contract End Date">
                                     </div>
                                 </div>
                                 <div class="col-md-6">
@@ -178,7 +178,7 @@
                                 <div class="col-md-6">
                                     <div class="form-group">
                                         <label for="txtIdProfession">ID Profession </label>
-                                        <input type="text" class="form-control" id="txtIdProfession"  placeholder="Enter Id Profession">
+                                        <input type="text" class="form-control" id="txtIdProfession" placeholder="Enter Id Profession">
                                     </div>
                                 </div>
                                 <div class="col-md-6">
@@ -214,13 +214,17 @@
                                     </div>
                                 </div>
                                 <div class="col-md-12">
-                                    <div class="card card-outline card-info">
-                                        <div class="card-header">
-                                            <h3 class="card-title">
-                                                <small>Documents to be uploaded</small>
-                                            </h3>
-                                            <!-- tools box -->
-                                            <div class="card-tools">
+                                    <div class="input-group">
+                                        <input type="button" width="100px" id="btnUploadRemainingFiles" name="Files" data-toggle="modal" data-target="#modal-lg" class="form-control btn btn-sm btn-info" value="Upload Files" />
+
+                                    </div>
+                                    <!--<div class="card card-outline card-info">
+                                    <div class="card-header">
+                                        <h3 class="card-title">
+                                            <small>Documents to be uploaded</small>
+                                        </h3>-->
+                                    <!-- tools box -->
+                                    <!--<div class="card-tools">
                                                 <button type="button" class="btn btn-tool btn-sm" data-card-widget="collapse" data-toggle="tooltip"
                                                         title="Collapse">
                                                     <i class="btn-success fas fa-minus"></i>
@@ -236,7 +240,7 @@
                                                 </div>
                                             </div>
                                         </div>
-                                    </div>
+                                    </div>-->
                                 </div>
 
                             </div>
@@ -275,7 +279,7 @@
                             <div class="row">
                                 <div class="col-sm-12">
                                     <div class="card-body table-responsive p-0" style="overflow:hidden">
-                                        <table class="table table-bordered table-head-fixed text-nowrap table-hover table-striped" id="tblEmployees"> </table>
+                                        <table class="table table-bordered table-head-fixed text-nowrap table-hover table-striped" width="100%" id="tblEmployees"> </table>
                                     </div>
                                 </div>
 
@@ -322,7 +326,7 @@
                 </div>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-outline-success" data-dismiss="modal">OK</button>
+                <button type="button" class="btn btn-outline-success" data-dismiss="modal">Okey</button>
             </div>
         </div>
     </div>
@@ -352,12 +356,34 @@
 
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-outline-success" data-dismiss="modal">OK</button>
+                <button type="button" class="btn btn-outline-success" data-dismiss="modal">Okey</button>
             </div>
         </div>
     </div>
 </div>
-
+@* Remianing file upload model *@
+<div class="modal fade" id="modal-lg">
+    <div class="modal-dialog modal-lg" style="font-size:smaller">
+        <div class="modal-content" style="width:auto">
+            <div class="modal-header" style="background-color:darkseagreen">
+                <h4 class="modal-title left">Upload Files</h4>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="mb-3">
+                <div class="card-body table-responsive p-0">
+                    <table class="table text-nowrap" style="width:100%" id="tblRemainingFiles"> </table>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-outline-success" data-dismiss="modal">Okey</button>
+            </div>
+        </div>
+        <!-- /.modal-content -->
+    </div>
+    <!-- /.modal-dialog -->
+</div>
 @* Message Modal *@
 <div class="modal fade" id="alert-modal">
     <div class="modal-dialog">
@@ -381,10 +407,38 @@
     </div>
     <!-- /.modal-dialog -->
 </div>
+
+<!--<div class="modal fade " id="modal-remaining" role="dialog">
+    <div class="modal-dialog">-->
+<!-- Modal content-->
+<!--<div class="modal-content alert-light " style="width:850px;align-content:center">
+            <div class="modal-header" style="background-color:darkseagreen">
+                <h4 class="modal-title left">Upload Files</h4>
+                <button type="button" class="close" style="color:darkred" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body" style="max-width:850px">
+                <div class="mb-3">
+
+                    <div class="card-body table-responsive p-0" style="overflow:hidden">
+                        <table class="table table-head-fixed text-nowrap  " width="100%" id="tblRemainingFiles_123"> </table>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-outline-success" data-dismiss="modal">Okey</button>
+            </div>
+        </div>
+    </div>
+</div>-->
+<!-- /.modal -->
 @* loader *@
 <div class="overlay"></div>
 @* hidden Variables *@
 <input type="hidden" id="hdnUserRole" value="@TempData.Peek("UserRole")" />
+<input type="hidden" id="hdnUserId" value="@TempData.Peek("UserId")" />
+
 
 
 
@@ -406,7 +460,9 @@
 
 @* Solution Specific files ends *@
 <script>
-   
 
-       
+    $(document).ready(function () {
+
+    });
+
 </script>

@@ -41,7 +41,9 @@ namespace ArisWorkforceManagementTool.Areas.MasterPages.Controllers
                     IsActive = obj.IsActive, 
                     CreatedDate = DateTime.Now, 
                     CreatedBy = 1, 
-                    DocumentCategoryID= obj.DocumentCategoryID
+                    DocumentCategoryID= obj.DocumentCategoryID,
+                    IsExpiryRequired=obj.IsExpiryRequired,
+                    IsMandatory=obj.IsMandatory
 
                 };
 
@@ -71,7 +73,9 @@ namespace ArisWorkforceManagementTool.Areas.MasterPages.Controllers
                     CreatedBy = docExists[0].CreatedBy,
                     ModifiedBy = 1,
                     ModifiedDate = DateTime.Now,
-                    DocumentCategoryID = obj.DocumentCategoryID
+                    DocumentCategoryID = obj.DocumentCategoryID,
+                    IsExpiryRequired=obj.IsExpiryRequired,
+                    IsMandatory = obj.IsMandatory
                 };
                 UnitOfWork.DocumentTypeRepository.Update(doc);
                 UnitOfWork.Save();

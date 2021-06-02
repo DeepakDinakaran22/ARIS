@@ -62,7 +62,9 @@ namespace Aris.Webjob
 
 
             app.UseHangfireDashboard("");
-            //BackgroundJob.Enqueue(() => Console.WriteLine("Hello world from Hangfire!"));
+            BackgroundJob.Enqueue(() => Console.WriteLine("Hello world from Hangfire!"));
+            RecurringJob.AddOrUpdate("remainderJob", () => Console.WriteLine("Hello world from Hangfire add or update!"),
+               Cron.Hourly);
 
             app.UseBackgroundJobs();
 

@@ -30,5 +30,6 @@ namespace Aris.Models.ViewModel
 
         public DateTime? ModifiedDate { get; set; }
         public string ActualFileName { get; set; }
+        public DateTime? ExpiryDate { get; set; }
     }
 }
