@@ -5,7 +5,7 @@ using Microsoft.Extensions.Options;
 using MimeKit;
 using MimeKit.Text;
 using System;
-
+using System.Net;
 
 namespace Aris.Common
 {
@@ -13,26 +13,32 @@ namespace Aris.Common
     {
         private readonly AppSettings _appSettings;
 
-        public EmailService(IOptions<AppSettings> appSettings)
+        //public EmailService(IOptions<AppSettings> appSettings)
+        //{
+        //    _appSettings = appSettings.Value;
+        //}
+        public EmailService(AppSettings appSettings)
         {
-            _appSettings = appSettings.Value;
+            _appSettings = appSettings;
         }
 
-        public void Send(string from, string to, string subject, string html)
+        public async void  Send( string to, string subject, string html)
         {
             // create message
             var email = new MimeMessage();
-            email.From.Add(MailboxAddress.Parse(from));
+            email.From.Add(MailboxAddress.Parse(_appSettings.SmtpUser));
             email.To.Add(MailboxAddress.Parse(to));
             email.Subject = subject;
             email.Body = new TextPart(TextFormat.Html) { Text = html };
 
-            // send email
+           
+            //send mail
             using var smtp = new SmtpClient();
-            smtp.Connect(_appSettings.SmtpHost, _appSettings.SmtpPort, SecureSocketOptions.StartTls);
+            smtp.Connect(_appSettings.SmtpHost, _appSettings.SmtpPort, true);
             smtp.Authenticate(_appSettings.SmtpUser, _appSettings.SmtpPassword);
-            smtp.Send(email);
+           await smtp.SendAsync(email);
             smtp.Disconnect(true);
+
         }
     }
 }

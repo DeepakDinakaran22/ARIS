@@ -10,6 +10,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Aris.Common;
 
 namespace ArisWorkforceManagementTool
 {
@@ -30,7 +31,10 @@ namespace ArisWorkforceManagementTool
                 .AddCookie();
             services.AddControllersWithViews().AddRazorRuntimeCompilation();
             services.AddDbContext<ArisContext>(options => options.UseSqlServer(Configuration.GetConnectionString("ArisConnection")));
+            services.Configure<AppSettings>(Configuration.GetSection("EmailSettings"));
+            
         }
+
 
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

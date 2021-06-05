@@ -65,12 +65,15 @@ namespace ArisWorkforceManagementTool.Controllers
             {
                 if (ex.Message == "Sequence contains no elements")
                 {
+                    _logger.LogInformation(ex.Message);
                     return Json(new { pendingRequests = 0 });
                 }
                 else
                 {
+                    _logger.LogError(ex.Message);
                     return Json(new { pendingRequests = 0 });
                 }
+
             }
         }
         [HttpGet]
@@ -88,12 +91,18 @@ namespace ArisWorkforceManagementTool.Controllers
             {
                 if (ex.Message == "Sequence contains no elements")
                 {
+                    _logger.LogInformation(ex.Message);
+
                     return Json(new { active  = 0, pending = 0, sendBack = 0, Modification =0 });
                 }
-                else
+                _logger.LogError(ex.ToString());
+
+                // throw ex;
+                return Json(new
                 {
-                    return Json(new { active = 0, pending = 0, sendBack = 0, Modification = 0 });
-                }
+                    redirectUrl = Url.Action("Error", "Home"),
+                    isRedirect = true
+                });
             }
         }
         [HttpGet]

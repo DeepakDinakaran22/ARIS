@@ -2,9 +2,9 @@
 {
     public class AppSettings
     {
-        public string SmtpHost { get; internal set; }
-        internal int SmtpPort { get; set; }
-        public string SmtpUser { get; internal set; }
-        public string SmtpPassword { get; internal set; }
+        public string SmtpHost { get;  set; }
+        public int SmtpPort { get; set; }
+        public string SmtpUser { get;  set; }
+        public string SmtpPassword { get;  set; }
     }
 }

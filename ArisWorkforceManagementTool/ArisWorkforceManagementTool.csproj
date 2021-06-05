@@ -27,6 +27,7 @@
     <PackageReference Include="jQuery" Version="3.5.1" />
     <PackageReference Include="Microsoft.AspNet.Web.Optimization" Version="1.1.3" />
     <PackageReference Include="Microsoft.AspNetCore.Mvc.Razor.RuntimeCompilation" Version="3.0.3" />
+    <PackageReference Include="Microsoft.Data.SqlClient" Version="2.1.3" />
     <PackageReference Include="Microsoft.EntityFrameworkCore" Version="5.0.5" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="5.0.5" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="3.0.0">
@@ -39,6 +40,8 @@
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
     <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="3.0.0" />
+    <PackageReference Include="NLog" Version="4.7.10" />
+    <PackageReference Include="NLog.Web.AspNetCore" Version="4.12.0" />
   </ItemGroup>
 
 
@@ -1070,6 +1073,7 @@
 
 
   <ItemGroup>
+    <ProjectReference Include="..\Aris.Common\Aris.Common.csproj" />
     <ProjectReference Include="..\Aris.Data\Aris.Data.csproj" />
     <ProjectReference Include="..\Aris.Models\Aris.Models.csproj" />
   </ItemGroup>

@@ -14,6 +14,8 @@ using Aris.Models;
 using System.IO;
 using Microsoft.AspNetCore.Hosting;
 using System.Net.Http.Headers;
+using Aris.Common;
+using Microsoft.Extensions.Options;
 
 namespace ArisWorkforceManagementTool.Areas.MasterPages.Controllers
 {
@@ -22,14 +24,17 @@ namespace ArisWorkforceManagementTool.Areas.MasterPages.Controllers
     {
         private readonly ILogger<ManageUsersController> _logger;
         private readonly IWebHostEnvironment webHostEnvironment;
+        private readonly AppSettings _appSettings;
+
         private string imagePath = string.Empty;
         UnitOfWork UnitOfWork = new UnitOfWork();
         UnitOfWork objUnitOfWorkFetch = new UnitOfWork();
 
-
-        public ManageUsersController(IWebHostEnvironment hostEnvironment)
+        public ManageUsersController(IWebHostEnvironment hostEnvironment, IOptions<AppSettings> appSettings)
         {
             this.webHostEnvironment = hostEnvironment;
+            _appSettings = appSettings.Value;
+
         }
 
         // GET: ManageUsers
@@ -96,7 +101,7 @@ namespace ArisWorkforceManagementTool.Areas.MasterPages.Controllers
                         IsActive = users.IsActive,
                         CreatedBy = createdBy,
                         CreatedDate=createdDate,
-                        ModifiedBy = 1,
+                        ModifiedBy = Convert.ToInt32(TempData.Peek("UserId")),
                         ModifiedDate = DateTime.Now,
                         UserImage = users.ProfileImage==null?img: users.ProfileImage,
                         Password = pwd
@@ -175,7 +180,8 @@ namespace ArisWorkforceManagementTool.Areas.MasterPages.Controllers
         {
             try
             {
-               
+
+                var randomPwd = GetRandomPassword();
                 var user = new Aris.Data.Entities.Users()
                 {
                     UserName = userObj.UserName,
@@ -183,14 +189,40 @@ namespace ArisWorkforceManagementTool.Areas.MasterPages.Controllers
                     UserTypeID = userObj.UserTypeID,
                     IsActive = userObj.IsActive,
                     CreatedDate = DateTime.Now,
-                    CreatedBy = 1,
+                    CreatedBy = Convert.ToInt32(TempData.Peek("UserId")),
                     FullName = userObj.FullName,
-                    Password = new AuthHelper().HashPassword(),
+                    Password = new AuthHelper().HashPassword(randomPwd),
                     UserImage = userObj.ProfileImage
                 };
 
                 UnitOfWork.UserRepository.Insert(user);
                 UnitOfWork.Save();
+                #region send mail
+
+                string strBody = @"
+                    <body>  
+                        <div>
+                            <p>Dear <span style=""font - weight: bold; "">[USER]</span>,</p>
+                            </div>
+                            <div>
+                            <p>A user account has been created for you in AMT web application.Please refer the details below to login.</p>
+                            <p><table style = ""text-align:left;"">
+                            <tr><th>User Name </th> <td>: [USERNAME] </td></tr>
+                            <tr><th>Password </th> <td>: [PASSWORD]</td>
+                            </tr><tr><th>Application Link </th><td>: [APPLICATIONLINK]</td></tr></table></p >
+                        </div>
+                        <div>
+                            <table style= ""font-weight: bold;"">
+                                <tr><td rowspan = ""2""></td><td>Regards </td></tr>
+                                <tr><td>AMT Admin </td></tr>
+                            </table>
+                        </div>
+                    </body>";
+                strBody=  strBody.Replace("[USER]", userObj.FullName).Replace("[USERNAME]", userObj.UserName).Replace("[APPLICATIONLINK]", "http://magicisland:8080").Replace("[PASSWORD]", randomPwd);
+                EmailService emailService = new EmailService(_appSettings);
+                emailService.Send( userObj.MailAddress, "AMT User Account Created", strBody);
+
+                #endregion
 
                 return Json(new { success = true, responseText = "User Added Successfully." });
             }
@@ -214,6 +246,19 @@ namespace ArisWorkforceManagementTool.Areas.MasterPages.Controllers
                 return Json(new { value = false, responseText = "User name is not exists" });
             }
 
+        }
+
+        public string GetRandomPassword()
+        {
+            var chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789@!#$%^&*";
+            var stringChars = new char[10];
+            var random = new Random();
+            for (int i = 0; i < stringChars.Length; i++)
+            {
+                stringChars[i] = chars[random.Next(chars.Length)];
+            }
+            var finalString = new String(stringChars);
+            return finalString;
         }
     }
 }

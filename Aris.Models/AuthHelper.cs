@@ -17,7 +17,7 @@ namespace Aris.Models
         * (All UInt32s are stored big-endian.)
         */
 
-        public string HashPassword(string password="Aris@123")
+        public string HashPassword(string password)
         {
             var prf = KeyDerivationPrf.HMACSHA256;
             var rng = RandomNumberGenerator.Create();

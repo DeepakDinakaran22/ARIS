@@ -40,7 +40,7 @@ namespace ArisWorkforceManagementTool.Areas.MasterPages.Controllers
                     DocumentDescription= obj.DocumentDescription,
                     IsActive = obj.IsActive, 
                     CreatedDate = DateTime.Now, 
-                    CreatedBy = 1, 
+                    CreatedBy = Convert.ToInt32(TempData.Peek("UserId")), 
                     DocumentCategoryID= obj.DocumentCategoryID,
                     IsExpiryRequired=obj.IsExpiryRequired,
                     IsMandatory=obj.IsMandatory
@@ -71,7 +71,7 @@ namespace ArisWorkforceManagementTool.Areas.MasterPages.Controllers
                     IsActive = obj.IsActive,
                     CreatedDate = docExists[0].CreatedDate,
                     CreatedBy = docExists[0].CreatedBy,
-                    ModifiedBy = 1,
+                    ModifiedBy = Convert.ToInt32(TempData.Peek("UserId")),
                     ModifiedDate = DateTime.Now,
                     DocumentCategoryID = obj.DocumentCategoryID,
                     IsExpiryRequired=obj.IsExpiryRequired,

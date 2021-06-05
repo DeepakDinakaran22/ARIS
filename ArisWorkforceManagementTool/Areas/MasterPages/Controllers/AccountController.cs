@@ -11,16 +11,45 @@ using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Aris.Common.Interfaces;
+using Aris.Common;
+using Microsoft.Extensions.Options;
+using ArisWorkforceManagementTool.Models;
+using System.Diagnostics;
+using Microsoft.Extensions.Logging;
 
 namespace ArisWorkforceManagementTool.Areas.MasterPages.Controllers
 {
-    public class AccountController : Controller
+    public class AccountController : Controller 
     {
+        private readonly ILogger<HomeController> _logger;
+
         UnitOfWork unitOfWork = new UnitOfWork();
+        private readonly AppSettings _appSettings;
+
+        public AccountController(IOptions<AppSettings> appSettings)
+        {
+            _appSettings = appSettings.Value;
+        }
         [HttpGet]
         public IActionResult Login()
         {
-            return View();
+            try
+            {
+                
+
+
+                // EmailService emailService = new EmailService(_appSettings);
+                // emailService.Send( "iamsreerajn@gmail.com", "subject", strBody);
+
+                return View();
+            }
+            catch(Exception ex)
+            {
+                
+                return null;
+
+            }
         }
 
         [HttpPost]
