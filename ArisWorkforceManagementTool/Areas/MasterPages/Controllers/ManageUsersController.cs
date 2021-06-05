@@ -22,6 +22,7 @@ namespace ArisWorkforceManagementTool.Areas.MasterPages.Controllers
     [Area("MasterPages")]
     public class ManageUsersController : Controller
     {
+        
         private readonly ILogger<ManageUsersController> _logger;
         private readonly IWebHostEnvironment webHostEnvironment;
         private readonly AppSettings _appSettings;
@@ -199,25 +200,7 @@ namespace ArisWorkforceManagementTool.Areas.MasterPages.Controllers
                 UnitOfWork.Save();
                 #region send mail
 
-                string strBody = @"
-                    <body>  
-                        <div>
-                            <p>Dear <span style=""font - weight: bold; "">[USER]</span>,</p>
-                            </div>
-                            <div>
-                            <p>A user account has been created for you in AMT web application.Please refer the details below to login.</p>
-                            <p><table style = ""text-align:left;"">
-                            <tr><th>User Name </th> <td>: [USERNAME] </td></tr>
-                            <tr><th>Password </th> <td>: [PASSWORD]</td>
-                            </tr><tr><th>Application Link </th><td>: [APPLICATIONLINK]</td></tr></table></p >
-                        </div>
-                        <div>
-                            <table style= ""font-weight: bold;"">
-                                <tr><td rowspan = ""2""></td><td>Regards </td></tr>
-                                <tr><td>AMT Admin </td></tr>
-                            </table>
-                        </div>
-                    </body>";
+                string strBody = EmailTemplateHelper.createAccount;
                 strBody=  strBody.Replace("[USER]", userObj.FullName).Replace("[USERNAME]", userObj.UserName).Replace("[APPLICATIONLINK]", "http://magicisland:8080").Replace("[PASSWORD]", randomPwd);
                 EmailService emailService = new EmailService(_appSettings);
                 emailService.Send( userObj.MailAddress, "AMT User Account Created", strBody);
