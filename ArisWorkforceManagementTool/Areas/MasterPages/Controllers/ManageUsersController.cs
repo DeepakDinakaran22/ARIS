@@ -8,6 +8,8 @@ using ArisWorkforceManagementTool.Models;
 using Aris.Data;
 using Aris.Data.Entities;
 using Aris.Models.ViewModel;
+using Aris.Models.Helper;
+
 using Microsoft.Extensions.Logging;
 using Users = Aris.Models.ViewModel.Users;
 using Aris.Models;
@@ -199,11 +201,14 @@ namespace ArisWorkforceManagementTool.Areas.MasterPages.Controllers
                 UnitOfWork.UserRepository.Insert(user);
                 UnitOfWork.Save();
                 #region send mail
-
+                var userData = UnitOfWork.UserRepository.Get(u => u.IsActive == 1);
+                var loggedInUser = (from users in userData
+                                    where users.UserId == Convert.ToInt32(TempData.Peek("UserId"))
+                                    select users).FirstOrDefault();
                 string strBody = EmailTemplateHelper.createAccount;
                 strBody=  strBody.Replace("[USER]", userObj.FullName).Replace("[USERNAME]", userObj.UserName).Replace("[APPLICATIONLINK]", "http://magicisland:8080").Replace("[PASSWORD]", randomPwd);
                 EmailService emailService = new EmailService(_appSettings);
-                emailService.Send( userObj.MailAddress, "AMT User Account Created", strBody);
+                emailService.Send( userObj.MailAddress, loggedInUser.MailAddress, "AMT User Account Created", strBody);
 
                 #endregion
 

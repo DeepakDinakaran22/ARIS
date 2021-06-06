@@ -4,14 +4,18 @@ using System.IO;
 using System.Linq;
 using System.Net.Http.Headers;
 using System.Threading.Tasks;
+using Aris.Common;
 using Aris.Data;
 using Aris.Data.Entities;
+using Aris.Models;
 using Aris.Models.ViewModel;
+using Aris.Models.Helper;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 
 namespace ArisWorkforceManagementTool.Areas.MasterPages.Controllers
 {
@@ -21,13 +25,15 @@ namespace ArisWorkforceManagementTool.Areas.MasterPages.Controllers
         private readonly ILogger<ManageUsersController> _logger;
         UnitOfWork UnitOfWork = new UnitOfWork();
         UnitOfWork objUnitOfWorkFetched = new UnitOfWork();
-        UnitOfWork uploadUnitOfWork = new UnitOfWork();
         private readonly IWebHostEnvironment webHostEnvironment;
         private string imagePath = string.Empty;
-        public int UserTypeId { get; set; } 
-        public ManageEmployeesController(IWebHostEnvironment hostEnvironment)
+        public int UserTypeId { get; set; }
+        private readonly AppSettings _appSettings;
+
+        public ManageEmployeesController(IWebHostEnvironment hostEnvironment, IOptions<AppSettings> appSettings)
         {
             this.webHostEnvironment = hostEnvironment;
+            _appSettings = appSettings.Value;
         }
 
         // GET: ManageEmployees
@@ -37,90 +43,24 @@ namespace ArisWorkforceManagementTool.Areas.MasterPages.Controllers
             return View();
         }
 
-        // GET: ManageEmployees/Details/5
-        public ActionResult Details(int id)
-        {
-            return View();
-        }
-
-        // GET: ManageEmployees/Create
-        public ActionResult Create()
-        {
-            return View();
-        }
-
-        // POST: ManageEmployees/Create
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult Create(IFormCollection collection)
-        {
-            try
-            {
-                // TODO: Add insert logic here
-
-                return RedirectToAction(nameof(Index));
-            }
-            catch
-            {
-                return View();
-            }
-        }
-
-        // GET: ManageEmployees/Edit/5
-        public ActionResult Edit(int id)
-        {
-            return View();
-        }
-
-        // POST: ManageEmployees/Edit/5
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult Edit(int id, IFormCollection collection)
-        {
-            try
-            {
-                // TODO: Add update logic here
-
-                return RedirectToAction(nameof(Index));
-            }
-            catch
-            {
-                return View();
-            }
-        }
-
-        // GET: ManageEmployees/Delete/5
-        public ActionResult Delete(int id)
-        {
-            return View();
-        }
-
-        // POST: ManageEmployees/Delete/5
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult Delete(int id, IFormCollection collection)
-        {
-            try
-            {
-                // TODO: Add delete logic here
-
-                return RedirectToAction(nameof(Index));
-            }
-            catch
-            {
-                return View();
-            }
-        }
         [HttpGet]
         public JsonResult GetCompanies()
         {
-            var companies = UnitOfWork.CompanyRepository.Get(x => x.IsActive == 1).ToList().OrderBy(o=>o.CompanyName);
-            foreach(var item in companies)
+            try
             {
-                item.CompanyName = item.CompanyName+'-'+item.CompanyLocation;
-            }
+                var companies = UnitOfWork.CompanyRepository.Get(x => x.IsActive == 1).ToList().OrderBy(o => o.CompanyName);
+                foreach (var item in companies)
+                {
+                    item.CompanyName = item.CompanyName + '-' + item.CompanyLocation;
+                }
 
-            return Json(companies);
+                return Json(companies);
+            }
+            catch(Exception ex)
+            {
+                _logger.LogError(ex.ToString());
+                return null;
+            }
 
         }
 
@@ -138,6 +78,7 @@ namespace ArisWorkforceManagementTool.Areas.MasterPages.Controllers
             }
             catch (Exception ex)
             {
+                _logger.LogError(ex.ToString());
                 return Json(new { success = false, responseText = "Something went wrong" });
             }
         }
@@ -186,13 +127,48 @@ namespace ArisWorkforceManagementTool.Areas.MasterPages.Controllers
                     UnitOfWork.EmployeeFileUploadsRepository.Update(item);
                     UnitOfWork.Save();
                 }
-              
-              
 
+
+                #region send mail
+                if (Convert.ToBoolean(ConstantVariables.SendMailNotification.Status))
+                {
+                    string strManagerNames = string.Empty;
+                    string strManagerMails = string.Empty;
+                    var userData = UnitOfWork.UserRepository.Get(u => u.IsActive == 1);
+                    var loggedInUser = (from users in userData
+                                       where users.UserId == Convert.ToInt32(TempData.Peek("UserId"))
+                                       select users).FirstOrDefault();
+                    var managerUser = from managers in userData
+                                      where managers.UserTypeID == Convert.ToInt32(ConstantVariables.UserType.Manager)
+                                      select managers;
+                    foreach (var item in managerUser)
+                    {
+                        strManagerNames = strManagerNames == string.Empty ? item.FullName : strManagerNames + ", " + item.FullName;
+                        strManagerMails = strManagerMails == string.Empty ? item.MailAddress : strManagerMails + ", " + item.MailAddress;
+
+                    }
+
+                    string strBody = EmailTemplateHelper.submitEmployeeDetails;
+                    strBody = strBody.Replace("[USER]", strManagerNames)
+                        .Replace("[LOGGEDINUSER]",loggedInUser.FullName)
+                        .Replace("[EMPID]", obj.EmployeeReferenceNo.ToString())
+                        .Replace("[EMPNAME]", obj.EmployeeName)
+                        .Replace("[PASSPORTNO]", obj.PassportNumber)
+                        .Replace("[RESIDENTNO]", obj.ResidentNumber)
+                        .Replace("[PASSPORTEXPIRY]",Convert.ToDateTime(obj.PassportExpiryDate).ToString("yyyy-MM-dd"))
+                        .Replace("[RESIDENTEXPIRY]", Convert.ToDateTime(obj.ResidentExpiryDate).ToString("yyyy-MM-dd"))
+                        .Replace("[GSMNO]", obj.Gsm.ToString())
+                        .Replace("[REMARKS]", obj.Remarks)
+                        .Replace("[APPLICATIONLINK]", "http://magicisland:8080");
+                    EmailService emailService = new EmailService(_appSettings);
+                    emailService.Send(strManagerMails,loggedInUser.MailAddress, "An employee details submitted for your action", strBody);
+                }
+                #endregion
                 return Json(new { success = true, responseText = "Employee details submitted for approval" });
             }
             catch (Exception ex)
             {
+                _logger.LogError(ex.ToString());
                 return Json(new { success = false, responseText = "Something went wrong." });
             }
         }
@@ -200,8 +176,16 @@ namespace ArisWorkforceManagementTool.Areas.MasterPages.Controllers
         [HttpGet]
         public JsonResult GetAllEmployees()
         {
-            var employees = UnitOfWork.EmployeeDetailsRepository.Get(null, x => x.OrderBy(id => id.EmployeeNo));
-            return Json(employees);
+            try
+            {
+                var employees = UnitOfWork.EmployeeDetailsRepository.Get(null, x => x.OrderBy(id => id.EmployeeNo));
+                return Json(employees);
+            }
+            catch(Exception ex)
+            {
+                _logger.LogError(ex.ToString());
+                return null;
+            }
 
         }
         [HttpPost]
@@ -254,12 +238,48 @@ namespace ArisWorkforceManagementTool.Areas.MasterPages.Controllers
                     UnitOfWork.Save();
                 }
 
+                #region send mail
+                if (Convert.ToBoolean(ConstantVariables.SendMailNotification.Status))
+                {
+                    string strManagerNames = string.Empty;
+                    string strManagerMails = string.Empty;
+                    var userData = UnitOfWork.UserRepository.Get(u => u.IsActive == 1);
+                    var loggedInUser = (from users in userData
+                                        where users.UserId == Convert.ToInt32(TempData.Peek("UserId"))
+                                        select users).FirstOrDefault();
+                    var managerUser = from managers in userData
+                                      where managers.UserTypeID == Convert.ToInt32(ConstantVariables.UserType.Manager)
+                                      select managers;
+                    foreach (var item in managerUser)
+                    {
+                        strManagerNames = strManagerNames == string.Empty ? item.FullName : strManagerNames + ", " + item.FullName;
+                        strManagerMails = strManagerMails == string.Empty ? item.MailAddress : strManagerMails + ", " + item.MailAddress;
+
+                    }
+
+                    string strBody = EmailTemplateHelper.reSubmitEmployeeDetails;
+                    strBody = strBody.Replace("[USER]", strManagerNames)
+                        .Replace("[LOGGEDINUSER]", loggedInUser.FullName)
+                        .Replace("[EMPID]", obj.EmployeeReferenceNo.ToString())
+                        .Replace("[EMPNAME]", obj.EmployeeName)
+                        .Replace("[PASSPORTNO]", obj.PassportNumber)
+                        .Replace("[RESIDENTNO]", obj.ResidentNumber)
+                        .Replace("[PASSPORTEXPIRY]", Convert.ToDateTime(obj.PassportExpiryDate).ToString("yyyy-MM-dd"))
+                        .Replace("[RESIDENTEXPIRY]", Convert.ToDateTime(obj.ResidentExpiryDate).ToString("yyyy-MM-dd"))
+                        .Replace("[GSMNO]", obj.Gsm.ToString())
+                        .Replace("[REMARKS]", obj.Remarks)
+                        .Replace("[APPLICATIONLINK]", "http://magicisland:8080");
+                    EmailService emailService = new EmailService(_appSettings);
+                    emailService.Send(strManagerMails, loggedInUser.MailAddress, "An employee details have been re-submitted for your action", strBody);
+                }
+                #endregion
 
                 return Json(new { success = true, responseText = "Employee details updated successfully." });
 
             }
             catch (Exception ex)
             {
+                _logger.LogError(ex.ToString());
                 return Json(new { success = false, responseText = "Something went wrong." });
             }
 
@@ -303,11 +323,58 @@ namespace ArisWorkforceManagementTool.Areas.MasterPages.Controllers
                 };
                 UnitOfWork.EmployeeDetailsRepository.Update(employee);
                 UnitOfWork.Save();
+
+                #region send mail
+                if (Convert.ToBoolean(ConstantVariables.SendMailNotification.Status))
+                {
+                    string strManagerNames = string.Empty;
+                    string strManagerMails = string.Empty;
+                    string strAdminMails = string.Empty;
+                    var userData = UnitOfWork.UserRepository.Get(u => u.IsActive == 1);
+                    var loggedInUser = (from users in userData
+                                        where users.UserId == Convert.ToInt32(TempData.Peek("UserId"))
+                                        select users).FirstOrDefault();
+                    var managerUser = from managers in userData
+                                      where managers.UserTypeID == Convert.ToInt32(ConstantVariables.UserType.Manager)
+                                      select managers;
+                    foreach (var item in managerUser)
+                    {
+                        strManagerNames = strManagerNames == string.Empty ? item.FullName : strManagerNames + ", " + item.FullName;
+                        strManagerMails = strManagerMails == string.Empty ? item.MailAddress : strManagerMails + ", " + item.MailAddress;
+
+                    }
+                    var adminUser = from admins in userData
+                                      where admins.UserTypeID == Convert.ToInt32(ConstantVariables.UserType.Admin)
+                                      select admins;
+                    foreach (var item in adminUser)
+                    {
+                        strAdminMails = strAdminMails == string.Empty ? item.MailAddress : strAdminMails + ", " + item.MailAddress;
+
+                    }
+
+                    string strBody = EmailTemplateHelper.approvedEmployeeDetails;
+                    strBody = strBody.Replace("[USER]", strManagerNames)
+                        .Replace("[LOGGEDINUSER]", loggedInUser.FullName)
+                        .Replace("[EMPID]", empExistingData[0].EmployeeReferenceNo.ToString())
+                        .Replace("[EMPNAME]", empExistingData[0].EmployeeName)
+                        .Replace("[PASSPORTNO]", empExistingData[0].PassportNumber)
+                        .Replace("[RESIDENTNO]", empExistingData[0].ResidentNumber)
+                        .Replace("[PASSPORTEXPIRY]", Convert.ToDateTime(empExistingData[0].PassportExpiryDate).ToString("yyyy-MM-dd"))
+                        .Replace("[RESIDENTEXPIRY]", Convert.ToDateTime(empExistingData[0].ResidentExpiryDate).ToString("yyyy-MM-dd"))
+                        .Replace("[GSMNO]", empExistingData[0].Gsm.ToString())
+                        .Replace("[REMARKS]", obj.Remarks)
+                        .Replace("[APPLICATIONLINK]", "http://magicisland:8080");
+                    EmailService emailService = new EmailService(_appSettings);
+                    emailService.Send(strAdminMails, strManagerMails, "An employee details have been approved | Aris-"+ empExistingData[0].EmployeeReferenceNo, strBody);
+                }
+                #endregion
+
                 return Json(new { success = true, responseText = "Employee details Approved and Saved to the system successfully." });
 
             }
             catch (Exception ex)
             {
+                _logger.LogError(ex.ToString());
                 return Json(new { success = false, responseText = "Something went wrong." });
             }
 
@@ -352,11 +419,46 @@ namespace ArisWorkforceManagementTool.Areas.MasterPages.Controllers
                 };
                 UnitOfWork.EmployeeDetailsRepository.Update(employee);
                 UnitOfWork.Save();
-                return Json(new { success = true, responseText = "Employee details has been sent back to admin." });
+                #region send mail
+                if (Convert.ToBoolean(ConstantVariables.SendMailNotification.Status))
+                {
+                    string strManagerNames = string.Empty;
+                    string strManagerMails = string.Empty;
+                    string strCreatedUser = string.Empty;
+                    var userData = UnitOfWork.UserRepository.Get(u => u.IsActive == 1);
+                    var loggedInUser = (from users in userData
+                                        where users.UserId == Convert.ToInt32(TempData.Peek("UserId"))
+                                        select users).FirstOrDefault();
+                    var createdUser = (from users in userData
+                                        where users.UserId == Convert.ToInt32(empExistingData[0].CreatedBy)
+                                        select users).FirstOrDefault();
+                    var managerUser = from managers in userData
+                                      where managers.UserTypeID == Convert.ToInt32(ConstantVariables.UserType.Manager)
+                                      select managers;
+                    foreach (var item in managerUser)
+                    {
+                        strManagerNames = strManagerNames == string.Empty ? item.FullName : strManagerNames + ", " + item.FullName;
+                        strManagerMails = strManagerMails == string.Empty ? item.MailAddress : strManagerMails + ", " + item.MailAddress;
+
+                    }
+
+                    string strBody = EmailTemplateHelper.sendBackEmployeeDetails;
+                    strBody = strBody.Replace("[USER]", createdUser.FullName.ToUpper())
+                        .Replace("[LOGGEDINUSER]", loggedInUser.FullName.ToUpper())
+                        .Replace("[EMPID]", empExistingData[0].EmployeeReferenceNo.ToString())
+                        .Replace("[EMPNAME]", empExistingData[0].EmployeeName.ToString())
+                        .Replace("[REMARKS]", obj.Remarks)
+                        .Replace("[APPLICATIONLINK]", "http://magicisland:8080");
+                    EmailService emailService = new EmailService(_appSettings);
+                    emailService.Send(createdUser.MailAddress, strManagerMails, "An employee details have been Sent Back | Aris-" + empExistingData[0].EmployeeReferenceNo, strBody);
+                }
+                #endregion
+                return Json(new { success = true, responseText = "Employee details have been sent back to admin." });
 
             }
             catch (Exception ex)
             {
+                _logger.LogError(ex.ToString());
                 return Json(new { success = false, responseText = "Something went wrong." });
             }
 
@@ -378,6 +480,7 @@ namespace ArisWorkforceManagementTool.Areas.MasterPages.Controllers
                 }
                 else
                 {
+                    _logger.LogError(ex.ToString());
                     return Json(new { success = false, responseText = "Something went wrong." });
                 }
             }
@@ -386,19 +489,28 @@ namespace ArisWorkforceManagementTool.Areas.MasterPages.Controllers
         [HttpPost]
         public async Task<IActionResult> UploadImage(IList<IFormFile> files,string empNo)
         {
-            string filename = string.Empty;
-            foreach (IFormFile source in files)
+            try
             {
-                filename = ContentDispositionHeaderValue.Parse(source.ContentDisposition).FileName.Trim('"');
+                string filename = string.Empty;
+                foreach (IFormFile source in files)
+                {
+                    filename = ContentDispositionHeaderValue.Parse(source.ContentDisposition).FileName.Trim('"');
 
-                filename = DateTime.Now.ToFileTime() + "_" + this.EnsureCorrectFilename(filename);
-                imagePath = filename;
+                    filename = DateTime.Now.ToFileTime() + "_" + this.EnsureCorrectFilename(filename);
+                    imagePath = filename;
 
-                using (FileStream output = System.IO.File.Create(this.GetPathAndFilename(filename, empNo)))
-                    await source.CopyToAsync(output);
+                    using (FileStream output = System.IO.File.Create(this.GetPathAndFilename(filename, empNo)))
+                        await source.CopyToAsync(output);
+                }
+
+                return Json(new { success = true, responseText = "Employee Image updated successfully.", profileImagePath = imagePath, imageFullPath = this.GetFullImagePathAndFilename(filename, empNo) });
             }
+            catch(Exception ex)
+            {
+                _logger.LogError(ex.ToString());
+                return Json(new { success = false, responseText = "Something went wrong.", profileImagePath = imagePath, imageFullPath = this.GetFullImagePathAndFilename("FileName", empNo) });
 
-            return Json(new { success = true, responseText = "Employee Image updated successfully.", profileImagePath = imagePath, imageFullPath= this.GetFullImagePathAndFilename(filename,empNo) });
+            }
         }
 
         [HttpPost]
@@ -479,6 +591,7 @@ namespace ArisWorkforceManagementTool.Areas.MasterPages.Controllers
             }
             catch(Exception ex)
             {
+                _logger.LogInformation(ex.ToString());
                 return Json(new { success = false, responseText = "Something went wrong. Please try again !"});
 
             }
@@ -567,103 +680,150 @@ namespace ArisWorkforceManagementTool.Areas.MasterPages.Controllers
             }
             catch (Exception ex)
             {
+                _logger.LogInformation(ex.ToString());
                 return Json(new { success = false, responseText = "Something went wrong. Please try again !" });
 
             }
         }
         private string EnsureCorrectFilename(string filename)
         {
-            if (filename.Contains("\\"))
-                filename = filename.Substring(filename.LastIndexOf("\\") + 1);
+            try
+            {
+                if (filename.Contains("\\"))
+                    filename = filename.Substring(filename.LastIndexOf("\\") + 1);
 
-            return filename;
+                return filename;
+            }
+            catch(Exception ex)
+            {
+
+                _logger.LogInformation(ex.ToString());
+                return null;
+            }
         }
 
         private string GetPathAndFilename(string filename,string empNo)
         {
-            if( Directory.Exists(this.webHostEnvironment.WebRootPath + "\\Uploads\\EmployeeUploads\\"+ empNo))
+            try
             {
-                return this.webHostEnvironment.WebRootPath + "\\Uploads\\EmployeeUploads\\"+empNo+"\\"+ filename;
+                if (Directory.Exists(this.webHostEnvironment.WebRootPath + "\\Uploads\\EmployeeUploads\\" + empNo))
+                {
+                    return this.webHostEnvironment.WebRootPath + "\\Uploads\\EmployeeUploads\\" + empNo + "\\" + filename;
 
+                }
+                else
+                {
+                    Directory.CreateDirectory(this.webHostEnvironment.WebRootPath + "\\Uploads\\EmployeeUploads\\" + empNo);
+                    return this.webHostEnvironment.WebRootPath + "\\Uploads\\EmployeeUploads\\" + empNo + "\\" + filename;
+
+                }
             }
-            else
+            catch(Exception ex)
             {
-                Directory.CreateDirectory(this.webHostEnvironment.WebRootPath + "\\Uploads\\EmployeeUploads\\" + empNo);
-                return this.webHostEnvironment.WebRootPath + "\\Uploads\\EmployeeUploads\\" + empNo + "\\" + filename;
-
+                _logger.LogInformation(ex.ToString());
+                return null;
             }
         }
-        private string GetFullImagePathAndFilename(string filename,string empNo)
+        private string GetFullImagePathAndFilename(string filename, string empNo)
         {
-            return "\\Uploads\\EmployeeUploads\\"+empNo+"\\"+ filename;
+            try
+            {
+            
+            return "\\Uploads\\EmployeeUploads\\" + empNo + "\\" + filename;
+            }
+            catch(Exception ex)
+            {
+                _logger.LogInformation(ex.ToString());
+                return null;
+            }
         }
         private string GetFullDocumentPathWithoutFileName(string empNo)
         {
-            return "\\Uploads\\EmployeeUploads\\" + empNo + "\\" ;
+            try
+            {
+                return "\\Uploads\\EmployeeUploads\\" + empNo + "\\";
+            }
+            catch(Exception ex)
+            {
+                _logger.LogInformation(ex.ToString());
+                return null;
+            }
         }
 
         #region Upload documents section
         [HttpGet]
         public JsonResult GetAllUploads(string uploadType, int EmpRefNo)
         {
-
-            List<DocumentType> documents = UnitOfWork.DocumentTypeRepository.Get(x => x.IsActive==1 ).ToList();
-            List<EmployeeFileUploads>  files = UnitOfWork.EmployeeFileUploadsRepository.Get(x => x.IsActive == 1 && x.EmployeeReferenceNo==EmpRefNo).ToList();
-            #region commented
-          var  data = from d in documents
-                   join f in files
-                   on d.DocumentId equals f.DocumentId into eGroup
-                   where d.DocumentCategoryID == 1 && !(d.DocumentName.ToLower().Contains("passport")) &&!(d.DocumentName.ToLower().Contains("resident"))
-                   from f in eGroup.DefaultIfEmpty()
-                   select new { 
-                       FileName = f == null ? "No Files" : f.ActualFileName, 
-                       FilePath = f == null ? "No Path" : f.FileLocation+f.FileName, 
-                       DocumentName = d.DocumentName, 
-                       DocumentId = d.DocumentId, 
-                       isExpiryRequired = d.IsExpiryRequired,
-                       expiryDate = f==null?null : Convert.ToDateTime(f.ExpiryDate).ToString("yyyy-MM-dd") ,
-                       isMandatory = d==null?0:d.IsMandatory
-                   };
-            switch (uploadType)
+            try
             {
-                case "PASSPORT":
-                     data = from d in documents
+                List<DocumentType> documents = UnitOfWork.DocumentTypeRepository.Get(x => x.IsActive == 1).ToList();
+                List<EmployeeFileUploads> files = UnitOfWork.EmployeeFileUploadsRepository.Get(x => x.IsActive == 1 && x.EmployeeReferenceNo == EmpRefNo).ToList();
+                #region commented
+                var data = from d in documents
+                           join f in files
+                           on d.DocumentId equals f.DocumentId into eGroup
+                           where d.DocumentCategoryID == 1 && !(d.DocumentName.ToLower().Contains("passport")) && !(d.DocumentName.ToLower().Contains("resident"))
+                           from f in eGroup.DefaultIfEmpty()
+                           select new
+                           {
+                               FileName = f == null ? "No Files" : f.ActualFileName,
+                               FilePath = f == null ? "No Path" : f.FileLocation + f.FileName,
+                               DocumentName = d.DocumentName,
+                               DocumentId = d.DocumentId,
+                               isExpiryRequired = d.IsExpiryRequired,
+                               expiryDate = f == null ? null : Convert.ToDateTime(f.ExpiryDate).ToString("yyyy-MM-dd"),
+                               isMandatory = d == null ? 0 : d.IsMandatory
+                           };
+                switch (uploadType)
+                {
+                    case "PASSPORT":
+                        data = from d in documents
                                join f in files
                                on d.DocumentId equals f.DocumentId into eGroup
                                where d.DocumentCategoryID == 1 && d.DocumentName.ToLower().Contains("passport")
                                from f in eGroup.DefaultIfEmpty()
-                               select new { FileName = f == null ? "No Files" : f.ActualFileName, 
-                                   FilePath = f == null ? "No Path" : f.FileLocation + f.FileName, 
-                                   DocumentName = d.DocumentName, 
-                                   DocumentId = d.DocumentId, 
-                                   isExpiryRequired = d.IsExpiryRequired, 
+                               select new
+                               {
+                                   FileName = f == null ? "No Files" : f.ActualFileName,
+                                   FilePath = f == null ? "No Path" : f.FileLocation + f.FileName,
+                                   DocumentName = d.DocumentName,
+                                   DocumentId = d.DocumentId,
+                                   isExpiryRequired = d.IsExpiryRequired,
                                    expiryDate = f == null ? null : Convert.ToDateTime(f.ExpiryDate).ToString("yyyy-MM-dd"),
                                    isMandatory = d == null ? 0 : d.IsMandatory
                                };
 
-                    break;
-                case "RESIDENT":
-                     data = from d in documents
+                        break;
+                    case "RESIDENT":
+                        data = from d in documents
                                join f in files
                                on d.DocumentId equals f.DocumentId into eGroup
                                where d.DocumentCategoryID == 1 && d.DocumentName.ToLower().Contains("resident")
                                from f in eGroup.DefaultIfEmpty()
-                               select new { FileName = f == null ? "No Files" : f.ActualFileName , 
-                                   FilePath = f == null ? "No Path" : f.FileLocation + f.FileName, 
-                                   DocumentName = d.DocumentName, 
-                                   DocumentId = d.DocumentId, 
-                                   isExpiryRequired = d.IsExpiryRequired, 
+                               select new
+                               {
+                                   FileName = f == null ? "No Files" : f.ActualFileName,
+                                   FilePath = f == null ? "No Path" : f.FileLocation + f.FileName,
+                                   DocumentName = d.DocumentName,
+                                   DocumentId = d.DocumentId,
+                                   isExpiryRequired = d.IsExpiryRequired,
                                    expiryDate = f == null ? null : Convert.ToDateTime(f.ExpiryDate).ToString("yyyy-MM-dd"),
                                    isMandatory = d == null ? 0 : d.IsMandatory
                                };
 
-                    break;
-                
-              
-            }
-            #endregion
+                        break;
 
-            return Json(data);
+
+                }
+                #endregion
+
+                return Json(data);
+            }
+            catch(Exception ex)
+            {
+                _logger.LogInformation(ex.ToString());
+                return null;
+            }
         
         }
 
@@ -682,6 +842,7 @@ namespace ArisWorkforceManagementTool.Areas.MasterPages.Controllers
             }
             catch (Exception ex)
             {
+                _logger.LogInformation(ex.ToString());
                 return Json(new { success = false, responseText = "Something went wrong. Please try again !" });
             }
         }
@@ -690,15 +851,23 @@ namespace ArisWorkforceManagementTool.Areas.MasterPages.Controllers
         [HttpGet]
         public JsonResult IsEmployeeNameExists(EmployeeDetails obj)
         {
-            var employees = UnitOfWork.EmployeeDetailsRepository.Get();
-            bool has = employees.ToList().Any(x => x.PassportNumber == obj.PassportNumber);
-            if (has)
+            try
             {
-                return Json(new { value = true, responseText = "Employee name exists" });
+                var employees = UnitOfWork.EmployeeDetailsRepository.Get();
+                bool has = employees.ToList().Any(x => x.PassportNumber == obj.PassportNumber);
+                if (has)
+                {
+                    return Json(new { value = true, responseText = "Employee name exists" });
+                }
+                else
+                {
+                    return Json(new { value = false, responseText = "Employee name is not exists" });
+                }
             }
-            else
+            catch(Exception ex)
             {
-                return Json(new { value = false, responseText = "Employee name is not exists" });
+                _logger.LogInformation(ex.ToString());
+                return null;
             }
 
         }

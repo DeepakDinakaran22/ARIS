@@ -695,6 +695,7 @@ $('.example-p-3').on('click', function () {
                     text: 'Yes',
                     btnClass: 'btn-blue',
                     action: function () {
+                        showLoader_employee(true);
                         SendBackRequest();
                     }
                 },
@@ -1069,7 +1070,7 @@ function ClearFields() {
         $("#btnSendBack").hide();
         $("#btnApprove").hide();
         $("#btnReset").hide();
-
+        $("#txtEmployeeNumber").val('');
     }
     else {
 
@@ -1231,7 +1232,13 @@ $('#tblEmployees').on('click', 'td.edit', function (e) {
         $("#txtAccountNumber").val(table.row(this).data()['bankAccountNumber']).attr('disabled', 'disabled');
         $("#txtConfirmAccountNumber").val(table.row(this).data()['bankAccountNumber']).attr('disabled', 'disabled');
         $("#txtRemarks").val(table.row(this).data()['remarks']).attr('disabled', 'disabled');
-        $("#imgUser").attr('src', "/Uploads/employeeUploads/" + $("#txtEmployeeNumber").val() + "/" + table.row(this).data()['employeeImage']).attr('disabled', 'disabled');
+        //$("#imgUser").attr('src', "/Uploads/employeeUploads/" + $("#txtEmployeeNumber").val() + "/" + table.row(this).data()['employeeImage']).attr('disabled', 'disabled');
+        if (table.row(this).data()['employeeImage'] != null) {
+            $("#imgUser").attr('src', "/Uploads/employeeUploads/" + $("#txtEmployeeNumber").val() + "/" + table.row(this).data()['employeeImage']).attr('disabled', 'disabled');
+        }
+        else {
+            $("#imgUser").attr('src', "/img/avatar.png").attr('disabled', 'disabled');
+        }
         isUploadAllowed = false; // new for restrict uploads
         GetAllUploads("PASSPORT", table.row(this).data()['employeeReferenceNo']);  // testing is in progress
         GetAllUploads("RESIDENT", table.row(this).data()['employeeReferenceNo']);
@@ -1267,7 +1274,13 @@ $('#tblEmployees').on('click', 'td.edit', function (e) {
         $("#txtConfirmAccountNumber").val(table.row(this).data()['bankAccountNumber']).attr('disabled', false);
        // $("#txtRemarks").val(table.row(this).data()['remarks']).attr('disabled', false);
         $("#txtRemarks").val('').attr('disabled', false);
-        $("#imgUser").attr('src', "/Uploads/employeeUploads/" + $("#txtEmployeeNumber").val() + "/" + table.row(this).data()['employeeImage']).attr('disabled', false);
+       // $("#imgUser").attr('src', "/Uploads/employeeUploads/" + $("#txtEmployeeNumber").val() + "/" + table.row(this).data()['employeeImage']).attr('disabled', false);
+        if (table.row(this).data()['employeeImage'] != null) {
+            $("#imgUser").attr('src', "/Uploads/employeeUploads/" + $("#txtEmployeeNumber").val() + "/" + table.row(this).data()['employeeImage']).attr('disabled', 'disabled');
+        }
+        else {
+            $("#imgUser").attr('src', "/img/avatar.png").attr('disabled', 'disabled');
+        }
         isUploadAllowed = true;// new for restrict uploads
         GetAllUploads("PASSPORT", table.row(this).data()['employeeReferenceNo']);  // testing is in progress
         GetAllUploads("RESIDENT", table.row(this).data()['employeeReferenceNo']);
@@ -1310,7 +1323,14 @@ $('#tblEmployees').on('click', 'td.edit', function (e) {
         $("#txtConfirmAccountNumber").val(table.row(this).data()['bankAccountNumber']).attr('disabled', 'disabled');
        // $("#txtRemarks").val(table.row(this).data()['remarks']).attr('enabled', true);
         $("#txtRemarks").val('').attr('enabled', true);
-        $("#imgUser").attr('src', "/Uploads/employeeUploads/" + $("#txtEmployeeNumber").val() + "/" + table.row(this).data()['employeeImage']).attr('disabled', 'disabled');
+        if (table.row(this).data()['employeeImage']!= null)
+            {
+                $("#imgUser").attr('src', "/Uploads/employeeUploads/" + $("#txtEmployeeNumber").val() + "/" + table.row(this).data()['employeeImage']).attr('disabled', 'disabled');
+            }
+        else 
+            {
+                $("#imgUser").attr('src', "/img/avatar.png").attr('disabled', 'disabled');
+            }
         isUploadAllowed = false; // new for restrict uploads
         GetAllUploads("PASSPORT", table.row(this).data()['employeeReferenceNo']);  // testing is in progress
         GetAllUploads("RESIDENT", table.row(this).data()['employeeReferenceNo']);
@@ -1350,7 +1370,13 @@ $('#tblEmployees').on('click', 'td.edit', function (e) {
         $("#txtConfirmAccountNumber").val(table.row(this).data()['bankAccountNumber']).attr('disabled', 'disabled');
          $("#txtRemarks").val(table.row(this).data()['remarks']).attr('disabled', 'disabled');
         //$("#txtRemarks").val('').attr('enabled', true);
-        $("#imgUser").attr('src', "/Uploads/employeeUploads/" + $("#txtEmployeeNumber").val() + "/" + table.row(this).data()['employeeImage']).attr('disabled', 'disabled');
+        //$("#imgUser").attr('src', "/Uploads/employeeUploads/" + $("#txtEmployeeNumber").val() + "/" + table.row(this).data()['employeeImage']).attr('disabled', 'disabled');
+        if (table.row(this).data()['employeeImage'] != null) {
+            $("#imgUser").attr('src', "/Uploads/employeeUploads/" + $("#txtEmployeeNumber").val() + "/" + table.row(this).data()['employeeImage']).attr('disabled', 'disabled');
+        }
+        else {
+            $("#imgUser").attr('src', "/img/avatar.png").attr('disabled', 'disabled');
+        }
         isUploadAllowed = false; // new for restrict uploads
         GetAllUploads("PASSPORT", table.row(this).data()['employeeReferenceNo']);  // testing is in progress
         GetAllUploads("RESIDENT", table.row(this).data()['employeeReferenceNo']);
@@ -1408,7 +1434,8 @@ function ApproveRequest() {
         showLoader(true);
         callAjax('POST', '/MasterPages/ManageEmployees/ApproveRequest', data);
         GetAllEmployees();
-        ClearFields();
+    ClearFields();
+
    
 }
 function SendBackRequest() {
@@ -1417,8 +1444,8 @@ function SendBackRequest() {
         EmployeeNo: empNO,
         Remarks: remarks
     };
-        showLoader(true);
         callAjax('POST', '/MasterPages/ManageEmployees/SendBackRequest', data);
+        showLoader_employee(false);
         GetAllEmployees();
         ClearFields();
    
@@ -1586,3 +1613,17 @@ $("#txtRemarks").keyup(function () {
 
     }
 });
+
+function showLoader_employee(val) {
+    try {
+        if (val == true) {
+            $("body").addClass("loading");
+        }
+        else {
+            $("body").removeClass("loading");
+        }
+    }
+    catch (err) {
+        console.log(err);
+    }
+}

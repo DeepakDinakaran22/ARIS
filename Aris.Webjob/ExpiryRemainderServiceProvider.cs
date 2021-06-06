@@ -24,7 +24,7 @@ namespace Aris.Webjob
         public void MailRemainder()
         {
             //send mail
-            emailService.Send("", "", "", "");
+            emailService.Send("", "", "");
             var data = UnitOfWork.UserRepository.Get();
             Console.WriteLine("Deepak");
         }

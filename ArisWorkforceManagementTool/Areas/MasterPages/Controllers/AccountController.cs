@@ -17,6 +17,7 @@ using Microsoft.Extensions.Options;
 using ArisWorkforceManagementTool.Models;
 using System.Diagnostics;
 using Microsoft.Extensions.Logging;
+using Aris.Models.Helper;
 
 namespace ArisWorkforceManagementTool.Areas.MasterPages.Controllers
 {
@@ -36,12 +37,7 @@ namespace ArisWorkforceManagementTool.Areas.MasterPages.Controllers
         {
             try
             {
-                
-
-
-                // EmailService emailService = new EmailService(_appSettings);
-                // emailService.Send( "iamsreerajn@gmail.com", "subject", strBody);
-
+    
                 return View();
             }
             catch(Exception ex)

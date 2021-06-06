@@ -10,6 +10,10 @@ using Aris.Data;
 using Aris.Data.Entities;
 using Microsoft.AspNetCore.Authorization;
 using System.Security.Claims;
+using Aris.Models.Helper;
+using Aris.Models;
+using Aris.Common;
+using Microsoft.Extensions.Options;
 
 namespace ArisWorkforceManagementTool.Controllers
 {
@@ -18,15 +22,18 @@ namespace ArisWorkforceManagementTool.Controllers
         private readonly ILogger<HomeController> _logger;
         UnitOfWork UnitOfWork = new UnitOfWork();
         UnitOfWork objUnitOfWorkFetch = new UnitOfWork();
+        private readonly AppSettings _appSettings;
 
-
-        public HomeController(ILogger<HomeController> logger)
+        public HomeController(ILogger<HomeController> logger, IOptions<AppSettings> appSettings)
         {
             _logger = logger;
+            _appSettings = appSettings.Value;
+
         }
         [Authorize]
         public IActionResult Index()
         {
+            
             return View();
         }
         public IActionResult ManagerHomeLanding()
@@ -113,7 +120,7 @@ namespace ArisWorkforceManagementTool.Controllers
             var allUsers = UnitOfWork.UserRepository.Get(x => x.UserId == userId);
            foreach(var item in allUsers)
             {
-                existingPassword = new Aris.Models.AuthHelper().VerifyHashedPassword(item.Password, pwd);
+                existingPassword = new Aris.Models.Helper.AuthHelper().VerifyHashedPassword(item.Password, pwd);
             }
 
             if (existingPassword)
@@ -149,7 +156,7 @@ namespace ArisWorkforceManagementTool.Controllers
                     ModifiedBy = userId,
                     ModifiedDate = DateTime.Now,
                     UserImage = fetchedUser[0].UserImage,
-                    Password = new Aris.Models.AuthHelper().GetHashPassword(pwd),
+                    Password = new AuthHelper().GetHashPassword(pwd),
                     
                 };
 

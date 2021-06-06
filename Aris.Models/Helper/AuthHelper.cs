@@ -3,7 +3,7 @@ using System;
 using System.Linq;
 using System.Security.Cryptography;
 
-namespace Aris.Models
+namespace Aris.Models.Helper
 {
     public class AuthHelper
     {

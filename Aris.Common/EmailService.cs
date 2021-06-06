@@ -22,15 +22,30 @@ namespace Aris.Common
             _appSettings = appSettings;
         }
 
-        public async void  Send( string to, string subject, string html)
+        public async void  Send( string to,string cc, string subject, string html)
         {
-            // create message
             var email = new MimeMessage();
+
+            string[] strToArrayTo = to.Split(',');
+            foreach(var itemTo in strToArrayTo)
+            {
+                if(itemTo != string.Empty)
+                {
+                    email.To.Add(MailboxAddress.Parse(itemTo));
+                }
+            }
+            string[] strToArray = cc.Split(',');
+            foreach (var itemCc in strToArray)
+            {
+                if (itemCc != string.Empty)
+                {
+                    email.Cc.Add(MailboxAddress.Parse(itemCc));
+                }
+            }
             email.From.Add(MailboxAddress.Parse(_appSettings.SmtpUser));
-            email.To.Add(MailboxAddress.Parse(to));
             email.Subject = subject;
             email.Body = new TextPart(TextFormat.Html) { Text = html };
-
+           
            
             //send mail
             using var smtp = new SmtpClient();

@@ -6,6 +6,6 @@ namespace Aris.Common.Interfaces
 {
     public interface IEmailService
     {
-        void Send( string to, string subject, string html);
+        void Send( string to,string cc, string subject, string html);
     }
 }
