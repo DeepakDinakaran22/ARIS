@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Aris.Models.ViewModel;
+using System;
 using System.Collections.Generic;
 using System.Text;
 
@@ -120,6 +121,37 @@ namespace Aris.Models
                             </table>
                         </div>
                     </body>";
+
+
+        public static string GetMailBody(IEnumerable<OfficeDocDetailsViewModel> officeDocumentDetails)
+        {
+            StringBuilder email = new StringBuilder(@"               
+                    <body>  
+                        <div>
+                            <p>Dear <span style=""font - weight: bold; "">All</span>,</p>
+                            </div>
+                            <div>
+                            <p>Please find the list of documents going to expire soon.</p>
+                            <p><table style = ""text-align:left;"">
+                            <tr><th>Document Name</th>
+                            <th>Isuue Date </th>
+                            <th>Expiry Date</th></tr>");
+            foreach (var document in officeDocumentDetails)
+            {
+                email.Append("<tr><td>" + document.DocumentName + "</td><td>" + document.DocIssueDate.ToString("dd/MM/yyyy") + "</td><td>" + document.DocExpiryDate.ToString("dd/MM/yyyy") + "</td>");
+            };
+
+            email.Append(@"<tr><th>Application Link</th><td>: [APPLICATIONLINK]</td></tr></table></p>
+                          </div >
+                          <div>
+                          <table style = ""font - weight: bold; "">
+                          <tr><td rowspan = ""2""></td><td> Regards </td></tr>
+                          <tr><td> AMT Admin </td></tr>
+                          </table>
+                          </div>
+                          </body>");
+            return email.ToString();
+        }
 
 
     }
