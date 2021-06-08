@@ -46,7 +46,7 @@ namespace Aris.Webjob
         }));
             services.AddScoped(typeof(IExpiryRemainderServiceProvider), typeof(ExpiryRemainderServiceProvider));
             services.AddScoped(typeof(IEmailService), typeof(EmailService));
-            services.Configure<AppSettings>(Configuration.GetSection("SmtpSettings"));
+            //services.Configure<AppSettings>(Configuration.GetSection("SmtpSettings"));
             services.AddHangfireServer();
             services.AddControllers();
             services.AddDbContext<ArisContext>(options => options.UseSqlServer(Configuration.GetConnectionString("ArisConnection")));
