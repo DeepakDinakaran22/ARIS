@@ -16,6 +16,8 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using Microsoft.AspNetCore.Authorization;
+
 
 namespace ArisWorkforceManagementTool.Areas.MasterPages.Controllers
 {
@@ -37,6 +39,7 @@ namespace ArisWorkforceManagementTool.Areas.MasterPages.Controllers
         }
 
         // GET: ManageEmployees
+        [Authorize]
         public ActionResult Index()
         {
             UserTypeId = Convert.ToInt32(TempData.Peek("UserRole"));

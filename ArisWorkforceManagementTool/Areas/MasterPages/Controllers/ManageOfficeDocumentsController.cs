@@ -11,6 +11,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+using Microsoft.AspNetCore.Authorization;
 
 namespace ArisWorkforceManagementTool.Areas.MasterPages.Controllers
 {
@@ -26,6 +27,7 @@ namespace ArisWorkforceManagementTool.Areas.MasterPages.Controllers
         {
             this.webHostEnvironment = hostEnvironment;
         }
+        [Authorize]
         public ActionResult Index()
         {
             return View();
@@ -34,53 +36,96 @@ namespace ArisWorkforceManagementTool.Areas.MasterPages.Controllers
         [HttpGet]
         public JsonResult GetAllOfficeDocuments()
         {
-            var officeD = UnitOfWork.OfficeDocDetailsRepository.Get(null, x => x.OrderByDescending(id => id.OfficeDocId));
-            if (officeD.Count() > 0)
+            try
             {
-                List<DocumentType> documents = UnitOfWork.DocumentTypeRepository.Get(x => x.IsActive == 1&&x.DocumentCategoryID==2).ToList();
+                var officeD = UnitOfWork.OfficeDocDetailsRepository.Get(null, x => x.OrderByDescending(id => id.OfficeDocId));
+                if (officeD.Count() > 0)
+                {
+                    List<DocumentType> documents = UnitOfWork.DocumentTypeRepository.Get(x => x.IsActive == 1 && x.DocumentCategoryID == 2).ToList();
 
-                List<OfficeDocDetails> officeDocs = UnitOfWork.OfficeDocDetailsRepository.Get(null).ToList();
-
-               
-                var data = from od in officeDocs where od.DocumentId != 0
-                           join d in documents
-                           on od.DocumentId equals d.DocumentId  into eGroup
-                           where od.DocumentId.ToString() != string.Empty
-                           from d in eGroup.DefaultIfEmpty()
-                           select new
-                           {
-                               OfficeDocId = od.OfficeDocId,
-                               DocumentName = d.DocumentName,
-                               DocumentId = od.DocumentId,
-                               DocIssueDate = od.DocIssueDate,
-                               DocExpiryDate = od.DocExpiryDate,
-                               OfficeDocDesc = od.OfficeDocDesc,
-                               IsActive = od.IsActive,
-                           };
-
-                   
+                    List<OfficeDocDetails> officeDocs = UnitOfWork.OfficeDocDetailsRepository.Get(null).ToList();
 
 
-                return Json(data);
+                    var data = from od in officeDocs
+                               where od.DocumentId != 0
+                               join d in documents
+                               on od.DocumentId equals d.DocumentId into eGroup
+                               where od.DocumentId.ToString() != string.Empty
+                               from d in eGroup.DefaultIfEmpty()
+                               select new
+                               {
+                                   OfficeDocId = od.OfficeDocId,
+                                   DocumentName = d.DocumentName,
+                                   DocumentId = od.DocumentId,
+                                   DocIssueDate = od.DocIssueDate,
+                                   DocExpiryDate = od.DocExpiryDate,
+                                   OfficeDocDesc = od.OfficeDocDesc,
+                                   IsActive = od.IsActive,
+                               };
+
+
+
+
+                    return Json(data);
+                }
+                else
+                {
+                    return Json(officeD);
+                }
             }
-            else
+            catch(Exception ex)
             {
-                return Json(officeD);
+                _logger.LogError(ex.ToString());
+                return null;
             }
 
         }
         [HttpGet]
         public JsonResult IsDocumentExists(OfficeDocDetails obj)
         {
-            var docs = UnitOfWork.OfficeDocDetailsRepository.Get();
-            bool has = docs.ToList().Any(x => x.DocumentId == obj.DocumentId);
-            if (has)
+            try
             {
-                return Json(new { value = true, responseText = "Document name exists" });
+                var docs = UnitOfWork.OfficeDocDetailsRepository.Get();
+                bool has = docs.ToList().Any(x => x.DocumentId == obj.DocumentId);
+                if (has)
+                {
+                    return Json(new { value = true, responseText = "Document name exists" });
+                }
+                else
+                {
+                    return Json(new { value = false, responseText = "Document name is not exists" });
+                }
             }
-            else
+            catch(Exception ex)
             {
-                return Json(new { value = false, responseText = "Document name is not exists" });
+                _logger.LogError(ex.ToString());
+                return Json(new { value = true, responseText = "Document name exists" });
+
+            }
+
+        }
+
+        [HttpGet]
+        public JsonResult GetIsExpiryEnabled(OfficeDocDetails obj)
+        {
+            try
+            {
+                var docs = UnitOfWork.DocumentTypeRepository.Get(d=>d.DocumentId==obj.DocumentId);
+                bool has = docs.ToList().Any(x => x.IsExpiryRequired == 1);
+                if (has)
+                {
+                    return Json(new { value = true });
+                }
+                else
+                {
+                    return Json(new { value = false});
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.ToString());
+                return Json(new { value = false});
+
             }
 
         }
@@ -88,14 +133,22 @@ namespace ArisWorkforceManagementTool.Areas.MasterPages.Controllers
         [HttpGet]
         public JsonResult GetDocuments()
         {
-            var docuements = UnitOfWork.DocumentTypeRepository.Get(x => x.IsActive == 1 && x.DocumentCategoryID==2 ).ToList().OrderBy(o => o.DocumentName);
-            //foreach (var item in companies)
-            //{
-            //    item.CompanyName = item.CompanyName + '-' + item.CompanyLocation;
-            //}
+            try
+            {
+                var docuements = UnitOfWork.DocumentTypeRepository.Get(x => x.IsActive == 1 && x.DocumentCategoryID == 2).ToList().OrderBy(o => o.DocumentName);
+                //foreach (var item in companies)
+                //{
+                //    item.CompanyName = item.CompanyName + '-' + item.CompanyLocation;
+                //}
 
-            return Json(docuements);
+                return Json(docuements);
 
+            }
+            catch(Exception ex)
+            {
+                _logger.LogError(ex.ToString());
+                return null;
+            }
         }
 
         [HttpPost]
@@ -103,12 +156,15 @@ namespace ArisWorkforceManagementTool.Areas.MasterPages.Controllers
         {
             try
             {
+                DateTime? expiry = null;
+                if(obj.DocExpiryDate == DateTime.MinValue) { expiry = null; } else { expiry = obj.DocExpiryDate; }
+            
                 var officeDoc = new OfficeDocDetails()
                 {
                     DocumentId = obj.DocumentId,
                     OfficeDocDesc = obj.OfficeDocDesc,
                     DocIssueDate = obj.DocIssueDate,
-                    DocExpiryDate = obj.DocExpiryDate,
+                    DocExpiryDate = expiry,
                     IsActive = obj.IsActive,
                     CreatedBy = Convert.ToInt32(TempData.Peek("UserId")),
                     CreatedDate = DateTime.Now
@@ -131,8 +187,9 @@ namespace ArisWorkforceManagementTool.Areas.MasterPages.Controllers
 
                 return Json(new { success = true, responseText = "Document added successfully." });
             }
-            catch
+            catch(Exception ex)
             {
+                _logger.LogError(ex.ToString());
                 return Json(new { success = false, responseText = "Something went wrong." });
             }
         }
@@ -141,6 +198,8 @@ namespace ArisWorkforceManagementTool.Areas.MasterPages.Controllers
         {
             try
             {
+                DateTime? expiry = null;
+                if (obj.DocExpiryDate == DateTime.MinValue) { expiry = null; } else { expiry = obj.DocExpiryDate; }
                 var fetchedDocs = objUnitOfWorkFetch.OfficeDocDetailsRepository.Get(x => x.OfficeDocId == obj.OfficeDocId).ToList();
                 var officeDoc = new OfficeDocDetails()
                 {
@@ -148,7 +207,7 @@ namespace ArisWorkforceManagementTool.Areas.MasterPages.Controllers
                     DocumentId = obj.DocumentId,
                     OfficeDocDesc = obj.OfficeDocDesc,
                     DocIssueDate = obj.DocIssueDate,
-                    DocExpiryDate = obj.DocExpiryDate,
+                    DocExpiryDate = expiry,
                     IsActive = obj.IsActive,
                     CreatedBy = fetchedDocs[0].CreatedBy,
                     CreatedDate = fetchedDocs[0].CreatedDate,
@@ -160,8 +219,9 @@ namespace ArisWorkforceManagementTool.Areas.MasterPages.Controllers
                 UnitOfWork.Save();
                 return Json(new { success = true, responseText = "Document Updated successfully." });
             }
-            catch
+            catch(Exception ex)
             {
+                _logger.LogError(ex.ToString());
                 return Json(new { success = false, responseText = "Something went wrong." });
             }
         }
@@ -202,28 +262,61 @@ namespace ArisWorkforceManagementTool.Areas.MasterPages.Controllers
             }
             catch (Exception ex)
             {
+                _logger.LogError(ex.ToString());
                 return Json(new { success = false, responseText = "Something went wrong. Please try again !" });
 
             }
         }
         private string EnsureCorrectFilename(string filename)
         {
-            if (filename.Contains("\\"))
-                filename = filename.Substring(filename.LastIndexOf("\\") + 1);
+            try
+            {
+                if (filename.Contains("\\"))
+                    filename = filename.Substring(filename.LastIndexOf("\\") + 1);
 
-            return filename;
+                return filename;
+            }
+            catch(Exception ex)
+            {
+                _logger.LogError(ex.ToString());
+                return null;
+            }
         }
         private string GetPathAndFilename(string filename)
         {
+            try
+            {
                 return this.webHostEnvironment.WebRootPath + "\\Uploads\\CompanyUploads\\" + filename;
+            }
+            catch(Exception ex)
+            {
+                _logger.LogError(ex.ToString());
+                return null;
+            }
         }
         private string GetFullDocumentPathWithoutFileName()
         {
-            return "\\Uploads\\CompanyUploads\\" ;
+            try
+            {
+                return "\\Uploads\\CompanyUploads\\";
+            }
+            catch(Exception ex)
+            {
+                _logger.LogError(ex.ToString());
+                return null;
+            }
         }
         private string GetFullImagePathAndFilename(string filename)
         {
-            return "\\Uploads\\EmployeeUploads\\" + filename;
+            try
+            {
+                return "\\Uploads\\EmployeeUploads\\" + filename;
+            }
+            catch(Exception ex)
+            {
+                _logger.LogError(ex.ToString());
+                return null;
+            }
         }
         [HttpGet]
         public JsonResult DeleteInValidDocUploads(int userID)
@@ -244,6 +337,7 @@ namespace ArisWorkforceManagementTool.Areas.MasterPages.Controllers
             }
             catch (Exception ex)
             {
+                _logger.LogError(ex.ToString());
                 return Json(new { success = false, responseText = "Something went wrong. Please try again !" });
 
             }
@@ -252,26 +346,32 @@ namespace ArisWorkforceManagementTool.Areas.MasterPages.Controllers
         [HttpGet]
         public JsonResult GetAllUploads(int docId)
         {
+            try
+            {
+                List<DocumentType> documents = UnitOfWork.DocumentTypeRepository.Get(x => x.IsActive == 1).ToList();
+                List<OfficeDocsFileUploads> files = UnitOfWork.OfficeDocsFileUploadsRepository.Get(x => x.IsActive == 1 && x.DocumentId == docId).ToList();
+                var data = from d in documents
+                           join f in files
+                           on d.DocumentId equals f.DocumentId into eGroup
+                           where d.DocumentCategoryID == 2 && d.DocumentId == docId
+                           from f in eGroup.DefaultIfEmpty()
+                           select new
+                           {
+                               FileName = f == null ? "No Files" : f.ActualFileName,
+                               FilePath = f == null ? "No Path" : f.FileLocation + f.FileName,
+                               DocumentName = d.DocumentName,
+                               DocumentId = d.DocumentId,
+                               isExpiryRequired = d.IsExpiryRequired,
+                               isMandatory = d == null ? 0 : d.IsMandatory
+                           };
 
-            List<DocumentType> documents = UnitOfWork.DocumentTypeRepository.Get(x => x.IsActive == 1).ToList();
-            List<OfficeDocsFileUploads> files = UnitOfWork.OfficeDocsFileUploadsRepository.Get(x => x.IsActive == 1 && x.DocumentId == docId).ToList();
-            var data = from d in documents
-                       join f in files
-                       on d.DocumentId equals f.DocumentId into eGroup
-                       where d.DocumentCategoryID == 2 && d.DocumentId==docId
-                       from f in eGroup.DefaultIfEmpty()
-                       select new
-                       {
-                           FileName = f == null ? "No Files" : f.ActualFileName,
-                           FilePath = f == null ? "No Path" : f.FileLocation + f.FileName,
-                           DocumentName = d.DocumentName,
-                           DocumentId = d.DocumentId,
-                           isExpiryRequired = d.IsExpiryRequired,
-                           isMandatory = d == null ? 0 : d.IsMandatory
-                       };
-           
-            return Json(data);
-
+                return Json(data);
+            }
+            catch(Exception ex)
+            {
+                _logger.LogError(ex.ToString());
+                return null;
+            }
         }
     }
 }

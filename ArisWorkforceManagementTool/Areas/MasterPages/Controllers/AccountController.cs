@@ -42,7 +42,7 @@ namespace ArisWorkforceManagementTool.Areas.MasterPages.Controllers
             }
             catch(Exception ex)
             {
-                
+                _logger.LogError(ex.ToString());
                 return null;
 
             }
@@ -52,40 +52,51 @@ namespace ArisWorkforceManagementTool.Areas.MasterPages.Controllers
         //[ValidateAntiForgeryToken]
         public async Task<IActionResult> Login(UserLoginModel userModel)
         {
-            if (!ModelState.IsValid)
+            try
             {
-                return View(userModel);
-            }
 
-            var user = unitOfWork.UserRepository.Get().Where(user => user.UserName.ToLower() == userModel.UserName.ToLower()).FirstOrDefault();
-            if (user != null &&
-                new AuthHelper().VerifyHashedPassword(user.Password, userModel.Password))
-            {
-                var claims = new List<Claim>
+
+                if (!ModelState.IsValid)
+                {
+                    return View(userModel);
+                }
+
+                var user = unitOfWork.UserRepository.Get().Where(user => user.UserName.ToLower() == userModel.UserName.ToLower()).FirstOrDefault();
+                if (user != null &&
+                    new AuthHelper().VerifyHashedPassword(user.Password, userModel.Password))
+                {
+                    var claims = new List<Claim>
                             {
                                 new Claim(ClaimTypes.Name, user.UserName.ToString()),
                                 new Claim("FullName", user.FullName),
                                 new Claim(ClaimTypes.Role, unitOfWork.UserTypeRepository.Get().Where(id=>id.UserTypeID==user.UserTypeID).FirstOrDefault().UserRole),
                             };
 
-                var claimsIdentity = new ClaimsIdentity(
-                    claims, CookieAuthenticationDefaults.AuthenticationScheme);
+                    var claimsIdentity = new ClaimsIdentity(
+                        claims, CookieAuthenticationDefaults.AuthenticationScheme);
 
-                var authProperties = new AuthenticationProperties
+                    var authProperties = new AuthenticationProperties
+                    {
+                        ExpiresUtc = DateTimeOffset.UtcNow.AddMinutes(20),
+                        IsPersistent = userModel.RememberMe,
+                    };
+
+                    await HttpContext.SignInAsync(
+                        CookieAuthenticationDefaults.AuthenticationScheme,
+                        new ClaimsPrincipal(claimsIdentity),
+                        authProperties);
+                    SetLayoutValues(user);
+                    return RedirectToAction(nameof(HomeController.Index), "Home");
+                }
+                else
                 {
-                    ExpiresUtc = DateTimeOffset.UtcNow.AddMinutes(20),
-                    IsPersistent = userModel.RememberMe,
-                };
-
-                await HttpContext.SignInAsync(
-                    CookieAuthenticationDefaults.AuthenticationScheme,
-                    new ClaimsPrincipal(claimsIdentity),
-                    authProperties);
-                SetLayoutValues(user);
-                return RedirectToAction(nameof(HomeController.Index), "Home");
+                    ModelState.AddModelError("CustomError", "Invalid UserName or Password");
+                    return View();
+                }
             }
-            else
+            catch(Exception ex)
             {
+                _logger.LogError(ex.ToString());
                 ModelState.AddModelError("CustomError", "Invalid UserName or Password");
                 return View();
             }
@@ -93,17 +104,25 @@ namespace ArisWorkforceManagementTool.Areas.MasterPages.Controllers
        [HttpPost]
         public async Task<IActionResult> Logout(string returnUrl = null)
         {
-            await HttpContext.SignOutAsync(
-                CookieAuthenticationDefaults.AuthenticationScheme);
-            //if (returnUrl != null)
-            //{
-            //    return LocalRedirect(returnUrl);
-            //}
-            //else
-            //{
-            //    return RedirectToAction("Login", "Account");
-            //}
-            return RedirectToAction("Login", "Account");
+            try
+            {
+                await HttpContext.SignOutAsync(
+                    CookieAuthenticationDefaults.AuthenticationScheme);
+                //if (returnUrl != null)
+                //{
+                //    return LocalRedirect(returnUrl);
+                //}
+                //else
+                //{
+                //    return RedirectToAction("Login", "Account");
+                //}
+                return RedirectToAction("Login", "Account");
+            }
+            catch(Exception ex)
+            {
+                _logger.LogError(ex.ToString());
+                return null;
+            }
         }
 
         protected void SetLayoutValues(Aris.Data.Entities.Users user)
@@ -120,7 +139,7 @@ namespace ArisWorkforceManagementTool.Areas.MasterPages.Controllers
             }
             catch (Exception ex)
             {
-
+                _logger.LogError(ex.ToString());
             }
         }
     }
