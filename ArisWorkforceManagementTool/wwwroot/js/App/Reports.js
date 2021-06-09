@@ -5,7 +5,7 @@ $(document).ready(function () {
     $("#btnUpdate").hide();
     $("#btnSubmit").show();
     getCompanies();
-    // GetAllEmployees();
+     GetAllEmployees();
     // GetEmployeeReferenceNo();
     $("#dpContractEndDate").datepicker({ minDate: 0 }); //maxDate: "+1M +15D" });
     $("#dpContractStartDate").datepicker({ minDate: 0 });
@@ -108,7 +108,7 @@ function SearchRequest() {
 
 
     if (isValid) {
-        callAjax('POST', '/MasterPages/ManageEmployees/SearchRequest', data);
+        callAjax('POST', '/Reports/ManageEmployees/SearchRequest', data);
         GetAllEmployees();
         ClearFields();
     }
@@ -246,34 +246,34 @@ function isValidEntry() {
 function GetAllEmployees() {
     $.ajax({
         type: "GET",
-        url: "/MasterPages/ManageEmployees/GetAllEmployees",
+        url: "/Reports/Reports/GetAllEmployeeReports",
         contentType: "application/json; charset=utf-8",
         dataType: "json",
         success: function (response) {
             if (response != null) {
                 populateEmployees(response);
             } else {
-                alert("Something went wrong");
+                console.log("Something went wrong");
             }
         },
         failure: function (response) {
-            alert(response.responseText);
+            console.log(response.responseText);
         },
         error: function (response) {
-            alert(response.responseText);
+            console.log(response.responseText);
         }
     });
 }
 function populateEmployees(response) {
-    table = $('#tblEmployees').DataTable(
+    table = $('#tblEmployeeReports').DataTable(
         {
             bLengthChange: true,
             bFilter: true,
             bSort: true,
             bPaginate: true,
             data: response,
-            scrollX: false,
-            scrollY: false,
+            scrollX: true,
+            scrollY: true,
             select: true,
             pageLength: 10,
             destroy: true,
@@ -283,28 +283,203 @@ function populateEmployees(response) {
                     data: 'employeeNo', title: 'Employee Number', visible: false,
                 },
                 {
-                    data: 'employeeName', title: 'Employee Name'
+                    data: 'employeeReferenceNo', title: 'Employee No.', class:'text-center',
+                    render: function (data) {
+                        return 'Aris-' + data;
+                    }
                 },
                 {
                     data: 'approvalStatus', title: 'Status',
                     render: function (data) {
-                        if (data == 1) {
-                            return 'Approved';
+                        if (data == 2) {
+                            clr = 'success';
+                            return '<span style="color:green;font-size:95%;font-weight:bold">Approved</span>';
                         }
-                        else {
-                            return 'Pending';
+                        else if (data == 1) {
+                            clr = 'danger';
+                            return '<span style="color:red;font-size:95%;font-weight:bold;">Sent Back</span>';
+                        }
+                        else if (data == 0) {
+                            clr = 'warning';
+                            return '<span style="color:orange;font-size:95%;font-weight:bold;">Pending</span>';
                         }
                     }
 
                 },
                 {
-                    data: null,
-                    title: 'View',
-                    class: 'edit',
-                    defaultContent: '<button type="button" class="btn btn-success"><i class="fas fa-edit"></i></button>',
-                    orderable: false
+                    data: 'employeeName', title: 'Employee Name'
+                },
+                {
+                    data: 'companyName', title: 'Company Name'
+                },
+                {
+                    data: 'passportNumber', title: 'Passport Number'
+                },
+                {
+                    data: 'passportExpiryDate', title: 'Passport Expiry Date',
+                    render: function (data) {
+                        var dt = new Date(data);
+                        return dt.toLocaleDateString();
+                    }
+                },
+                {
+                    data: 'residentNumber', title: 'Resident Number'
+                },
+                {
+                    data: 'residentExpiryDate', title: 'Resident Expiry Date',
+                    render: function (data) {
+                        var dt = new Date(data);
+                        return dt.toLocaleDateString();
+                    }
+                },
+                {
+                    data: 'joiningDate', title: 'Joining Date'
+                    ,
+                    render: function (data) {
+                        var dt = new Date(data);
+                        return dt.toLocaleDateString();
+                    }
+                },
+                {
+                    data: 'contractStartDate', title: 'Contract Start Date',
+                    render: function (data) {
+                        var dt = new Date(data);
+                        return dt.toLocaleDateString();
+                    }
+                },
+                {
+                    data: 'contractEndDate', title: 'Contract End Date',
+                    render: function (data) {
+                        var dt = new Date(data);
+                        return dt.toLocaleDateString();
+                    }
+                },
+                {
+                    data: 'gsm', title: 'Gsm '
+                },
+                {
+                    data: 'accomodationDetails', title: 'Accomodation Details '
+                },
+                {
+                    data: 'maritalStatus', title: 'Marital Status',
+                    render: function (data) {
+                        if (data == 0) {
+                            return 'UnMarried';
+                        }
+                        else {
+                            return 'Married';
+                        }
+                    }
+                },
+                {
+                    data: 'idProfession', title: 'ID Profession'
+                },
+                {
+                    data: 'designation', title: 'Designation'
+                },
+                {
+                    data: 'bankName', title: 'Bank Name'
+                },
+                {
+                    data: 'bankAccountNumber', title: 'BankAccountNumber'
+                },
+                {
+                    data: 'remarks', title:'Last Remarks'
                 }
-            ]
+                
+                
+                //{
+                //    data: null,
+                //    title: 'View',
+                //    class: 'edit',
+                //    defaultContent: '<button type="button" class="btn btn-success"><i class="fas fa-edit"></i></button>',
+                //    orderable: false
+                //}
+            ],
+            rowCallback: function (row, data) {
+
+                if (data.approvalStatus == 0) {
+                    $('td', row).css('background-color', '#FFFEEA');
+
+                    //$('td:eq(6)', row).html('<span class="label label-success">OPERATIVO</span>');
+                }
+                else if (data.approvalStatus == 2) {
+                    $('td', row).css('background-color', '#DFFFE1');
+                }
+                else {
+                    $('td', row).css('background-color', '#FFD9D9');
+
+                }
+            }
         });
 
+}
+
+function GetAllEmployeesBySearch() {
+    var employeeName = $("#txtEmployeeName").val().trim().toLowerCase();
+    var employeeReferenceNo = $("#txtEmployeeNumber").val().trim()==''?null: parseInt($("#txtEmployeeNumber").val().trim());
+    var companyId = $("#ddlCompany option:selected").val()==0?null: $("#ddlCompany option:selected").val();
+    var approvalStatus = $("#ddlApprovalStatus option:selected").val() == -1 ? null : $("#ddlApprovalStatus option:selected").val();
+
+    //var nationality = $("#ddlCountry option:selected").val();
+    //var passportNumber = $("#txtPassportNumber").val();
+    //var passportExpiryDate = $("#dpPassportExpiryDate").val() != '' ? $("#dpPassportExpiryDate").datepicker('getDate').toLocaleString() : '';
+    //var residentNumber = $("#txtResidentNumber").val();
+    //var residentExpiryDate = $("#dpResidentExpiryDate").val() != '' ? $("#dpResidentExpiryDate").datepicker('getDate').toLocaleString() : '';
+    //var joiningDate = $("#dpJoiningDate").val() != '' ? $("#dpJoiningDate").datepicker('getDate').toLocaleString() : '';
+    //var contractStartDate = $("#dpContractStartDate").val() != '' ? $("#dpContractStartDate").datepicker('getDate').toLocaleString() : '';
+    //var contractEndDate = $("#dpContractEndDate").val() != '' ? $("#dpContractEndDate").datepicker('getDate').toLocaleString() : '';
+    //var gsm = $("#txtGsm").val();
+    //var accomodationDetails = $("#txtAccomodationDetails").val();
+    //var maritalStatus = $("input[name='radioMarital']:checked").val();
+    //var idProfession = $("#txtIdProfession").val();
+    //var designation = $("#txtDesignation").val();
+    //var bankName = $("#txtBankName").val();
+    //var bankAccountNumber = $("#txtAccountNumber").val();
+    //var remarks = $("#txtRemarks").val();
+
+    var data = {
+        EmployeeName: employeeName,
+        EmployeeReferenceNo: employeeReferenceNo,
+        CompanyId: companyId,
+        ApprovalStatus: approvalStatus
+        //Nationality: nationality,
+        //PassportNumber: passportNumber,
+        //PassportExpiryDate: passportExpiryDate,
+        //ResidentNumber: residentNumber,
+        //ResidentExpiryDate: residentExpiryDate,
+        //JoiningDate: joiningDate,
+        //ContractStartDate: contractStartDate,
+        //ContractEndDate: contractEndDate,
+        //Gsm: gsm,
+        //AccomodationDetails: accomodationDetails,
+        //MaritalStatus: maritalStatus,
+        //IdProfession: idProfession,
+        //Designation: designation,
+        //BankName: bankName,
+        //BankAccountNumber: bankAccountNumber,
+        //Remarks: remarks
+    };
+
+    //isValid = isValidEntry();
+    $.ajax({
+        type: "GET",
+        url: "/Reports/Reports/GetAllEmployeeReports",
+        contentType: "application/json; charset=utf-8",
+        dataType: "json",
+        data: data,
+        success: function (response) {
+            if (response != null) {
+                populateEmployees(response);
+            } else {
+                console.log("Something went wrong");
+            }
+        },
+        failure: function (response) {
+            console.log(response.responseText);
+        },
+        error: function (response) {
+            console.log(response.responseText);
+        }
+    });
 }

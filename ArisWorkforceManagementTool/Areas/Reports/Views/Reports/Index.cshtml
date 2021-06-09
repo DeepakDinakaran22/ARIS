@@ -22,7 +22,7 @@
 
 <section class="content">
     <div class="container-fluid">
-        <div class="row">
+        <div class="row" style="font-size:smaller">
             <!-- left column -->
             <div class="col-md-12">
                 <!-- general form elements -->
@@ -35,7 +35,7 @@
 
                     <form role="form">
 
-                        <div class="card-body">
+                        <div class="card-body" style="line-height: 5px;">
                             <div class="row">
                                 <div class="col-md-3">
                                     <div class="form-group">
@@ -57,73 +57,83 @@
                                         </select>
                                     </div>
                                 </div>
-
                                 <div class="col-md-3">
+                                    <div class="form-group">
+                                        <label>Status</label>
+                                        <select class="form-control select2bs4" id="ddlApprovalStatus" required style="width: 100%;">
+                                            <option value="-1" selected="selected">Select</option>
+                                            <option value="2">Approved</option>
+                                            <option value="0">Pending</option>
+                                            <option value="1">Sent Back</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="col-md-3" hidden>
                                     <div class="form-group">
                                         <label>Nationality</label>
                                         <select id="ddlCountry" class="form-control select2bs4" value="0" data-role="country-selector" data-code-mode="numeric"></select>
                                     </div>
                                 </div>
-                                <div class="col-md-3">
+                                <div class="col-md-3" hidden>
                                     <div class="form-group">
                                         <label for="PassportNumber">Passport Number </label>
                                         <input type="text" class="form-control" id="txtPassportNumber" placeholder="Enter Passport Number">
                                     </div>
                                 </div>
-                                <div class="col-md-3">
+                                <div class="col-md-3" hidden>
                                     <div class="form-group">
                                         <label>Passport Expiry From</label>
                                         <input type="text" class="form-control date" id="dpPassportExpiryFrom">
                                     </div>
                                 </div>
-                                <div class="col-md-3">
+                                <div class="col-md-3" hidden>
                                     <div class="form-group">
                                         <label>Passport Expiry To</label>
                                         <input type="text" class="form-control date" id="dpPassportExpiryTo">
                                     </div>
                                 </div>
 
-                                <div class="col-md-3">
+                                <div class="col-md-3" hidden>
                                     <div class="form-group">
                                         <label for="ResidentNumber">Resident Number </label>
                                         <input type="text" class="form-control" id="txtResidentNumber" placeholder="Enter Resident No">
                                     </div>
                                 </div>
-                                <div class="col-md-3">
+                                <div class="col-md-3" hidden>
                                     <div class="form-group">
                                         <label>Resident Expiry From</label>
                                         <input type="text" class="form-control date" id="dpResidentExpiryFrom">
                                     </div>
                                 </div>
-                                <div class="col-md-3">
+                                <div class="col-md-3" hidden>
                                     <div class="form-group">
                                         <label>Resident Expiry To</label>
                                         <input type="text" class="form-control date" id="dpResidentExpiryTo">
                                     </div>
                                 </div>
 
-                                <div class="col-md-3">
+                                <div class="col-md-3" hidden>
                                     <div class="form-group">
                                         <label>Joining Date From</label>
                                         <input type="text" class="form-control date" id="dpJoiningDateFrom">
 
                                     </div>
                                 </div>
-                                <div class="col-md-3">
+                                <div class="col-md-3" hidden>
                                     <div class="form-group">
                                         <label>Joining Date To</label>
                                         <input type="text" class="form-control date" id="dpJoiningDateTo">
 
                                     </div>
                                 </div>
-                                <div class="col-md-3">
+                                <div class="col-md-3" hidden>
                                     <div class="form-group">
                                         <label>Contract Start Date</label>
                                         <input type="text" class="form-control date" id="dpContractStartDate">
 
                                     </div>
                                 </div>
-                                <div class="col-md-3">
+                                <div class="col-md-3" hidden>
                                     <div class="form-group">
                                         <label>Contract End Date</label>
                                         <input type="text" class="form-control date" id="dpContractEndDate">
@@ -135,7 +145,7 @@
 
                         <div class="card-footer" style="text-align:right">
                             <button type="reset" id="btnReset" class="btn btn-primary">Reset</button>
-                            <button type="button" id="btnSubmit" onclick="SearchRequest()" class="btn btn-success">Search</button>
+                            <button type="button" id="btnSubmit" onclick="GetAllEmployeesBySearch()" class="btn btn-success">Search</button>
                         </div>
                     </form>
 
@@ -158,7 +168,7 @@
                             <div class="row">
                                 <div class="col-sm-12">
                                     <div class="card-body table-responsive p-0" style="overflow:hidden">
-                                        <table class="table table-head-fixed text-nowrap" id="tblEmployees"> </table>
+                                        <table class="table table-bordered table-head-fixed text-nowrap table-hover table-striped" style="vertical-align:inherit" id="tblEmployeeReports"> </table>
                                     </div>
                                 </div>
 
@@ -192,26 +202,50 @@
 @* Solution Specific files ends *@
 <script>
 
-    $(document).ready(function () {
-        SearchText();
-    });
-    function SearchText() {
+    $(function () {
         $("#txtEmployeeName").autocomplete({
             source: function (request, response) {
                 $.ajax({
+                    url: '/Reports/Reports/AutoComplete',
+                    data: { "prefix": $("#txtEmployeeName").val().trim()},
                     type: "POST",
-                    contentType: "application/json; charset=utf-8",
-                    url: "Reports/Reports/AutoComplete",
-                    data: "{'prefix':'" + $('#txtEmployeeName').val() + "'}",
-                    dataType: "json",
                     success: function (data) {
-                        response(data.d);
+                        response($.map(data, function (item) {
+                            return item;
+                        }))
                     },
-                    error: function (result) {
-                        alert("No Match");
+                    error: function (response) {
+                        console.log(response.responseText);
+                    },
+                    failure: function (response) {
+                        console.log(response.responseText);
                     }
                 });
-            }
+            },
+            minLength: 1
         });
-    }
+    });
+    $(function () {
+        $("#txtEmployeeNumber").autocomplete({
+            source: function (request, response) {
+                $.ajax({
+                    url: '/Reports/Reports/AutoCompleteNumber',
+                    data: { "prefix": $("#txtEmployeeNumber").val().trim() },
+                    type: "POST",
+                    success: function (data) {
+                        response($.map(data, function (item) {
+                            return item;
+                        }))
+                    },
+                    error: function (response) {
+                        console.log(response.responseText);
+                    },
+                    failure: function (response) {
+                        console.log(response.responseText);
+                    }
+                });
+            },
+            minLength: 1
+        });
+    });
 </script>
