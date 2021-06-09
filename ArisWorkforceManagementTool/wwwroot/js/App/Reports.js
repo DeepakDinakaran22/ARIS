@@ -267,7 +267,14 @@ function GetAllEmployees() {
 function populateEmployees(response) {
     table = $('#tblEmployeeReports').DataTable(
         {
-            bLengthChange: true,
+            dom: 'Bfrtip',
+            buttons: [
+                'copyHtml5',
+                'excelHtml5',
+                'csvHtml5',
+                //'pdfHtml5'
+            ],
+            bLengthChange: false,
             bFilter: true,
             bSort: true,
             bPaginate: true,
@@ -483,3 +490,49 @@ function GetAllEmployeesBySearch() {
         }
     });
 }
+$(function () {
+    $("#txtEmployeeName").autocomplete({
+        source: function (request, response) {
+            $.ajax({
+                url: '/Reports/Reports/AutoComplete',
+                data: { "prefix": $("#txtEmployeeName").val().trim() },
+                type: "POST",
+                success: function (data) {
+                    response($.map(data, function (item) {
+                        return item;
+                    }))
+                },
+                error: function (response) {
+                    console.log(response.responseText);
+                },
+                failure: function (response) {
+                    console.log(response.responseText);
+                }
+            });
+        },
+        minLength: 1
+    });
+});
+$(function () {
+    $("#txtEmployeeNumber").autocomplete({
+        source: function (request, response) {
+            $.ajax({
+                url: '/Reports/Reports/AutoCompleteNumber',
+                data: { "prefix": $("#txtEmployeeNumber").val().trim() },
+                type: "POST",
+                success: function (data) {
+                    response($.map(data, function (item) {
+                        return item;
+                    }))
+                },
+                error: function (response) {
+                    console.log(response.responseText);
+                },
+                failure: function (response) {
+                    console.log(response.responseText);
+                }
+            });
+        },
+        minLength: 1
+    });
+});
