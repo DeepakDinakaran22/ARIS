@@ -1,29 +1,28 @@
 ﻿using Aris.Common;
-using Aris.Common.Interfaces;
 using Aris.Data;
 using Aris.Models;
 using Aris.Models.Helper;
 using Aris.Models.ViewModel;
 using Hangfire;
+using Microsoft.Extensions.Options;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 
 namespace Aris.Webjob
 {
     public class ExpiryRemainderServiceProvider : IExpiryRemainderServiceProvider
     {
-        private readonly IEmailService emailService;
-        public ExpiryRemainderServiceProvider(IEmailService emailService)
+        private readonly AppSettings _appSettings;
+        public ExpiryRemainderServiceProvider(IOptions<AppSettings> appSettings)
         {
-            this.emailService = emailService;
+            _appSettings = appSettings.Value;
         }
         public static readonly string remainderJob = "RemainderJob";
 
         UnitOfWork UnitOfWork = new UnitOfWork();
-        private string strManagerNames;
         private string strManagerMails;
+
 
         public void RemainderWorker(IJobCancellationToken jobCancellationToken)
         {
@@ -33,26 +32,81 @@ namespace Aris.Webjob
 
         public void MailRemainder()
         {
-            AppSettings appsettings = new AppSettings
-            {
-                SmtpHost = "mail.aris.com.om",
-                SmtpPassword = "Notifications2021",
-                SmtpPort = 465,
-                SmtpUser = "amtnotification@aris.com.om"
-            };
-            EmailService emailService = new EmailService(appsettings);
-            OfficeDocumentExpiryRemainderJob(emailService);
-
-            //var employeeDocumentDetails = UnitOfWork.EmployeeDetailsRepository.Get().Where(x => x.PassportExpiryDate > expiryDate || x.ResidentExpiryDate > expiryDate).ToList();
-
+            EmailService emailService = new EmailService(_appSettings);
+            GetRecepients();
+            OfficeDocumentExpiryJob(emailService);
+            EmployeeDocumentExpiryJob(emailService);
         }
 
-        private void OfficeDocumentExpiryRemainderJob(EmailService emailService)
+        private void EmployeeDocumentExpiryJob(EmailService emailService)
+        {
+            List<ExpiredDocuments> expireds = new List<ExpiredDocuments>();
+            var expiryDate = DateTime.Today.AddDays(10).Date;
+            var passportDetails = from ed in UnitOfWork.EmployeeDetailsRepository.Get()
+                                  where ed.PassportExpiryDate < expiryDate
+                                  select new
+                                  ExpiredDocuments
+                                  {
+                                      DocumentName = "Passport",
+                                      EmployeeName = ed.EmployeeName,
+                                      ExpiryDate = ed.PassportExpiryDate
+                                  };
+            expireds.Add(passportDetails?.FirstOrDefault());
+            var data = UnitOfWork.EmployeeDetailsRepository.Get();
+            var residentDetails = from ed in UnitOfWork.EmployeeDetailsRepository.Get()
+                                  where ed.ResidentExpiryDate < expiryDate
+                                  select new
+                                  ExpiredDocuments
+                                  {
+                                      DocumentName = "Resident",
+                                      EmployeeName = ed.EmployeeName,
+                                      ExpiryDate = ed.PassportExpiryDate
+                                  };
+            expireds.Add(residentDetails?.FirstOrDefault());
+            var contractDetails = from ed in UnitOfWork.EmployeeDetailsRepository.Get()
+                                  where ed.ContractEndDate < expiryDate
+                                  select new
+                                  ExpiredDocuments
+                                  {
+                                      DocumentName = "Contract",
+                                      EmployeeName = ed.EmployeeName,
+                                      ExpiryDate = ed.PassportExpiryDate
+                                  };
+            expireds.Add(contractDetails?.FirstOrDefault());
+
+            var userDocuments = from ef in UnitOfWork.EmployeeFileUploadsRepository.Get()
+                                join dt in UnitOfWork.DocumentTypeRepository.Get() on ef.DocumentId equals dt.DocumentId
+                                join ed in UnitOfWork.EmployeeDetailsRepository.Get() on ef.EmployeeReferenceNo equals ed.EmployeeReferenceNo
+                                where ef.ExpiryDate != null && ef.ExpiryDate < expiryDate
+                                select new ExpiredDocuments()
+                                {
+                                    DocumentName = dt.DocumentName,
+                                    EmployeeName = ed.EmployeeName,
+                                    ExpiryDate = ef.ExpiryDate
+
+                                };
+            if (userDocuments != null)
+                expireds.AddRange(userDocuments);
+            if (expireds != default(List<ExpiredDocuments>))
+            {
+                string strBody = EmailTemplateHelper.UserDocumentDetails(expireds)
+                  .Replace("[APPLICATIONLINK]", "http://localhost:8080");
+
+                emailService.Send(strManagerMails, "", "Employee document expiry remainder", strBody);
+            }
+            else
+            {
+                Console.WriteLine("No mails to send");
+            }
+        }
+
+        private void OfficeDocumentExpiryJob(EmailService emailService)
         {
             var expiryDate = DateTime.Today.AddDays(10);
 
             var officeDocumentDetails = from od in UnitOfWork.OfficeDocDetailsRepository.Get()
                                         join dt in UnitOfWork.DocumentTypeRepository.Get() on od.DocumentId equals dt.DocumentId
+                                        where od.DocExpiryDate < expiryDate
                                         select new OfficeDocDetailsViewModel()
                                         {
                                             DocumentName = dt.DocumentName,
@@ -61,7 +115,21 @@ namespace Aris.Webjob
 
                                         };
 
+            if (officeDocumentDetails != null)
+            {
+                string strBody = EmailTemplateHelper.OfficeDocumentDetails(officeDocumentDetails)
+                    .Replace("[APPLICATIONLINK]", "http://localhost:8080");
 
+                emailService.Send(strManagerMails, "", "Office document expiry remainder", strBody);
+            }
+            else
+            {
+                Console.WriteLine("No mails to send");
+            }
+        }
+
+        private void GetRecepients()
+        {
             var managerUser = from managers in UnitOfWork.UserRepository.Get()
                               where managers.UserTypeID == Convert.ToInt32(ConstantVariables.UserType.Manager)
                               select managers;
@@ -70,11 +138,6 @@ namespace Aris.Webjob
                 strManagerMails = strManagerMails != string.Empty ? strManagerMails + ", " + item.MailAddress : item.MailAddress;
 
             }
-
-            string strBody = EmailTemplateHelper.GetMailBody(officeDocumentDetails)
-                .Replace("[APPLICATIONLINK]", "http://localhost:8080"); ;
-
-            emailService.Send(strManagerMails, "", "Office document expiry remainder", strBody);
         }
     }
 }
