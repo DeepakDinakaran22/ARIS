@@ -5,6 +5,7 @@ var loggedInUserId;
 var tbl_docUpload;
 var counter = 1000;
 var isValidName = false;
+var isExp = false;
 $(document).ready(function () {
 
     showLoader(true);
@@ -27,10 +28,12 @@ $(document).ready(function () {
             $("#divUploadFile").hide();
         }
         else {
+            CheckExpiryDateRequirement();
             GetAllUploads();
             $("#files").attr("disabled", false);
             CheckNameExists();
             $("#divUploadFile").show();
+          
         }
 
     });
@@ -40,12 +43,20 @@ $(document).ready(function () {
 $('#tblOfficeDoc').on('click', 'td.edit', function(e) {
     e.preventDefault();
     ClearFields();
+    
     $("#divUploadFile").show();
 
     $("#ddlDocument").val(table.row(this).data()['documentId']).attr("disabled", "disabled");;
+    CheckExpiryDateRequirement();// dependancy with ddlDocumentTypeId
     $("#txtOfficeDocDesc").val(table.row(this).data()['officeDocDesc']).attr("disabled", false);
     $("#dpDocIssueDate").datepicker("setDate", $.datepicker.parseDate("yy-mm-dd", table.row(this).data()['docIssueDate'].replace('T00:00:00', '')));
-    $("#dpDocExpiryDate").datepicker("setDate", $.datepicker.parseDate("yy-mm-dd", table.row(this).data()['docExpiryDate'].replace('T00:00:00', '')));
+    if (!isExp) {
+        $("#dpDocExpiryDate").val('');
+    }
+    else {
+        $("#dpDocExpiryDate").datepicker("setDate", $.datepicker.parseDate("yy-mm-dd", table.row(this).data()['docExpiryDate'].replace('T00:00:00', '')));
+
+    }
     if (table.row(this).data()['isActive'] == 1) {
         $("#ddlStatus").val(1);
     }
@@ -56,37 +67,11 @@ $('#tblOfficeDoc').on('click', 'td.edit', function(e) {
     $("#btnUpdate").show();
     $("#btnSubmit").hide();
     GetAllUploads();
-
     $(window).scrollTop(0);
 
+
 });
-//
-//function uploadFiles(inputId) {
-//    var input = document.getElementById(inputId);
-//    var files = input.files;
-//    var formData = new FormData();
-//    var empNo = $("#txtEmployeeNumber").val().trim();
-//    for (var i = 0; i != files.length; i++) {
-//        formData.append("files", files[i]);
-//    }
-//    formData.append("empNo", empNo);
-//    $.ajax(
-//        {
-//            url: "/MasterPages/ManageEmployees/UploadImage",
-//            //data: formData,
-//            data:  formData ,
-//            processData: false,
-//            contentType: false,
-//            type: "POST",
-//            async: false,
-//            success: function (data) {
-//                $("#hdnEmployeePicturePath").val(data.profileImagePath);
-//                $("#imgUser").attr('src', data.imageFullPath);
-               
-//            }
-//        }
-//    );
-//}
+
 function populateOfficeDocs(response) {
     var docId = 0;
     table = $("#tblOfficeDoc").DataTable(
@@ -132,15 +117,20 @@ function populateOfficeDocs(response) {
                 },
                 {
                     data: 'docIssueDate', title: 'Issue Date',
-                    render: function(data) {
-                        return data.replace('T00:00:00', '');
+                    render: function (data) {
+                        if (data != null) {
+                            return data.replace('T00:00:00', '');
+                        }
+                        else { return null;}
                     }
                 },
                 {
                     data: 'docExpiryDate', title: 'Expiry Date',
                     render: function(data) {
-                        return data.replace('T00:00:00', '');
-                    }
+                        if (data != null) {
+                            return data.replace('T00:00:00', '');
+                        }
+                        else { return 'No Expiry'; }                    }
                 },
                 {
                     data: 'isActive', title: 'Status',
@@ -286,6 +276,8 @@ function CheckNameExists() {
                 if (response != null) {
                     if (response.value == true) {
                         $('#ddlDocument').css('border-color', 'red');
+                        $("#dpDocExpiryDate").attr('disabled', false);
+
                        // showAlert({ title: "Warning!", message: 'Document name exists!', type: "WARNING" });
                         MessageBox('Exists!', 'fa fa-file', 'Document is already added!', 'orange', 'btn btn-warning', 'Okey');
                         isValidName = false;
@@ -293,7 +285,7 @@ function CheckNameExists() {
                     else {
                         isValidName = true;
                         $('#ddlDocument').css('border-color', '');
-
+                        
                     }
 
                 } else {
@@ -309,6 +301,41 @@ function CheckNameExists() {
             error: function (response) {
                 alert(response.responseText);
             }
+        });
+    }
+    catch (err) {
+
+    }
+}
+function CheckExpiryDateRequirement() {
+    try {
+       //showLoader(true);
+        $.ajax({
+            type: "GET",
+            url: "/MasterPages/ManageOfficeDocuments/GetIsExpiryEnabled",
+            data: { DocumentId: $("#ddlDocument option:selected").val() },
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            async: false,
+            success: function (response) {
+                if (response != null) {
+                    if (response.value == true) {
+                        isExp = true;
+                        $("#dpDocExpiryDate").attr('disabled', false);
+                        return true;
+                     }
+                    else {
+                        isExp = false;
+                        $("#dpDocExpiryDate").attr('disabled', true);
+                        return false;
+                    } 
+                  
+
+                } else {
+                    console.log("Something went wrong");
+                }
+            }
+           
         });
     }
     catch (err) {
@@ -382,14 +409,16 @@ function isValidEntry() {
     else {
         $('#dpDocIssueDate').css('border-color', '');
     }
-    if ($("#dpDocExpiryDate").val() == '') {
-        $('#dpDocExpiryDate').css('border-color', 'red');
-        valid = false;
-        count = count + 1;
-        message += count + '. Expiry Date </br>';
-    }
-    else {
-        $('#dpDocExpiryDate').css('border-color', '');
+    if (isExp) {
+        if ($("#dpDocExpiryDate").val() == '') {
+            $('#dpDocExpiryDate').css('border-color', 'red');
+            valid = false;
+            count = count + 1;
+            message += count + '. Expiry Date </br>';
+        }
+        else {
+            $('#dpDocExpiryDate').css('border-color', '');
+        }
     }
     if ($("#ddlStatus").val() == -1) {
         $('#ddlStatus').css('border-color', 'red');
@@ -449,8 +478,10 @@ function ClearFields() {
         $('#ddlStatus').css('border-color', '');
         $("#btnUploadDocs").css('border-color', '');
         $("#divUploadFile").hide();
+        $("#dpDocExpiryDate").attr('disabled', false);
 
-
+        $("#btnUpdate").hide();
+        $("#btnSubmit").show();
         
     }
     catch (err) {
@@ -515,13 +546,7 @@ function deleteInvalidDocUploads() {
         success: function (response) {
             if (response != null) {
 
-                //GetAllUploads("PASSPORT", empNo.replace('ARIS-', ''));
-                //GetAllUploads("RESIDENT", empNo.replace('ARIS-', ''));
-                //GetAllUploads("REMAINING", empNo.replace('ARIS-', ''));
-
-
             } else {
-                // alert("Something went wrong");
             }
         },
         failure: function (response) {

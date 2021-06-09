@@ -24,6 +24,7 @@
 
 
   <ItemGroup>
+    <PackageReference Include="ClosedXML" Version="0.95.4" />
     <PackageReference Include="jQuery" Version="3.5.1" />
     <PackageReference Include="Microsoft.AspNet.Web.Optimization" Version="1.1.3" />
     <PackageReference Include="Microsoft.AspNetCore.Mvc.Razor.RuntimeCompilation" Version="3.0.3" />
@@ -54,6 +55,7 @@
     <Folder Include="wwwroot\plugins\confirmBox\" />
     <Folder Include="wwwroot\plugins\login\" />
     <Folder Include="wwwroot\plugins\confirmPassword\" />
+    <Folder Include="wwwroot\plugins\export\" />
     <Folder Include="wwwroot\Uploads\EmployeeUploads\" />
     <Folder Include="wwwroot\Uploads\CompanyUploads\" />
     <Folder Include="wwwroot\Uploads\UserUploads\" />

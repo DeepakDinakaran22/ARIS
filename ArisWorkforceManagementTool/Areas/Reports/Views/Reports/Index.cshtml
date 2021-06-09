@@ -1,8 +1,12 @@
 ﻿
 @{
     ViewData["Title"] = "Reports";
-    Layout = "~/Views/Shared/_Layout.cshtml";
+    Layout = "~/Views/Shared/_Reports.cshtml";
 }
+<link rel="stylesheet" href="https://cdn.datatables.net/buttons/1.7.1/css/buttons.dataTables.min.css" />
+<link rel="stylesheet" href="~/plugins/datatables-bs4/css/dataTables.bootstrap4.css">
+
+
 <link rel="stylesheet" href="~/css/jquery-ui.css">
 <div class="content-header">
     <div class="container-fluid">
@@ -22,7 +26,7 @@
 
 <section class="content">
     <div class="container-fluid">
-        <div class="row">
+        <div class="row" style="font-size:smaller">
             <!-- left column -->
             <div class="col-md-12">
                 <!-- general form elements -->
@@ -35,7 +39,7 @@
 
                     <form role="form">
 
-                        <div class="card-body">
+                        <div class="card-body" style="line-height: 5px;">
                             <div class="row">
                                 <div class="col-md-3">
                                     <div class="form-group">
@@ -45,7 +49,7 @@
                                 </div>
                                 <div class="col-md-3">
                                     <div class="form-group">
-                                        <label for="EmployeeName">Employee Name </label>
+                                        <label for="txtEmployeeName">Employee Name </label>
                                         <input type="text" class="form-control" id="txtEmployeeName" placeholder="Enter Name">
                                     </div>
                                 </div>
@@ -57,73 +61,83 @@
                                         </select>
                                     </div>
                                 </div>
-
                                 <div class="col-md-3">
+                                    <div class="form-group">
+                                        <label>Status</label>
+                                        <select class="form-control select2bs4" id="ddlApprovalStatus" required style="width: 100%;">
+                                            <option value="-1" selected="selected">Select</option>
+                                            <option value="2">Approved</option>
+                                            <option value="0">Pending</option>
+                                            <option value="1">Sent Back</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="col-md-3" hidden>
                                     <div class="form-group">
                                         <label>Nationality</label>
                                         <select id="ddlCountry" class="form-control select2bs4" value="0" data-role="country-selector" data-code-mode="numeric"></select>
                                     </div>
                                 </div>
-                                <div class="col-md-3">
+                                <div class="col-md-3" hidden>
                                     <div class="form-group">
                                         <label for="PassportNumber">Passport Number </label>
                                         <input type="text" class="form-control" id="txtPassportNumber" placeholder="Enter Passport Number">
                                     </div>
                                 </div>
-                                <div class="col-md-3">
+                                <div class="col-md-3" hidden>
                                     <div class="form-group">
                                         <label>Passport Expiry From</label>
                                         <input type="text" class="form-control date" id="dpPassportExpiryFrom">
                                     </div>
                                 </div>
-                                <div class="col-md-3">
+                                <div class="col-md-3" hidden>
                                     <div class="form-group">
                                         <label>Passport Expiry To</label>
                                         <input type="text" class="form-control date" id="dpPassportExpiryTo">
                                     </div>
                                 </div>
 
-                                <div class="col-md-3">
+                                <div class="col-md-3" hidden>
                                     <div class="form-group">
                                         <label for="ResidentNumber">Resident Number </label>
                                         <input type="text" class="form-control" id="txtResidentNumber" placeholder="Enter Resident No">
                                     </div>
                                 </div>
-                                <div class="col-md-3">
+                                <div class="col-md-3" hidden>
                                     <div class="form-group">
                                         <label>Resident Expiry From</label>
                                         <input type="text" class="form-control date" id="dpResidentExpiryFrom">
                                     </div>
                                 </div>
-                                <div class="col-md-3">
+                                <div class="col-md-3" hidden>
                                     <div class="form-group">
                                         <label>Resident Expiry To</label>
                                         <input type="text" class="form-control date" id="dpResidentExpiryTo">
                                     </div>
                                 </div>
 
-                                <div class="col-md-3">
+                                <div class="col-md-3" hidden>
                                     <div class="form-group">
                                         <label>Joining Date From</label>
                                         <input type="text" class="form-control date" id="dpJoiningDateFrom">
 
                                     </div>
                                 </div>
-                                <div class="col-md-3">
+                                <div class="col-md-3" hidden>
                                     <div class="form-group">
                                         <label>Joining Date To</label>
                                         <input type="text" class="form-control date" id="dpJoiningDateTo">
 
                                     </div>
                                 </div>
-                                <div class="col-md-3">
+                                <div class="col-md-3" hidden>
                                     <div class="form-group">
                                         <label>Contract Start Date</label>
                                         <input type="text" class="form-control date" id="dpContractStartDate">
 
                                     </div>
                                 </div>
-                                <div class="col-md-3">
+                                <div class="col-md-3" hidden>
                                     <div class="form-group">
                                         <label>Contract End Date</label>
                                         <input type="text" class="form-control date" id="dpContractEndDate">
@@ -135,7 +149,7 @@
 
                         <div class="card-footer" style="text-align:right">
                             <button type="reset" id="btnReset" class="btn btn-primary">Reset</button>
-                            <button type="button" id="btnSubmit" onclick="SearchRequest()" class="btn btn-success">Search</button>
+                            <button type="button" id="btnSubmit" onclick="GetAllEmployeesBySearch()" class="btn btn-success">Search</button>
                         </div>
                     </form>
 
@@ -158,7 +172,7 @@
                             <div class="row">
                                 <div class="col-sm-12">
                                     <div class="card-body table-responsive p-0" style="overflow:hidden">
-                                        <table class="table table-head-fixed text-nowrap" id="tblEmployees"> </table>
+                                        <table class="table table-bordered table-head-fixed text-nowrap table-hover table-striped" style="vertical-align:inherit" id="tblEmployeeReports"> </table>
                                     </div>
                                 </div>
 
@@ -170,335 +184,40 @@
                     <!-- /.card-body -->
                 </div>
             </div>
+
             <!--/.col (right) -->
         </div>
         <!-- /.row -->
     </div><!-- /.container-fluid -->
 </section>
+
 @* Common files Starts*@
 <script src="~/lib/jquery/dist/jquery.min.js" type="text/javascript"></script>
-<link rel="stylesheet" href="~/plugins/datatables-bs4/css/dataTables.bootstrap4.css">
-<link rel="stylesheet" href="~/plugins/datatables-responsive/css/responsive.bootstrap4.css">
-
-<script src="~/js/Common/Common.js" type="text/javascript"></script>
-
+@*<script src="https://code.jquery.com/jquery-3.5.1.js" type="text/javascript"></script>*@
 <script src="~/js/jquery-ui.js" type="text/javascript"></script>
-<script src="~/plugins/bootstrap/js/bootstrap.min.js" type="text/x-jsrender">
-</script>
+<script src="~/js/Common/Common.js" type="text/javascript"></script>
+<script src="~/plugins/bootstrap/js/bootstrap.min.js" type="text/javascript"></script>
+<script src="~/js/App/Reports.js" type="text/javascript"></script>
+
+<script type="text/javascript" src="~/plugins/export/jszip.min.js"></script>
+<script type="text/javascript" src="~/plugins/export/pdfmake.min.js"></script>
+<script type="text/javascript" src="~/plugins/export/vfs_fonts.js"></script>
+<script src="~/plugins/datatables/jquery.dataTables.min.js" type="text/javascript"></script>
+<script type="text/javascript" src="~/plugins/export/dataTables.buttons.min.js"></script>
+<script type="text/javascript" src="~/plugins/export/buttons.html5.min.js"></script>
+<script type="text/javascript" src="~/plugins/export/buttons.print.min.js"></script>
+<script src="~/plugins/datatables-bs4/js/dataTables.bootstrap4.min.js" type="text/javascript"></script>
+<script src="~/plugins/datatables-responsive/js/dataTables.responsive.min.js" type="text/javascript"></script>
+<script src="~/plugins/datatables-responsive/js/responsive.bootstrap4.min.js" type="text/javascript"></script>
+
+
 @* Common files ends *@
 @* Solution Specific files starts *@
-<script src="~/js/App/ManageEmployees.js" type="text/javascript"></script>
 <script src="~/plugins/countrypicker/js/jquery.countrySelector.js" type="text/javascript"></script>
 @* Solution Specific files ends *@
 <script>
-    var row;
-    var table;
-    var empNO;
-    $(document).ready(function () {
-        $("#btnUpdate").hide();
-        $("#btnSubmit").show();
-        getCompanies();
-        // GetAllEmployees();
-        // GetEmployeeReferenceNo();
-        $("#dpContractEndDate").datepicker({ minDate: 0 }); //maxDate: "+1M +15D" });
-        $("#dpContractStartDate").datepicker({ minDate: 0 });
-        $("#dpJoiningDateFrom").datepicker({ minDate: 0 });
-        $("#dpJoiningDateTo").datepicker({ minDate: 0 });
-        $("#dpResidentExpiryFrom").datepicker({ minDate: 0 });
-        $("#dpResidentExpiryTo").datepicker({ minDate: 0 });
-        $("#dpPassportExpiryFrom").datepicker({ minDate: 0 });
-        $("#dpPassportExpiryTo").datepicker({ minDate: 0 });
 
-        $('#tblEmployees').on('click', 'td.edit', function (e) {
-            e.preventDefault();
-            empNO = parseInt(table.row(this).data()['employeeNo']);
-            $("#txtEmployeeNumber").val('ARIS-' + table.row(this).data()['employeeReferenceNo']);
-            $("#txtEmployeeName").val(table.row(this).data()['employeeName']);
-            $("#ddlCompany").val(table.row(this).data()['companyId']);
-            $("#ddlCountry").val(table.row(this).data()['nationality']);
-            $("#txtPassportNumber").val(table.row(this).data()['passportNumber']);
-            $("#dpPassportExpiryDate").datepicker("setDate", $.datepicker.parseDate("yy-mm-dd", table.row(this).data()['passportExpiryDate'].replace('T00:00:00', '')));
-            $("#txtResidentNumber").val(table.row(this).data()['residentNumber']);
-            $("#dpResidentExpiryDate").datepicker("setDate", $.datepicker.parseDate("yy-mm-dd", table.row(this).data()['residentExpiryDate'].replace('T00:00:00', '')));
-            $("#dpJoiningDate").datepicker("setDate", $.datepicker.parseDate("yy-mm-dd", table.row(this).data()['joiningDate'].replace('T00:00:00', '')));
-            $("#dpContractStartDate").datepicker("setDate", $.datepicker.parseDate("yy-mm-dd", table.row(this).data()['contractStartDate'].replace('T00:00:00', '')));
-            $("#dpContractEndDate").datepicker("setDate", $.datepicker.parseDate("yy-mm-dd", table.row(this).data()['contractEndDate'].replace('T00:00:00', '')));
-            $("#txtGsm").val(parseInt(table.row(this).data()['gsm']));
-            $("#txtAccomodationDetails").val(table.row(this).data()['accomodationDetails']);
-            $("input[name='radioMarital'][value='" + table.row(this).data()['maritalStatus'] + "']").prop('checked', true);
-            $("#txtIdProfession").val(table.row(this).data()['idProfession']);
-            $("#txtDesignation").val(table.row(this).data()['designation']);
-            $("#txtBankName").val(table.row(this).data()['bankName']);
-            $("#txtAccountNumber").val(table.row(this).data()['bankAccountNumber']);
-            $("#txtRemarks").val(table.row(this).data()['remarks']);
-
-
-            $("#btnUpdate").show();
-            $("#btnSubmit").hide();
-
-        });
-
-
-    });
-
-    function getCompanies() {
-        try {
-            bindDropDownList('ddlCompany', 'GET', '/MasterPages/ManageEmployees/GetCompanies', 'json', 'companyId', 'companyName');
-
-        }
-        catch (err) {
-            console.log(err);
-        }
-    }
-
-    function SearchRequest() {
-        var isValid = true;
-        var employeeName = $("#txtEmployeeName").val();
-        var employeeReferenceNo = parseInt($("#txtEmployeeNumber").val().replace('ARIS-', ''));
-        var companyId = $("#ddlCompany option:selected").val();
-        var nationality = $("#ddlCountry option:selected").val();
-        var passportNumber = $("#txtPassportNumber").val();
-        var passportExpiryDate = $("#dpPassportExpiryDate").val() != '' ? $("#dpPassportExpiryDate").datepicker('getDate').toLocaleString() : '';
-        var residentNumber = $("#txtResidentNumber").val();
-        var residentExpiryDate = $("#dpResidentExpiryDate").val() != '' ? $("#dpResidentExpiryDate").datepicker('getDate').toLocaleString() : '';
-        var joiningDate = $("#dpJoiningDate").val() != '' ? $("#dpJoiningDate").datepicker('getDate').toLocaleString() : '';
-        var contractStartDate = $("#dpContractStartDate").val() != '' ? $("#dpContractStartDate").datepicker('getDate').toLocaleString() : '';
-        var contractEndDate = $("#dpContractEndDate").val() != '' ? $("#dpContractEndDate").datepicker('getDate').toLocaleString() : '';
-        var gsm = $("#txtGsm").val();
-        var accomodationDetails = $("#txtAccomodationDetails").val();
-        var maritalStatus = $("input[name='radioMarital']:checked").val();
-        var idProfession = $("#txtIdProfession").val();
-        var designation = $("#txtDesignation").val();
-        var bankName = $("#txtBankName").val();
-        var bankAccountNumber = $("#txtAccountNumber").val();
-        var remarks = $("#txtRemarks").val();
-        // employee image
-        // file uploads
-
-        var data = {
-            EmployeeName: employeeName,
-            EmployeeReferenceNo: employeeReferenceNo,
-            CompanyId: companyId,
-            Nationality: nationality,
-            PassportNumber: passportNumber,
-            PassportExpiryDate: passportExpiryDate,
-            ResidentNumber: residentNumber,
-            ResidentExpiryDate: residentExpiryDate,
-            JoiningDate: joiningDate,
-            ContractStartDate: contractStartDate,
-            ContractEndDate: contractEndDate,
-            Gsm: gsm,
-            AccomodationDetails: accomodationDetails,
-            MaritalStatus: maritalStatus,
-            IdProfession: idProfession,
-            Designation: designation,
-            BankName: bankName,
-            BankAccountNumber: bankAccountNumber,
-            Remarks: remarks
-        };
-
-        isValid = isValidEntry();
-
-
-        if (isValid) {
-            callAjax('POST', '/MasterPages/ManageEmployees/SearchRequest', data);
-            GetAllEmployees();
-            ClearFields();
-        }
-        else {
-
-        }
-
-
-
-    }
-
-    function isValidEntry() {
-        var valid = true;
-
-        if ($('#txtEmployeeName').val() == '') {
-            $('#txtEmployeeName').css('border-color', 'red');
-            valid = false;
-        }
-        else {
-            $('#txtEmployeeName').css('border-color', '');
-        }
-        if ($("#ddlCompany").val() == 0) {
-            $('#ddlCompany').css('border-color', 'red');
-            valid = false;
-        }
-        else {
-            $('#ddlCompany').css('border-color', '');
-        }
-        if ($("#ddlCountry").val() == -1) {
-            $('#ddlCountry').css('border-color', 'red');
-            valid = false;
-        }
-        else {
-            $('#ddlCountry').css('border-color', '');
-        }
-        if ($("#txtPassportNumber").val() == '') {
-            $('#txtPassportNumber').css('border-color', 'red');
-            valid = false;
-        }
-        else {
-            $('#txtPassportNumber').css('border-color', '');
-        }
-        if ($("#dpPassportExpiryDate").val() == '') {
-            $('#dpPassportExpiryDate').css('border-color', 'red');
-            valid = false;
-        }
-        else {
-            $('#dpPassportExpiryDate').css('border-color', '');
-        }
-        if ($("#txtResidentNumber").val() == '') {
-            $('#txtResidentNumber').css('border-color', 'red');
-            valid = false;
-        }
-        else {
-            $('#txtResidentNumber').css('border-color', '');
-        }
-        if ($("#dpResidentExpiryDate").val() == '') {
-            $('#dpResidentExpiryDate').css('border-color', 'red');
-            valid = false;
-        }
-        else {
-            $('#dpResidentExpiryDate').css('border-color', '');
-        }
-        if ($("#dpJoiningDate").val() == '') {
-            $('#dpJoiningDate').css('border-color', 'red');
-            valid = false;
-        }
-        else {
-            $('#dpJoiningDate').css('border-color', '');
-        }
-        if ($("#dpContractStartDate").val() == '') {
-            $('#dpContractStartDate').css('border-color', 'red');
-            valid = false;
-        }
-        else {
-            $('#dpContractStartDate').css('border-color', '');
-        }
-        if ($("#dpContractEndDate").val() == '') {
-            $('#dpContractEndDate').css('border-color', 'red');
-            valid = false;
-        }
-        else {
-            $('#dpContractEndDate').css('border-color', '');
-        }
-        if ($("#txtGsm").val() == '') {
-            $('#txtGsm').css('border-color', 'red');
-            valid = false;
-        }
-        else {
-            $('#txtGsm').css('border-color', '');
-        }
-        if ($("#txtAccomodationDetails").val() == '') {
-            $('#txtAccomodationDetails').css('border-color', 'red');
-            valid = false;
-        }
-        else {
-            $('#txtAccomodationDetails').css('border-color', '');
-
-        }
-        if ($("#txtIdProfession").val() == '') {
-            $('#txtIdProfession').css('border-color', 'red');
-            valid = false;
-        }
-        else {
-            $('#txtIdProfession').css('border-color', '');
-        }
-
-        if ($("#txtDesignation").val() == '') {
-            $('#txtDesignation').css('border-color', 'red');
-            valid = false;
-        }
-        else {
-            $('#txtDesignation').css('border-color', '');
-        }
-        if ($("#txtBankName").val() == '') {
-            $('#txtBankName').css('border-color', 'red');
-            valid = false;
-        }
-        else {
-            $('#txtBankName').css('border-color', '');
-        }
-
-        if ($("#txtAccountNumber").val() == '') {
-            $('#txtAccountNumber').css('border-color', 'red');
-            valid = false;
-        }
-        else {
-            $('#txtAccountNumber').css('border-color', '');
-        }
-
-
-        return valid;
-    }
-
-    function GetAllEmployees() {
-        $.ajax({
-            type: "GET",
-            url: "/MasterPages/ManageEmployees/GetAllEmployees",
-            contentType: "application/json; charset=utf-8",
-            dataType: "json",
-            success: function (response) {
-                if (response != null) {
-                    populateEmployees(response);
-                } else {
-                    alert("Something went wrong");
-                }
-            },
-            failure: function (response) {
-                alert(response.responseText);
-            },
-            error: function (response) {
-                alert(response.responseText);
-            }
-        });
-    }
-    function populateEmployees(response) {
-        table = $('#tblEmployees').DataTable(
-            {
-                bLengthChange: true,
-                bFilter: true,
-                bSort: true,
-                bPaginate: true,
-                data: response,
-                scrollX: false,
-                scrollY: false,
-                select: true,
-                pageLength: 10,
-                destroy: true,
-                //  columnDefs: [ { width: 90, targets: 0 } ],
-                columns: [
-                    {
-                        data: 'employeeNo', title: 'Employee Number', visible: false,
-                    },
-                    {
-                        data: 'employeeName', title: 'Employee Name'
-                    },
-                    {
-                        data: 'approvalStatus', title: 'Status',
-                        render: function (data) {
-                            if (data == 1) {
-                                return 'Approved';
-                            }
-                            else {
-                                return 'Pending';
-                            }
-                        }
-
-                    },
-                    {
-                        data: null,
-                        title: 'View',
-                        class: 'edit',
-                        defaultContent: '<button type="button" class="btn btn-success"><i class="fas fa-edit"></i></button>',
-                        orderable: false
-                    }
-                ]
-            });
+    function ExportToExcel() {
 
     }
 

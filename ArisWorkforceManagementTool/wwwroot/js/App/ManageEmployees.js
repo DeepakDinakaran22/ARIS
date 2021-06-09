@@ -180,13 +180,13 @@ function populatePassport(response) {
     table_passport = $("#tblPassportFiles").DataTable(
         {
             bLengthChange: false,
-            bFilter: true,
+            bFilter: false,
             bSort: true,
-            bPaginate: true,
+            bPaginate: false,
             data: response,
-            response: true,
-            scrollY: true,
-            sScrollX: true,
+            //response: true,
+            //scrollY: true,
+            //sScrollX: true,
             //scrollY: "650px",
            // sScrollX: "100%",
            // scrollCollapse: true,
@@ -255,9 +255,9 @@ function populateResident(response) {
     table_resident = $("#tblResidentFiles").DataTable(
         {
             bLengthChange: false,
-            bFilter: true,
+            bFilter: false,
             bSort: true,
-            bPaginate: true,
+            bPaginate: false,
             data: response,
             //scrollY: "650px",
             //sScrollX: "100%",

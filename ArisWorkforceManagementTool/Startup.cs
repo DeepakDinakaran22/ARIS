@@ -48,6 +48,18 @@ namespace ArisWorkforceManagementTool
             {
                 app.UseExceptionHandler("/Home/Error");
             }
+
+            app.UseStatusCodePages(context => {
+                var request = context.HttpContext.Request;
+                var response = context.HttpContext.Response;
+
+                if (response.StatusCode == 404)
+                {
+                    response.Redirect("/Home/Unautherized");
+                }
+
+                return Task.CompletedTask;
+            });
             app.UseStaticFiles();
 
             app.UseRouting();

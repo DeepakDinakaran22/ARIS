@@ -8,6 +8,8 @@ using Aris.Models.ViewModel;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+using Microsoft.AspNetCore.Authorization;
+
 
 namespace ArisWorkforceManagementTool.Areas.MasterPages.Controllers
 {
@@ -17,6 +19,7 @@ namespace ArisWorkforceManagementTool.Areas.MasterPages.Controllers
         private readonly ILogger<ManageUsersController> _logger;
         UnitOfWork UnitOfWork = new UnitOfWork();
         UnitOfWork UnitOfWorkExists = new UnitOfWork();
+        [Authorize]
         public ActionResult Index()
         {
             return View();
@@ -25,8 +28,17 @@ namespace ArisWorkforceManagementTool.Areas.MasterPages.Controllers
         [HttpGet]
         public JsonResult GetAllDocuments()
         {
-            var companies = UnitOfWork.DocumentTypeRepository.Get(null, x => x.OrderByDescending(id => id.DocumentId));
-            return Json(companies);
+            try
+            {
+                var companies = UnitOfWork.DocumentTypeRepository.Get(null, x => x.OrderByDescending(id => id.DocumentId));
+                return Json(companies);
+            }
+            catch(Exception ex)
+            {
+                _logger.LogError(ex.ToString());
+                return null;
+
+            }
 
         }
 
@@ -52,8 +64,9 @@ namespace ArisWorkforceManagementTool.Areas.MasterPages.Controllers
 
                 return Json(new { success = true, responseText = "Document type added successfully." });
             }
-            catch
+            catch(Exception ex)
             {
+                _logger.LogError(ex.ToString());
                 return Json(new { success = false, responseText = "Something went wrong." });
             }
         }
@@ -85,6 +98,7 @@ namespace ArisWorkforceManagementTool.Areas.MasterPages.Controllers
             }
             catch (Exception ex)
             {
+                _logger.LogError(ex.ToString());
                 return Json(new { success = false, responseText = "Something went wrong." });
             }
 
@@ -92,23 +106,39 @@ namespace ArisWorkforceManagementTool.Areas.MasterPages.Controllers
         [HttpGet]
         public JsonResult GetCategories()
         {
-            var categories = UnitOfWork.DocumentCategoryRepository.Get(x => x.IsActive == 1).ToList().OrderBy(o => o.DocumentCategoryName);
-            return Json(categories);
+            try
+            {
+                var categories = UnitOfWork.DocumentCategoryRepository.Get(x => x.IsActive == 1).ToList().OrderBy(o => o.DocumentCategoryName);
+                return Json(categories);
+            }
+            catch(Exception ex)
+            {
+                _logger.LogError(ex.ToString());
+                return null;
+            }
 
         }
         public JsonResult IsDocumentNameExists(DocumentTypeViewModel obj)
         {
-            var documents = UnitOfWork.DocumentTypeRepository.Get();
-            bool has = documents.ToList().Any(x => x.DocumentName.ToLower() == obj.DocumentName.ToLower() && x.DocumentCategoryID == obj.DocumentCategoryID);
-            if (has)
+            try
             {
+                var documents = UnitOfWork.DocumentTypeRepository.Get();
+                bool has = documents.ToList().Any(x => x.DocumentName.ToLower() == obj.DocumentName.ToLower() && x.DocumentCategoryID == obj.DocumentCategoryID);
+                if (has)
+                {
+                    return Json(new { value = true, responseText = "Document name exists" });
+                }
+                else
+                {
+                    return Json(new { value = false, responseText = "Document name is not exists" });
+                }
+            }
+            catch(Exception ex)
+            {
+                _logger.LogError(ex.ToString());
                 return Json(new { value = true, responseText = "Document name exists" });
-            }
-            else
-            {
-                return Json(new { value = false, responseText = "Document name is not exists" });
-            }
 
+            }
         }
 
 

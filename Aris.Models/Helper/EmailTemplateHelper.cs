@@ -139,7 +139,14 @@ namespace Aris.Models
                             <th>Expiry Date</th></tr>");
             foreach (var document in officeDocumentDetails)
             {
-                email.Append("<tr><td>" + document.DocumentName + "</td><td>" + document.DocIssueDate.ToString("dd/MM/yyyy") + "</td><td>" + document.DocExpiryDate.ToString("dd/MM/yyyy") + "</td>");
+                DateTime? dateOrNull = document.DocExpiryDate;
+                DateTime expDate = DateTime.MaxValue;
+
+                if (dateOrNull != null)
+                {
+                    expDate = dateOrNull.Value;
+                }
+                email.Append("<tr><td>" + document.DocumentName + "</td><td>" + document.DocIssueDate.ToString("dd/MM/yyyy") + "</td><td>" + expDate.ToString("dd/MM/yyyy") + "</td>");
             };
 
             email.Append(@"<tr><th>Application Link</th><td>: [APPLICATIONLINK]</td></tr></table></p>

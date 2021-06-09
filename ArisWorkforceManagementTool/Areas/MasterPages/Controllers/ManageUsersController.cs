@@ -18,6 +18,7 @@ using Microsoft.AspNetCore.Hosting;
 using System.Net.Http.Headers;
 using Aris.Common;
 using Microsoft.Extensions.Options;
+using Microsoft.AspNetCore.Authorization;
 
 namespace ArisWorkforceManagementTool.Areas.MasterPages.Controllers
 {
@@ -40,7 +41,7 @@ namespace ArisWorkforceManagementTool.Areas.MasterPages.Controllers
 
         }
 
-        // GET: ManageUsers
+        [Authorize(Roles ="Manager")]
         public ActionResult Index()
         {
             return View();
@@ -123,59 +124,62 @@ namespace ArisWorkforceManagementTool.Areas.MasterPages.Controllers
             }
             catch (Exception ex)
             {
+                _logger.LogError(ex.ToString());
                 return Json(new { success = false, responseText = "Something went wrong." });
             }
         }
 
-        // GET: ManageUsers/Delete/5
-        public ActionResult Delete(int id)
-        {
-            return View();
-        }
-
-        // POST: ManageUsers/Delete/5
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult Delete(int id, IFormCollection collection)
-        {
-            try
-            {
-                // TODO: Add delete logic here
-
-                return RedirectToAction(nameof(Index));
-            }
-            catch
-            {
-                return View();
-            }
-        }
         [HttpPost]
         public async Task<IActionResult> UploadImage(IList<IFormFile> files)
         {
-            foreach (IFormFile source in files)
+            try
             {
-                string filename = ContentDispositionHeaderValue.Parse(source.ContentDisposition).FileName.Trim('"');
+                foreach (IFormFile source in files)
+                {
+                    string filename = ContentDispositionHeaderValue.Parse(source.ContentDisposition).FileName.Trim('"');
 
-                filename = DateTime.Now.ToFileTime() + "_" + this.EnsureCorrectFilename(filename);
-                imagePath = filename;
+                    filename = DateTime.Now.ToFileTime() + "_" + this.EnsureCorrectFilename(filename);
+                    imagePath = filename;
 
-                using (FileStream output = System.IO.File.Create(this.GetPathAndFilename(filename)))
-                    await source.CopyToAsync(output);
+                    using (FileStream output = System.IO.File.Create(this.GetPathAndFilename(filename)))
+                        await source.CopyToAsync(output);
+                }
+
+                return Json(new { success = true, responseText = "Profile Image updated successfully.", profileImagePath = imagePath });
             }
-
-            return Json(new { success = true, responseText = "Profile Image updated successfully.", profileImagePath = imagePath });
+            catch(Exception ex)
+            {
+                _logger.LogError(ex.ToString());
+                return Json(new { success = false, responseText = "Something went wrong.", profileImagePath = imagePath });
+            }
         }
         private string EnsureCorrectFilename(string filename)
         {
-            if (filename.Contains("\\"))
-                filename = filename.Substring(filename.LastIndexOf("\\") + 1);
+            try
+            {
+                if (filename.Contains("\\"))
+                    filename = filename.Substring(filename.LastIndexOf("\\") + 1);
 
-            return filename;
+                return filename;
+            }
+            catch(Exception ex)
+            {
+                _logger.LogError(ex.ToString());
+                return null;
+            }
         }
 
         private string GetPathAndFilename(string filename)
         {
-            return this.webHostEnvironment.WebRootPath + "\\Uploads\\UserUploads\\" + filename;
+            try
+            {
+                return this.webHostEnvironment.WebRootPath + "\\Uploads\\UserUploads\\" + filename;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.ToString());
+                return null;
+            }
         }
         [HttpPost]
         //[ValidateAntiForgeryToken]
@@ -214,8 +218,9 @@ namespace ArisWorkforceManagementTool.Areas.MasterPages.Controllers
 
                 return Json(new { success = true, responseText = "User Added Successfully." });
             }
-            catch
+            catch(Exception ex)
             {
+                _logger.LogError(ex.ToString());
                 return Json(new { success = true, responseText = "Something Went Wrong!" });
             }
         }

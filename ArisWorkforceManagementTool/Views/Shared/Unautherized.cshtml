@@ -1,0 +1,35 @@
+﻿@{
+    Layout = null;
+
+}
+
+<link href="~/lib/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
+<link rel="stylesheet" href="~/css/error.css" />
+<script src="~/lib/bootstrap/dist/js/bootstrap.min.js"></script>
+<script src="~/lib/jquery/dist/jquery.js"></script>
+<!------ Include the above in your HEAD tag ---------->
+
+<div class="container-fluid">
+    <div style="height:20%"></div>
+    <div class="row">
+        <div class="col-md-12">
+            <div class="error-template">
+                <h1>
+                    Oops!
+                </h1>
+                <h2>
+                    Unautherized to access !
+                </h2>
+                <div class="error-details">
+                    Sorry, an error has occured, Requested page not found!
+                </div>
+                <div class="error-actions">
+                    <a href="../Account/Login" class="btn btn-primary btn-lg">
+                        <span class="glyphicon glyphicon-home"></span>
+                        Back To Login
+                    </a><a href="mailto:aris-amtsupport@aris.com.om?subject=AMT Support Issue" class="btn btn-default btn-lg"><span class="glyphicon glyphicon-envelope"></span> Contact Support </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
