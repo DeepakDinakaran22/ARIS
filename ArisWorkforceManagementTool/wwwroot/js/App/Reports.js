@@ -272,7 +272,11 @@ function populateEmployees(response) {
                 'copyHtml5',
                 'excelHtml5',
                 'csvHtml5',
-                //'pdfHtml5'
+                {
+                    className: 'copy',
+                    text: 'Test',
+                   
+                }
             ],
             bLengthChange: false,
             bFilter: true,
