@@ -34,10 +34,11 @@ namespace ArisWorkforceManagementTool.Areas.MasterPages.Controllers
         UnitOfWork UnitOfWork = new UnitOfWork();
         UnitOfWork objUnitOfWorkFetch = new UnitOfWork();
 
-        public ManageUsersController(IWebHostEnvironment hostEnvironment, IOptions<AppSettings> appSettings)
+        public ManageUsersController(IWebHostEnvironment hostEnvironment, IOptions<AppSettings> appSettings, ILogger<ManageUsersController> logger)
         {
             this.webHostEnvironment = hostEnvironment;
             _appSettings = appSettings.Value;
+            _logger = logger;
 
         }
 
@@ -210,7 +211,7 @@ namespace ArisWorkforceManagementTool.Areas.MasterPages.Controllers
                                     where users.UserId == Convert.ToInt32(TempData.Peek("UserId"))
                                     select users).FirstOrDefault();
                 string strBody = EmailTemplateHelper.createAccount;
-                strBody=  strBody.Replace("[USER]", userObj.FullName).Replace("[USERNAME]", userObj.UserName).Replace("[APPLICATIONLINK]", "http://magicisland:8080").Replace("[PASSWORD]", randomPwd);
+                strBody=  strBody.Replace("[USER]", userObj.FullName).Replace("[USERNAME]", userObj.UserName).Replace("[APPLICATIONLINK]", "https://aris-amt.com/").Replace("[PASSWORD]", randomPwd);
                 EmailService emailService = new EmailService(_appSettings);
                 emailService.Send( userObj.MailAddress, loggedInUser.MailAddress, "AMT User Account Created", strBody);
 

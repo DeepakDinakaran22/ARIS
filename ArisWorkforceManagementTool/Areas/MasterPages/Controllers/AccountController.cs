@@ -23,21 +23,22 @@ namespace ArisWorkforceManagementTool.Areas.MasterPages.Controllers
 {
     public class AccountController : Controller 
     {
-        private readonly ILogger<HomeController> _logger;
+        private readonly ILogger<AccountController> _logger;
 
         UnitOfWork unitOfWork = new UnitOfWork();
         private readonly AppSettings _appSettings;
 
-        public AccountController(IOptions<AppSettings> appSettings)
+        public AccountController(IOptions<AppSettings> appSettings, ILogger<AccountController> logger)
         {
             _appSettings = appSettings.Value;
+            _logger = logger;
         }
         [HttpGet]
         public IActionResult Login()
         {
             try
             {
-    
+                _logger.LogInformation("Came to controller view");
                 return View();
             }
             catch(Exception ex)

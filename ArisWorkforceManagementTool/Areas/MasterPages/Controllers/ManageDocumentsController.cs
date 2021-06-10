@@ -16,9 +16,13 @@ namespace ArisWorkforceManagementTool.Areas.MasterPages.Controllers
     [Area("MasterPages")]
     public class ManageDocumentsController : Controller
     {
-        private readonly ILogger<ManageUsersController> _logger;
+        private readonly ILogger<ManageDocumentsController> _logger;
         UnitOfWork UnitOfWork = new UnitOfWork();
         UnitOfWork UnitOfWorkExists = new UnitOfWork();
+        public ManageDocumentsController(ILogger<ManageDocumentsController> logger)
+        {
+            _logger = logger;
+        }
         [Authorize]
         public ActionResult Index()
         {

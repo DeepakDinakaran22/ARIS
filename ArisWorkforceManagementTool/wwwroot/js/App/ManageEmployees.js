@@ -743,7 +743,9 @@ function CheckNameExists() {
                 if (response != null) {
                     if (response.value == true) {
                         //$('#txtCompanyName').css('border-color', 'red');
-                        showAlert({ title: "Warning!", message: 'An employee is exists with same passport number!', type: "WARNING" });
+                        //showAlert({ title: "Warning!", message: 'An employee is exists with same passport number!', type: "WARNING" });
+                        MessageBox('Exists!', 'fa fa-user', 'An employee is exists with same passport number!', 'orange', 'btn btn-warning', 'Okey');
+
                     }
                     else {
                        // $('#txtCompanyName').css('border-color', '');

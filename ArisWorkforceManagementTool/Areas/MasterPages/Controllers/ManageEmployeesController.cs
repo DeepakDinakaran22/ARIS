@@ -24,7 +24,7 @@ namespace ArisWorkforceManagementTool.Areas.MasterPages.Controllers
     [Area("MasterPages")]
     public class ManageEmployeesController : Controller
     {
-        private readonly ILogger<ManageUsersController> _logger;
+        private readonly ILogger<ManageEmployeesController> _logger;
         UnitOfWork UnitOfWork = new UnitOfWork();
         UnitOfWork objUnitOfWorkFetched = new UnitOfWork();
         private readonly IWebHostEnvironment webHostEnvironment;
@@ -32,10 +32,11 @@ namespace ArisWorkforceManagementTool.Areas.MasterPages.Controllers
         public int UserTypeId { get; set; }
         private readonly AppSettings _appSettings;
 
-        public ManageEmployeesController(IWebHostEnvironment hostEnvironment, IOptions<AppSettings> appSettings)
+        public ManageEmployeesController(IWebHostEnvironment hostEnvironment, IOptions<AppSettings> appSettings, ILogger<ManageEmployeesController> logger)
         {
             this.webHostEnvironment = hostEnvironment;
             _appSettings = appSettings.Value;
+            _logger = logger;
         }
 
         // GET: ManageEmployees
@@ -162,7 +163,7 @@ namespace ArisWorkforceManagementTool.Areas.MasterPages.Controllers
                         .Replace("[RESIDENTEXPIRY]", Convert.ToDateTime(obj.ResidentExpiryDate).ToString("yyyy-MM-dd"))
                         .Replace("[GSMNO]", obj.Gsm.ToString())
                         .Replace("[REMARKS]", obj.Remarks)
-                        .Replace("[APPLICATIONLINK]", "http://magicisland:8080");
+                        .Replace("[APPLICATIONLINK]", "https://aris-amt.com/");
                     EmailService emailService = new EmailService(_appSettings);
                     emailService.Send(strManagerMails,loggedInUser.MailAddress, "An employee details submitted for your action", strBody);
                 }
@@ -271,7 +272,7 @@ namespace ArisWorkforceManagementTool.Areas.MasterPages.Controllers
                         .Replace("[RESIDENTEXPIRY]", Convert.ToDateTime(obj.ResidentExpiryDate).ToString("yyyy-MM-dd"))
                         .Replace("[GSMNO]", obj.Gsm.ToString())
                         .Replace("[REMARKS]", obj.Remarks)
-                        .Replace("[APPLICATIONLINK]", "http://magicisland:8080");
+                        .Replace("[APPLICATIONLINK]", "https://aris-amt.com/");
                     EmailService emailService = new EmailService(_appSettings);
                     emailService.Send(strManagerMails, loggedInUser.MailAddress, "An employee details have been re-submitted for your action", strBody);
                 }
@@ -366,7 +367,7 @@ namespace ArisWorkforceManagementTool.Areas.MasterPages.Controllers
                         .Replace("[RESIDENTEXPIRY]", Convert.ToDateTime(empExistingData[0].ResidentExpiryDate).ToString("yyyy-MM-dd"))
                         .Replace("[GSMNO]", empExistingData[0].Gsm.ToString())
                         .Replace("[REMARKS]", obj.Remarks)
-                        .Replace("[APPLICATIONLINK]", "http://magicisland:8080");
+                        .Replace("[APPLICATIONLINK]", "https://aris-amt.com/");
                     EmailService emailService = new EmailService(_appSettings);
                     emailService.Send(strAdminMails, strManagerMails, "An employee details have been approved | Aris-"+ empExistingData[0].EmployeeReferenceNo, strBody);
                 }
@@ -451,7 +452,7 @@ namespace ArisWorkforceManagementTool.Areas.MasterPages.Controllers
                         .Replace("[EMPID]", empExistingData[0].EmployeeReferenceNo.ToString())
                         .Replace("[EMPNAME]", empExistingData[0].EmployeeName.ToString())
                         .Replace("[REMARKS]", obj.Remarks)
-                        .Replace("[APPLICATIONLINK]", "http://magicisland:8080");
+                        .Replace("[APPLICATIONLINK]", "https://aris-amt.com/");
                     EmailService emailService = new EmailService(_appSettings);
                     emailService.Send(createdUser.MailAddress, strManagerMails, "An employee details have been Sent Back | Aris-" + empExistingData[0].EmployeeReferenceNo, strBody);
                 }
@@ -723,6 +724,7 @@ namespace ArisWorkforceManagementTool.Areas.MasterPages.Controllers
             }
             catch(Exception ex)
             {
+                
                 _logger.LogInformation(ex.ToString());
                 return null;
             }

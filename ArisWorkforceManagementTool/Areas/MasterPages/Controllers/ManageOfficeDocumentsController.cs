@@ -18,14 +18,15 @@ namespace ArisWorkforceManagementTool.Areas.MasterPages.Controllers
     [Area("MasterPages")]
     public class ManageOfficeDocumentsController : Controller
     {
-        private readonly ILogger<ManageUsersController> _logger;
+        private readonly ILogger<ManageOfficeDocumentsController> _logger;
         UnitOfWork UnitOfWork = new UnitOfWork();
         UnitOfWork objUnitOfWorkFetch = new UnitOfWork();
         private readonly IWebHostEnvironment webHostEnvironment;
         private string imagePath = string.Empty;
-        public ManageOfficeDocumentsController(IWebHostEnvironment hostEnvironment)
+        public ManageOfficeDocumentsController(IWebHostEnvironment hostEnvironment, ILogger<ManageOfficeDocumentsController> logger)
         {
             this.webHostEnvironment = hostEnvironment;
+            _logger = logger;
         }
         [Authorize]
         public ActionResult Index()
