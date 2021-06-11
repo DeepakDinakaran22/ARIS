@@ -135,6 +135,7 @@ function ResetFlds() {
     $('#ddlUserType').css('border-color', '');
     $('#ddlStatus').css('border-color', '');
     $('#txtUserFullName').css('border-color', '');
+    isValidUser = false;
 
 }
 function UpdateUserRequest() {
@@ -317,7 +318,7 @@ function isValidEntry() {
         message += count + '. Valid Email ID </br>';
     }
     else {
-        $("#txtUserEmail").css('border-color', '');
+       // $("#txtUserEmail").css('border-color', '');
 
     }
 

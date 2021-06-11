@@ -13,16 +13,16 @@
             async: bAsync,
             success: function (response) {
                 if (response.success == true) {
-                    showLoader(false);
-                    // showAlert({ title: "SUCCESS!", message: response.responseText, type: "SUCCESS" });
                     MessageBox('Congratulations!', 'fa fa-check', response.responseText, 'green', 'btn btn-success','Okey');
 
                 } else {
-                    showLoader(false);
                     MessageBox('Congratulations!', 'fa fa-times', response.responseText, 'red', 'btn btn-danger','Okey');
-                   // showAlert({ title: "ERROR!", message: response.responseText, type: "ERROR" });
                 }
                 
+            },
+            complete: function (response) {
+                showLoader(false);
+
             },
            
             error: function (exception) {

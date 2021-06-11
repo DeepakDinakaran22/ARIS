@@ -20,7 +20,7 @@ function GetDashboardValuesHomeLanding() {
             $("#lblActiveEmployees").text(response.active);
             $("#lblPendingRequests").text(response.pending);
             $("#lblSentBackReq").text(response.sendBack);
-            $("#lblModificationReq").text(response.modificaiton);
+            $("#lblExpired").text(response.expired);
 
 
         },

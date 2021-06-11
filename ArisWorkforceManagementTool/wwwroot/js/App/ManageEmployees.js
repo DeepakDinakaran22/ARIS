@@ -470,7 +470,6 @@ function SubmitRequest() {
     if (isValid) {
         if ($("#txtConfirmAccountNumber").val().trim() == $("#txtAccountNumber").val().trim()) {
 
-            showLoader(true);
             callAjax('POST', '/MasterPages/ManageEmployees/SubmitRequest', data);
             GetAllEmployees();
             ClearFields();
@@ -528,7 +527,7 @@ function UpdateRequest() {
     };
     isValid = isValidEntry();
     if (isValid) {
-        showLoader(true);
+        //showLoader(true);
         callAjax('POST', '/MasterPages/ManageEmployees/UpdateRequest', data);
         GetAllEmployees();
         ClearFields();
@@ -670,7 +669,6 @@ $('.example-p-1').on('click', function () {
                 text: 'Yes',
                 btnClass: 'btn-blue',
                 action: function () {
-                    //$.alert('you clicked on <strong>Yes</strong>');
                     UpdateRequest();
                 }
             },
@@ -1013,6 +1011,16 @@ function isValidEntry() {
         message += count + '. Upload All Mandatory Documents  </br>';
     }
 
+    if ($("#dpJoiningDate").val() != '' && $("#dpContractStartDate").val() != '' && $("#dpContractEndDate").val() != '') {
+        var ceDate = new Date($("#dpContractEndDate").val());
+        var csdate = new Date($("#dpContractStartDate").val());
+        var jDate = new Date($("#dpJoiningDate").val());
+        if ((ceDate < csdate) || (ceDate < jDate)) {
+            valid = false;
+            count = count + 1;
+            message += count + '. Contract end date should not be older than joining date/ contract start date';
+        }
+    }
 
     if (message != '') {
         MessageBox('Required!', 'fa fa-warning', message, 'red', 'btn btn-danger', 'Okey');

@@ -242,6 +242,7 @@ function ResetClientFields() {
         $("#txtCompanyLocation").css('border-color', '');
         $("#btnUpdate").hide();
         $("#btnSubmit").show();
+        isValidCompany = false;
     }
     catch (err) {
         console.log(err);

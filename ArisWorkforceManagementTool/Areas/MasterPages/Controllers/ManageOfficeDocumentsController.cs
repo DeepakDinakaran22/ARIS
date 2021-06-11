@@ -218,6 +218,16 @@ namespace ArisWorkforceManagementTool.Areas.MasterPages.Controllers
 
                 UnitOfWork.OfficeDocDetailsRepository.Update(officeDoc);
                 UnitOfWork.Save();
+
+                var uploadedData = UnitOfWork.OfficeDocsFileUploadsRepository.Get(f => f.IsValid == 0 && f.DocumentId == obj.DocumentId);
+                foreach (var item in uploadedData)
+                {
+                    item.IsValid = 1;
+                    item.ModifiedBy = Convert.ToInt32(TempData.Peek("UserId"));
+                    item.ModifiedDate = DateTime.Now;
+                    UnitOfWork.OfficeDocsFileUploadsRepository.Update(item);
+                    UnitOfWork.Save();
+                }
                 return Json(new { success = true, responseText = "Document Updated successfully." });
             }
             catch(Exception ex)
@@ -343,7 +353,30 @@ namespace ArisWorkforceManagementTool.Areas.MasterPages.Controllers
 
             }
         }
+        [HttpGet]
+        public JsonResult DeleteSelectedFiles(int docUploadId)
+        {
+            try
+            {
 
+                var uploadedData = UnitOfWork.OfficeDocsFileUploadsRepository.Get(f => f.DocFileUploadId == docUploadId);
+                foreach (var item in uploadedData)
+                {
+                    UnitOfWork.OfficeDocsFileUploadsRepository.Delete(item.DocFileUploadId);
+                    UnitOfWork.Save();
+                }
+
+                return Json(new { success = true, responseText = "success" });
+
+
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.ToString());
+                return Json(new { success = false, responseText = "Something went wrong. Please try again !" });
+
+            }
+        }
         [HttpGet]
         public JsonResult GetAllUploads(int docId)
         {
@@ -360,10 +393,11 @@ namespace ArisWorkforceManagementTool.Areas.MasterPages.Controllers
                            {
                                FileName = f == null ? "No Files" : f.ActualFileName,
                                FilePath = f == null ? "No Path" : f.FileLocation + f.FileName,
+                               DocFileUploadId = f == null ? 0 : f.DocFileUploadId,
                                DocumentName = d.DocumentName,
                                DocumentId = d.DocumentId,
                                isExpiryRequired = d.IsExpiryRequired,
-                               isMandatory = d == null ? 0 : d.IsMandatory
+                               isMandatory = d == null ? 0 : d.IsMandatory,
                            };
 
                 return Json(data);

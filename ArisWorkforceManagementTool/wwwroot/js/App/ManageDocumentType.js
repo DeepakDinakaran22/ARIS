@@ -296,7 +296,7 @@ function ResetFields() {
         $("#ddlIsExpiry").val(-1);
         $('#ddlMandatory').css('border-color', '');
         $("#ddlMandatory").val(-1);
-
+        isValidDoc = false;
 
 
         $("#btnUpdate").hide();

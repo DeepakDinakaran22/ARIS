@@ -32,7 +32,7 @@ $(document).ready(function () {
             GetAllUploads();
             $("#files").attr("disabled", false);
             CheckNameExists();
-            $("#divUploadFile").show();
+            //$("#divUploadFile").show();
           
         }
 
@@ -142,9 +142,26 @@ function populateOfficeDocs(response) {
                             return 'Active';
                         }
                     }
-                },
+                }
+                
                
-            ]
+            ],
+            rowCallback: function (row, data) {
+                if (data.docExpiryDate != null) {
+                    var today = new Date();
+                    var edate = new Date(data.docExpiryDate.replace('T00:00:00', ''));
+                    if (today > edate) {
+                        $('td:eq(3)', row).css('background-color', '#F83112');
+                    }
+                    else {
+
+                    }
+                }
+                //if (data.approvalStatus == 0) {
+                //    $('td', row).css('background-color', '#FFFEEA');
+                //}
+                
+            }
         });
 
 }
@@ -519,6 +536,57 @@ function uploadDocuments(inputId) {
         }
     );
 }
+function DeleteSelectedFiles(inputId) {
+    var uploadedId = inputId.split('_')[1];
+    $.confirm({
+        title: 'Are you sure?',
+        content: 'Want to delete  the file permanently ?',
+        icon: 'fa fa-question-circle',
+        animation: 'scale',
+        closeAnimation: 'scale',
+        opacity: 0.5,
+        buttons: {
+            'confirm': {
+                text: 'Yes',
+                btnClass: 'btn-blue',
+                action: function () {
+                    DeleteSelectedUploads(uploadedId);
+                }
+            },
+            cancel: function () {
+            },
+        }
+    });
+  
+}
+
+function DeleteSelectedUploads(id) {
+    var uploadFileId = id;
+    $.ajax({
+        type: "GET",
+        url: "/MasterPages/ManageOfficeDocuments/DeleteSelectedFiles",
+        contentType: "application/json; charset=utf-8",
+        data: { docUploadId: uploadFileId },
+        dataType: "json",
+        async: false,
+        success: function (response) {
+            if (response != null) {
+                MessageBox('Deleted !', 'fa fa-times', 'Selected file has been deleted!', 'green', 'btn btn-success', 'Okey');
+
+            } else {
+            }
+        },
+        failure: function (response) {
+            MessageBox('Error!', 'fa fa-times', 'Something went wrong', 'red', 'btn btn-danger', 'Okey');
+
+        },
+        error: function (response) {
+            console.log(response.responseText);
+        }
+    });
+    GetAllUploads();
+}
+
 function MessageBox(title, icon, content, type, btnClass, btnText) {
     $.confirm({
         title: title,
@@ -583,6 +651,7 @@ function GetAllUploads() {
 }
 function pupulateUploadDocs(response) {
     var docId = 0;
+    var upldId = 0;
     tbl_docUpload = $("#tblUploadDocs").DataTable(
         {
             bLengthChange: false,
@@ -596,6 +665,13 @@ function pupulateUploadDocs(response) {
             pageLength: 10,
             destroy: true,
             columns: [
+                {
+                    data:'docFileUploadId', visible: false,
+                    render :function (data) {
+                        upldId = data;
+                        return data;
+                    }
+                },
                 {
                     data: 'documentId', title: 'Document ID', visible: false,
                     render: function (data) {
@@ -649,7 +725,20 @@ function pupulateUploadDocs(response) {
 
                         }
                     }
-                }
+                },
+                 {
+                    data: null, title: 'Delete',
+                    class: 'delete',
+                     render: function (data) {
+                         if (data == null) {
+                            return data;
+                        }
+                        else {
+                             return '<a href="#" onclick="DeleteSelectedFiles(\'delete_' + upldId +'\');" id="delete_' + upldId + '"> Delete </a>';
+                        }
+                    }
+                },
+                
             ]
         });
 
@@ -671,16 +760,18 @@ $('#tblUploadDocs').on('click', 'td.download', function (e) {
     }
 });
 
+
 //add new row to the table
 $('#btnAddRow').on('click', function () {
     var tables= $('#tblUploadDocs').DataTable();
     tables.row.add({
+        'docFileUploadId': null,
         'documentId': counter,
         'filePath': 'a',
         'documentName': 'b',
         'fileName': 'No File',
         'isMandatory': 'No',
-        '': '<input type="file" multiple id="upload_' + 123 + '" onchange="uploadDocuments(\'upload_' + $("#ddlDocument option:selected").val() + '\');">',
+        '': '<input type="file" multiple id="upload_' + $("#ddlDocument option:selected").val() + '" onchange="uploadDocuments(\'upload_' + $("#ddlDocument option:selected").val() + '\');">',
 
     }).draw(false);
     counter = counter + 1;

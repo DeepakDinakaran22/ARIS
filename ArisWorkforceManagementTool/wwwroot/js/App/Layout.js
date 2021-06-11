@@ -2,6 +2,7 @@
 var isConfirmPasswordMatch = false;
 var isCurrentPasswordCorrect = false;
 $(document).ready(function () {
+    $('body').addClass('text-sm');
     ResetPwd();
     $("#btnSavePassword").hide();
 
