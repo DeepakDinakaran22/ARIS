@@ -32,7 +32,7 @@ $(document).ready(function () {
             GetAllUploads();
             $("#files").attr("disabled", false);
             CheckNameExists();
-            //$("#divUploadFile").show();
+            $("#divUploadFile").show();
           
         }
 
