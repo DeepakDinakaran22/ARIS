@@ -203,7 +203,7 @@
                                 <div class="col-md-6">
                                     <div class="form-group">
                                         <label for="AccountNumber">Confirm Account No. </label>
-                                        <input type="password" class="form-control" id="txtConfirmAccountNumber" autocomplete="new-password"  placeholder="Enter Account Number">
+                                        <input type="password" class="form-control" id="txtConfirmAccountNumber" autocomplete="new-password" placeholder="Enter Account Number">
                                         <span id="spanConfirmAccount" style="color:red"></span>
                                     </div>
                                 </div>
@@ -241,6 +241,14 @@
                                             </div>
                                         </div>
                                     </div>-->
+                                </div>
+                                <hr />
+                                <div class="col-md-12" id="div_confidential">
+                                    <div class="input-group">
+                                        <input type="button" width="100px" id="btnUploadConfidential" name="Files" data-toggle="modal" data-target="#modal-lg-confidential" class="form-control btn btn-sm btn-warning" value="Confidential Files" />
+
+                                    </div>
+
                                 </div>
 
                             </div>
@@ -318,7 +326,7 @@
             <div class="modal-body">
                 <div class="row">
                     <div class="col-sm-12 ">
-                        <div class="card-body table-responsive p-0" style="overflow:hidden">
+                        <div class="card-body table-responsive p-0">
                             <table class="table table-head-fixed text-wrap" id="tblPassportFiles"> </table>
                         </div>
                         @*<table class="table text-wrap compact border-dark" id="tblPassportFiles"> </table>*@
@@ -346,7 +354,7 @@
             <div class="modal-body">
                 <div class="row">
                     <div class="col-sm-12">
-                        <div class="card-body table-responsive p-0" style="overflow:hidden">
+                        <div class="card-body table-responsive p-0">
                             <table class="table table-head-fixed text-wrap" id="tblResidentFiles"> </table>
                         </div>
                         @*  <table class="table text-nowrap" id="tblResidentFiles"> </table>*@
@@ -374,6 +382,29 @@
             <div class="mb-3">
                 <div class="card-body table-responsive p-0">
                     <table class="table text-nowrap" style="width:100%" id="tblRemainingFiles"> </table>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-outline-success" data-dismiss="modal">Okey</button>
+            </div>
+        </div>
+        <!-- /.modal-content -->
+    </div>
+    <!-- /.modal-dialog -->
+</div>
+@* Confidential file upload model *@
+<div class="modal fade" id="modal-lg-confidential">
+    <div class="modal-dialog modal-lg" style="font-size:smaller">
+        <div class="modal-content" style="width:auto">
+            <div class="modal-header" style="background-color:darkseagreen">
+                <h4 class="modal-title left">Upload Confidential Files</h4>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="mb-3">
+                <div class="card-body table-responsive p-0">
+                    <table class="table text-nowrap" style="width:100%" id="tblConfidentialFiles"> </table>
                 </div>
             </div>
             <div class="modal-footer">

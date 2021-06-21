@@ -336,10 +336,16 @@ namespace ArisWorkforceManagementTool.Areas.MasterPages.Controllers
             {
 
                 var uploadedData = UnitOfWork.OfficeDocsFileUploadsRepository.Get(f => f.IsValid == 0 && f.CreatedBy == userID );
+                string fileLocation = this.webHostEnvironment.WebRootPath + "\\Uploads\\CompanyUploads\\";
+
                 foreach (var item in uploadedData)
                 {
                     UnitOfWork.OfficeDocsFileUploadsRepository.Delete(item.DocFileUploadId);
                     UnitOfWork.Save();
+                    if (System.IO.File.Exists(fileLocation + item.FileName))
+                    {
+                        System.IO.File.Delete(fileLocation + item.FileName);
+                    }
                 }
 
                 return Json(new { success = true, responseText = "success" });
@@ -360,10 +366,16 @@ namespace ArisWorkforceManagementTool.Areas.MasterPages.Controllers
             {
 
                 var uploadedData = UnitOfWork.OfficeDocsFileUploadsRepository.Get(f => f.DocFileUploadId == docUploadId);
+                string fileLocation = this.webHostEnvironment.WebRootPath + "\\Uploads\\CompanyUploads\\";
+
                 foreach (var item in uploadedData)
                 {
                     UnitOfWork.OfficeDocsFileUploadsRepository.Delete(item.DocFileUploadId);
                     UnitOfWork.Save();
+                    if (System.IO.File.Exists(fileLocation + item.FileName))
+                    {
+                        System.IO.File.Delete(fileLocation + item.FileName);
+                    }
                 }
 
                 return Json(new { success = true, responseText = "success" });

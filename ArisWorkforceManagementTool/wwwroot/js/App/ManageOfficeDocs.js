@@ -652,6 +652,7 @@ function GetAllUploads() {
 function pupulateUploadDocs(response) {
     var docId = 0;
     var upldId = 0;
+    var hasFile = false;
     tbl_docUpload = $("#tblUploadDocs").DataTable(
         {
             bLengthChange: false,
@@ -694,9 +695,11 @@ function pupulateUploadDocs(response) {
                     class: 'download',
                     render: function (data) {
                         if (data == "No Files") {
+                            hasFile = false;
                             return data;
                         }
                         else {
+                            hasFile = true;
                             return '<a href="#" id="download_' + docId + '">' + data + '</a>';
                         }
                     }
@@ -717,7 +720,7 @@ function pupulateUploadDocs(response) {
                     title: 'Upload',
                     class: 'upload',
                     render: function (data) {
-                        if (true) {
+                        if (hasFile == false) {
                             return '<input type="file" multiple id="upload_' + docId + '" onchange="uploadDocuments(\'upload_' + docId + '\');">';
                         }
                         else {
@@ -730,8 +733,8 @@ function pupulateUploadDocs(response) {
                     data: null, title: 'Delete',
                     class: 'delete',
                      render: function (data) {
-                         if (data == null) {
-                            return data;
+                         if (hasFile == false) {
+                             return '<a href="#" hidden onclick="DeleteSelectedFiles(\'delete_' + upldId + '\');" id="delete_' + upldId + '"> Delete </a>';
                         }
                         else {
                              return '<a href="#" onclick="DeleteSelectedFiles(\'delete_' + upldId +'\');" id="delete_' + upldId + '"> Delete </a>';

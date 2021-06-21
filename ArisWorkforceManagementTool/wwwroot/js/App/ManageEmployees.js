@@ -17,7 +17,12 @@ $(document).ready(function () {
     showLoader(true);
     userRole = $("#hdnUserRole").val();
     loggedInUserId = $("#hdnUserId").val();
-
+    if (userRole == 1) {
+        $("#div_confidential").hide();
+    }
+    else if (userRole == 2) {
+        $("#div_confidential").show();
+    }
     
 
     $("#dpContractEndDate").datepicker({ minDate: 0 }); //maxDate: "+1M +15D" });
@@ -177,6 +182,8 @@ function GetAllUploads(uType,empNo) {
 }
 function populatePassport(response) {
     var docId = 0;
+    var upldId = 0;
+    var hasFile = false;
     table_passport = $("#tblPassportFiles").DataTable(
         {
             bLengthChange: false,
@@ -184,16 +191,25 @@ function populatePassport(response) {
             bSort: true,
             bPaginate: false,
             data: response,
+            ScrollX: false,
             //response: true,
             //scrollY: true,
-            //sScrollX: true,
-            //scrollY: "650px",
-           // sScrollX: "100%",
-           // scrollCollapse: true,
+            //scrollX: true,
+            //scrollY: "500px",
+            //sScrollX: "100%",
+            scrollCollapse: true,
             select: true,
             pageLength: 10,
             destroy: true,
+            order:[[2,'asc']],
             columns: [
+                {
+                    data: 'docFileUploadId', visible: false,
+                    render: function (data) {
+                        upldId = data;
+                        return data;
+                    }
+                },
                 {
                     data: 'documentId', title: 'Document ID', visible: false,
                     render: function (data) {
@@ -214,9 +230,11 @@ function populatePassport(response) {
                     class:'download',
                     render: function (data) {
                         if (data == "No Files") {
+                            hasFile = false;
                             return data;
                         }
                         else {
+                            hasFile = true;
                             return '<a href="#" id="download_' + docId + '">' + data + '</a>';
                         }
                     }
@@ -237,7 +255,7 @@ function populatePassport(response) {
                     title: 'Upload',
                     class: 'upload',
                     render: function (data) {
-                        if (isUploadAllowed) {
+                        if (isUploadAllowed && !hasFile) {
                             return '<input type="file" id="upload_' + docId + '" onchange="uploadDocuments(\'upload_' + docId + '\');">';
                         }
                         else {
@@ -245,13 +263,27 @@ function populatePassport(response) {
 
                         }
                     }
-                }
+                },
+                {
+                    data: null, title: 'Delete',
+                    class: 'delete',
+                    render: function (data) {
+                        if (isUploadAllowed && hasFile == false) {
+                            return '<a href="#" hidden onclick="DeleteSelectedFiles(\'delete_' + upldId + '\');" id="delete_' + upldId + '"> Delete </a>';
+                        }
+                        else {
+                            return '<a href="#" onclick="DeleteSelectedFiles(\'delete_' + upldId + '\');" id="delete_' + upldId + '"> Delete </a>';
+                        }
+                    }
+                },
             ]
         });
 
 }
 function populateResident(response) {
     var docId = 0;
+    var upldId = 0;
+    var hasFile = false;
     table_resident = $("#tblResidentFiles").DataTable(
         {
             bLengthChange: false,
@@ -259,13 +291,24 @@ function populateResident(response) {
             bSort: true,
             bPaginate: false,
             data: response,
+            ScrollX: false,
+            //scrollY: true,
+            //scrollX: true,
             //scrollY: "650px",
             //sScrollX: "100%",
             //scrollCollapse: true,
             select: true,
             pageLength: 10,
             destroy: true,
+            order: [[2, 'asc']],
             columns: [
+                {
+                    data: 'docFileUploadId', visible: false,
+                    render: function (data) {
+                        upldId = data;
+                        return data;
+                    }
+                },
                 {
                     data: 'documentId', title: 'Document ID', visible: false,
                     render: function (data) {
@@ -285,9 +328,12 @@ function populateResident(response) {
                     class: 'download',
                     render: function (data) {
                         if (data == "No Files") {
+                            hasFile = false;
+
                             return data;
                         }
                         else {
+                            hasFile = true;
                             return '<a href="#" id="download_' + docId + '">' + data + '</a>';                        }
                     }
                 },
@@ -307,14 +353,26 @@ function populateResident(response) {
                     title: 'Upload',
                     class: 'upload',
                     render: function (data) {
-                        if (isUploadAllowed) {
+                        if (isUploadAllowed && !hasFile) {
                             return '<input type="file" id="upload_' + docId + '" onchange="uploadDocuments(\'upload_' + docId + '\');">';
                         }
                         else {
                             return '<input type="file" id="upload_' + docId + '" disabled onchange="uploadDocuments(\'upload_' + docId + '\');">';
                         }
                     }
-                }
+                },
+                {
+                    data: null, title: 'Delete',
+                    class: 'delete',
+                    render: function (data) {
+                        if (isUploadAllowed && hasFile == false) {
+                            return '<a href="#" hidden onclick="DeleteSelectedFiles(\'delete_' + upldId + '\');" id="delete_' + upldId + '"> Delete </a>';
+                        }
+                        else {
+                            return '<a href="#" onclick="DeleteSelectedFiles(\'delete_' + upldId + '\');" id="delete_' + upldId + '"> Delete </a>';
+                        }
+                    }
+                },
             ]
         });
 
@@ -322,6 +380,8 @@ function populateResident(response) {
 function populateRemaining(response) {
     var docId = 0;
     var isExpReq = 0;
+    var upldId = 0;
+    var hasFile = false;
     table_remaining = $("#tblRemainingFiles").DataTable(
         {
             bLengthChange: false,
@@ -335,6 +395,13 @@ function populateRemaining(response) {
             pageLength: 10,
             destroy: true,
             columns: [
+                {
+                    data: 'docFileUploadId', visible: false,
+                    render: function (data) {
+                        upldId = data;
+                        return data;
+                    }
+                },
                 {
                     data: 'documentId', title: 'Document ID', visible: false,
                     render: function (data) {
@@ -373,9 +440,11 @@ function populateRemaining(response) {
                     class: 'download',
                     render: function (data) {
                         if (data == "No Files") {
+                            hasFile = false;
                             return data;
                         }
                         else {
+                            hasFile = true;
                             return '<a href="#"  id="download_' + docId + '">' + data + '</a>';
                         }
                     }
@@ -402,14 +471,26 @@ function populateRemaining(response) {
                     title: 'Upload',
                     class: 'upload',
                     render: function (data) {
-                        if (isUploadAllowed) {
+                        if (isUploadAllowed && !hasFile) {
                             return '<input type="file" id="upload_' + docId + '" onchange="uploadDocuments_remaining(\'upload_' + docId + '\');">';
                         }
                         else {
                             return '<input type="file" id="upload_' + docId + '" disabled onchange="uploadDocuments_remaining(\'upload_' + docId + '\');">';
                         }
                     }
-                }
+                },
+                {
+                    data: null, title: 'Delete',
+                    class: 'delete',
+                    render: function (data) {
+                        if (isUploadAllowed && hasFile == false) {
+                            return '<a href="#" hidden onclick="DeleteSelectedFiles(\'delete_' + upldId + '\');" id="delete_' + upldId + '"> Delete </a>';
+                        }
+                        else {
+                            return '<a href="#" onclick="DeleteSelectedFiles(\'delete_' + upldId + '\');" id="delete_' + upldId + '"> Delete </a>';
+                        }
+                    }
+                },
                
             ]
         });
@@ -1636,4 +1717,58 @@ function showLoader_employee(val) {
     catch (err) {
         console.log(err);
     }
+}
+function DeleteSelectedFiles(inputId) {
+    if (userRole == 1) {
+        var uploadedId = inputId.split('_')[1];
+        $.confirm({
+            title: 'Are you sure?',
+            content: 'Want to delete  the file ?',
+            icon: 'fa fa-question-circle',
+            animation: 'scale',
+            closeAnimation: 'scale',
+            opacity: 0.5,
+            buttons: {
+                'confirm': {
+                    text: 'Yes',
+                    btnClass: 'btn-blue',
+                    action: function () {
+                        DeleteSelectedUploads(uploadedId);
+                    }
+                },
+                cancel: function () {
+                },
+            }
+        });
+    }
+
+}
+function DeleteSelectedUploads(id) {
+    var uploadFileId = id;
+    var empId = $("#txtEmployeeNumber").val().trim();
+    $.ajax({
+        type: "GET",
+        url: "/MasterPages/ManageEmployees/DeleteSelectedFiles",
+        contentType: "application/json; charset=utf-8",
+        data: { docUploadId: uploadFileId, empId: empId },
+        dataType: "json",
+        async: false,
+        success: function (response) {
+            if (response != null) {
+                MessageBox('Deleted !', 'fa fa-times', 'Selected file has been deleted!', 'green', 'btn btn-success', 'Okey');
+
+            } else {
+            }
+        },
+        failure: function (response) {
+            MessageBox('Error!', 'fa fa-times', 'Something went wrong', 'red', 'btn btn-danger', 'Okey');
+
+        },
+        error: function (response) {
+            console.log(response.responseText);
+        }
+    });
+    GetAllUploads("PASSPORT", $("#txtEmployeeNumber").val().replace('ARIS-', ''));
+    GetAllUploads("RESIDENT", $("#txtEmployeeNumber").val().replace('ARIS-', ''));
+    GetAllUploads("REMAINING", $("#txtEmployeeNumber").val().replace('ARIS-', ''));
 }

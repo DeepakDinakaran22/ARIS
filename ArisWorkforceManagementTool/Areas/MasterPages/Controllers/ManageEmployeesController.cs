@@ -31,6 +31,7 @@ namespace ArisWorkforceManagementTool.Areas.MasterPages.Controllers
         private string imagePath = string.Empty;
         public int UserTypeId { get; set; }
         private readonly AppSettings _appSettings;
+        private static string employeeImage;
 
         public ManageEmployeesController(IWebHostEnvironment hostEnvironment, IOptions<AppSettings> appSettings, ILogger<ManageEmployeesController> logger)
         {
@@ -78,7 +79,7 @@ namespace ArisWorkforceManagementTool.Areas.MasterPages.Controllers
                 UnitOfWork.EmployeeFileUploadsRepository.Insert(files);
                 UnitOfWork.Save();
 
-                return Json(new { success = true, responseText = "Company added successfully." });
+                return Json(new { success = true, responseText = "Client added successfully." });
             }
             catch (Exception ex)
             {
@@ -501,6 +502,7 @@ namespace ArisWorkforceManagementTool.Areas.MasterPages.Controllers
                     filename = ContentDispositionHeaderValue.Parse(source.ContentDisposition).FileName.Trim('"');
 
                     filename = DateTime.Now.ToFileTime() + "_" + this.EnsureCorrectFilename(filename);
+                    employeeImage = filename;
                     imagePath = filename;
 
                     using (FileStream output = System.IO.File.Create(this.GetPathAndFilename(filename, empNo)))
@@ -771,6 +773,7 @@ namespace ArisWorkforceManagementTool.Areas.MasterPages.Controllers
                            from f in eGroup.DefaultIfEmpty()
                            select new
                            {
+                               docFileUploadId = f == null ?0 : f.EmpFileUploadId,
                                FileName = f == null ? "No Files" : f.ActualFileName,
                                FilePath = f == null ? "No Path" : f.FileLocation + f.FileName,
                                DocumentName = d.DocumentName,
@@ -789,6 +792,7 @@ namespace ArisWorkforceManagementTool.Areas.MasterPages.Controllers
                                from f in eGroup.DefaultIfEmpty()
                                select new
                                {
+                                   docFileUploadId = f == null ? 0 : f.EmpFileUploadId,
                                    FileName = f == null ? "No Files" : f.ActualFileName,
                                    FilePath = f == null ? "No Path" : f.FileLocation + f.FileName,
                                    DocumentName = d.DocumentName,
@@ -807,6 +811,7 @@ namespace ArisWorkforceManagementTool.Areas.MasterPages.Controllers
                                from f in eGroup.DefaultIfEmpty()
                                select new
                                {
+                                   docFileUploadId = f == null ? 0 : f.EmpFileUploadId,
                                    FileName = f == null ? "No Files" : f.ActualFileName,
                                    FilePath = f == null ? "No Path" : f.FileLocation + f.FileName,
                                    DocumentName = d.DocumentName,
@@ -837,12 +842,23 @@ namespace ArisWorkforceManagementTool.Areas.MasterPages.Controllers
         {
             try
             {
-                    var uploadedData = UnitOfWork.EmployeeFileUploadsRepository.Get(f => f.IsValid == 0 && f.CreatedBy == userID && f.EmployeeReferenceNo== Convert.ToInt32(empNo.Replace("ARIS-", "")));
-                    foreach (var item in uploadedData)
+                var uploadedData = UnitOfWork.EmployeeFileUploadsRepository.Get(f => f.IsValid == 0 && f.CreatedBy == userID && f.EmployeeReferenceNo== Convert.ToInt32(empNo.Replace("ARIS-", "")));
+                string fileLocation = this.webHostEnvironment.WebRootPath + "\\Uploads\\EmployeeUploads\\" + empNo+"\\";
+               
+                foreach (var item in uploadedData)
                     {
                         UnitOfWork.EmployeeFileUploadsRepository.Delete(item.EmpFileUploadId);
                         UnitOfWork.Save();
+                    if (System.IO.File.Exists(fileLocation + item.FileName))
+                    {
+                        System.IO.File.Delete(fileLocation + item.FileName);
                     }
+                    if (System.IO.File.Exists(fileLocation + employeeImage))
+                    {
+                        System.IO.File.Delete(fileLocation + employeeImage);
+
+                    }
+                }
                 return Json(new { success = true, responseText = "success" });
             }
             catch (Exception ex)
@@ -875,6 +891,38 @@ namespace ArisWorkforceManagementTool.Areas.MasterPages.Controllers
                 return null;
             }
 
+        }
+        [HttpGet]
+        public JsonResult DeleteSelectedFiles(int docUploadId,string empId)
+        {
+            try
+            {
+
+                var uploadedData = UnitOfWork.EmployeeFileUploadsRepository.Get(f =>  f.EmpFileUploadId == Convert.ToInt32(docUploadId));
+                string fileLocation = this.webHostEnvironment.WebRootPath + "\\Uploads\\EmployeeUploads\\"+empId+"\\";
+
+                foreach (var item in uploadedData)
+                {
+
+                    UnitOfWork.EmployeeFileUploadsRepository.Delete(item.EmpFileUploadId);
+                    UnitOfWork.Save();
+
+                    if (System.IO.File.Exists(fileLocation + item.FileName))
+                    {
+                        System.IO.File.Delete(fileLocation + item.FileName);
+                    }
+                }
+
+                return Json(new { success = true, responseText = "success" });
+
+
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.ToString());
+                return Json(new { success = false, responseText = "Something went wrong. Please try again !" });
+
+            }
         }
 
     }

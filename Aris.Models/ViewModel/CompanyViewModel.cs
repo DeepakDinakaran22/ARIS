@@ -22,5 +22,8 @@ namespace Aris.Models.ViewModel
 
         public DateTime? ModifiedDate { get; set; }
         public string CompanyLocation { get; set; }
+        public DateTime? CompanyExpiry { get; set; }
+        public string CompanyEmail { get; set; }
+        public string CompanyPhone { get; set; }
     }
 }

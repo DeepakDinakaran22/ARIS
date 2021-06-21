@@ -262,6 +262,9 @@ function populateDocuments(response) {
                         else if(data=='2') {
                             return 'Office Documents';
                         }
+                        else   {
+                            return 'Client Documents';
+                        }
                     }
                 },
                 {

@@ -90,7 +90,7 @@ namespace Aris.Webjob
             if (expireds != default(List<ExpiredDocuments>))
             {
                 string strBody = EmailTemplateHelper.UserDocumentDetails(expireds)
-                  .Replace("[APPLICATIONLINK]", "http://localhost:8080");
+                  .Replace("[APPLICATIONLINK]", "https://aris-amt.com");
 
                 emailService.Send(strManagerMails, "", "Employee document expiry remainder", strBody);
             }
@@ -118,7 +118,7 @@ namespace Aris.Webjob
             if (officeDocumentDetails != null)
             {
                 string strBody = EmailTemplateHelper.OfficeDocumentDetails(officeDocumentDetails)
-                    .Replace("[APPLICATIONLINK]", "http://localhost:8080");
+                    .Replace("[APPLICATIONLINK]", "http://aris-amt.com");
 
                 emailService.Send(strManagerMails, "", "Office document expiry remainder", strBody);
             }
@@ -131,12 +131,11 @@ namespace Aris.Webjob
         private void GetRecepients()
         {
             var managerUser = from managers in UnitOfWork.UserRepository.Get()
-                              where managers.UserTypeID == Convert.ToInt32(ConstantVariables.UserType.Manager)
+                              where managers.UserTypeID == Convert.ToInt32(ConstantVariables.UserType.Manager) || managers.UserTypeID == Convert.ToInt32(ConstantVariables.UserType.Admin)
                               select managers;
             foreach (var item in managerUser)
             {
                 strManagerMails = strManagerMails != string.Empty ? strManagerMails + ", " + item.MailAddress : item.MailAddress;
-
             }
         }
     }

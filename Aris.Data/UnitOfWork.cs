@@ -15,7 +15,10 @@ namespace Aris.Data
         private GenericRepository<EmployeeFileUploads> employeeFileUploadsRepository;
         private GenericRepository<OfficeDocDetails> officeDocDetailsRepository;
         private GenericRepository<OfficeDocsFileUploads> officeDocsFileUploadsRepository;
+        private GenericRepository<CompanyFileUploads> companyFileUploadsRepository;
+
         public GenericRepository<Users> UserRepository
+
         {
             get
             {
@@ -118,6 +121,17 @@ namespace Aris.Data
             }
 
         }
+        public GenericRepository<CompanyFileUploads> CompanyFileUploadsRepository
+        {
+            get
+            {
+                if (this.companyFileUploadsRepository == null)
+                    this.companyFileUploadsRepository = new GenericRepository<CompanyFileUploads>(context);
+                return this.companyFileUploadsRepository;
+            }
+
+        }
+
 
         public void Save()
         {

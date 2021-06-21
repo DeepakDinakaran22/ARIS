@@ -14,7 +14,7 @@ namespace Aris.Models.Helper
         }
         public enum ApplicationData
         {
-            [Description("http://magicisland:8080")]
+            [Description("https://aris-amt.com")]
             ApplicationLink = 1
         }
 
