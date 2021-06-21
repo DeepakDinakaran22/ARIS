@@ -11,20 +11,15 @@ var approvalStatusId;
 var isUploadAllowed = true;
 var cnt = 0;
 var today;
+var tbl_docUpload;
 $(document).ready(function () {
+    $("#div_confidential").hide();
     var d = new Date();
     today = moment(new Date()).format('YYYY-MM-DD');
     showLoader(true);
     userRole = $("#hdnUserRole").val();
     loggedInUserId = $("#hdnUserId").val();
-    if (userRole == 1) {
-        $("#div_confidential").hide();
-    }
-    else if (userRole == 2) {
-        $("#div_confidential").show();
-    }
-    
-
+  
     $("#dpContractEndDate").datepicker({ minDate: 0 }); //maxDate: "+1M +15D" });
     $("#dpContractStartDate").datepicker({ minDate: 0 });
     $("#dpJoiningDate").datepicker({ minDate: 0 });
@@ -1392,6 +1387,7 @@ $('#tblEmployees').on('click', 'td.edit', function (e) {
 
     }
     else if (approvalStatusId == 0 && userRole == '2') {
+
         empNO = parseInt(table.row(this).data()['employeeNo']);
         $("#txtEmployeeNumber").val('ARIS-' + table.row(this).data()['employeeReferenceNo']);
         $("#txtEmployeeName").val(table.row(this).data()['employeeName']).attr('disabled', 'disabled');
@@ -1436,7 +1432,8 @@ $('#tblEmployees').on('click', 'td.edit', function (e) {
         $("#btnApprove").show();
         $("#btnUploadRemainingFiles").val("Uploaded Files/ Documents");
 
-        
+        $("#div_confidential").show();
+        GetConfidentialUploads();
     }
     else if ((approvalStatusId == 1 || approvalStatusId==2) && userRole == '2') {
         empNO = parseInt(table.row(this).data()['employeeNo']);
@@ -1480,7 +1477,8 @@ $('#tblEmployees').on('click', 'td.edit', function (e) {
 
         $("#btnSendBack").hide();
         $("#btnApprove").hide();
-
+        $("#div_confidential").show();
+        GetConfidentialUploads();
 
     }
     $(window).scrollTop(0);
@@ -1771,4 +1769,270 @@ function DeleteSelectedUploads(id) {
     GetAllUploads("PASSPORT", $("#txtEmployeeNumber").val().replace('ARIS-', ''));
     GetAllUploads("RESIDENT", $("#txtEmployeeNumber").val().replace('ARIS-', ''));
     GetAllUploads("REMAINING", $("#txtEmployeeNumber").val().replace('ARIS-', ''));
+}
+
+
+function GetConfidentialUploads() {
+    $.ajax({
+        type: "GET",
+        url: "/MasterPages/ManageEmployees/GetAllConfidentialUploads",
+        contentType: "application/json; charset=utf-8",
+        data: { empId: $("#txtEmployeeNumber").val().trim() },
+        dataType: "json",
+        success: function (response) {
+            if (response != null) {
+                pupulateUploadDocs(response);
+            } else {
+
+            }
+        },
+        failure: function (response) {
+            console.log(response.responseText);
+        },
+        error: function (response) {
+            console.log(response.responseText);
+        }
+    });
+}
+function pupulateUploadDocs(response) {
+    var docId = 0;
+    var isExpReq = 0;
+    var upldId = 0;
+    var hasFile = false;
+    table_remaining = $("#tblConfidentialFiles").DataTable(
+        {
+            bLengthChange: false,
+            bFilter: false,
+            bSort: false,
+            bPaginate: false,
+            bInfo: false,
+            data: response,
+            ScrollX: false,
+            select: false,
+            pageLength: 10,
+            destroy: true,
+            columns: [
+                {
+                    data: 'docFileUploadId', visible: false,
+                    render: function (data) {
+                        upldId = data;
+                        return data;
+                    }
+                },
+                {
+                    data: 'documentId', title: 'Document ID', visible: false,
+                    render: function (data) {
+                        if (data != null) { docId = data; }
+                        return data;
+                    }
+
+                },
+                {
+                    data: 'isExpiryRequired', title: 'test', visible: false,
+                    render: function (data) {
+                        isExpReq = data;
+                        return data;
+                    }
+                },
+                {
+                    data: 'filePath', title: 'File Path', visible: false,
+                },
+
+                {
+                    data: 'documentName', title: 'Document Name'
+                },
+                {
+                    data: 'isMandatory', title: 'Mandatory', visible: true,
+                    render: function (data) {
+                        if (data == 1) {
+                            return 'Yes';
+                        }
+                        else {
+                            return 'No';
+                        }
+                    }
+                },
+                {
+                    data: 'fileName', title: 'File Name',
+                    class: 'download',
+                    render: function (data) {
+                        if (data == "No Files") {
+                            hasFile = false;
+                            return data;
+                        }
+                        else {
+                            hasFile = true;
+                            return '<a href="#"  id="download_' + docId + '">' + data + '</a>';
+                        }
+                    }
+                },
+
+                {
+                    data: 'expiryDate', title: 'Expiry', visible: true, class: 'text-center',
+                    render: function (data) {
+                        var eDate;
+                        if (isExpReq == 1) {
+                            if (data != null) {
+                                eDate = data;
+                            }
+                            return '<input type="date"  value="' + eDate + '"  class="form - control expiry" id="dp_' + docId + '" style="width: 132px; font - size: smaller; " >';
+                        }
+                        else {
+                            return '<input type="text" value="No Expiry Required" disabled class="form-control expiry" id="dp_' + docId + '" style="width:132px;font-size:smaller;" >';
+                            //return 'No Expiry';
+                        }
+                    }
+                },
+                {
+                    data: null,
+                    title: 'Upload',
+                    class: 'upload',
+                    render: function (data) {
+                        if (hasFile == false) {
+                            return '<input type="file" id="upload_' + docId + '" onchange="uploadDocuments_confidential(\'upload_' + docId + '\');">';
+                        }
+                        else {
+                            return '<input type="file" id="upload_' + docId + '" disabled onchange="uploadDocuments_confidential(\'upload_' + docId + '\');">';
+                        }
+                    }
+                },
+                {
+                    data: null, title: 'Delete',
+                    class: 'delete',
+                    render: function (data) {
+                        if (hasFile == false) {
+                            return '<a href="#" hidden onclick="DeleteSelectedFilesConf(\'delete_' + upldId + '\');" id="delete_' + upldId + '"> Delete </a>';
+                        }
+                        else {
+                            return '<a href="#" onclick="DeleteSelectedFilesConf(\'delete_' + upldId + '\');" id="delete_' + upldId + '"> Delete </a>';
+                        }
+                    }
+                },
+
+            ]
+        });
+}
+$('#tblConfidentialFiles').on('click', 'td.download', function (e) {
+    e.preventDefault();
+    try {
+        var filePath = tbl_docUpload.row(this).data()['filePath'];
+        if (filePath != 'No Path') {
+            var link = document.createElement('a');
+            link.href = filePath;
+            link.download = filePath.substr(filePath.lastIndexOf('/') + 1);
+            link.click();
+        }
+
+    }
+    catch (err) {
+        console.log(err);
+    }
+});
+function ToastPopups(type, title) {
+    var Toast = Swal.mixin({
+        toast: true,
+        position: 'middle',
+        showConfirmButton: false,
+        timer: 3000
+    });
+
+    if (type == 'SUCCESS') {
+        Toast.fire({
+            icon: 'success',
+            title: title
+        })
+    }
+    else {
+        Toast.fire({
+            icon: 'error',
+            title: title,
+
+        })
+    }
+}
+function DeleteSelectedFilesConf(inputId) {
+    var uploadedId = inputId.split('_')[1];
+    $.confirm({
+        title: 'Are you sure?',
+        content: 'Want to delete  the file permanently ?',
+        icon: 'fa fa-question-circle',
+        animation: 'scale',
+        closeAnimation: 'scale',
+        opacity: 0.5,
+        buttons: {
+            'confirm': {
+                text: 'Yes',
+                btnClass: 'btn-blue',
+                action: function () {
+                    DeleteSelectedUploadsConf(uploadedId);
+                }
+            },
+            cancel: function () {
+            },
+        }
+    });
+
+}
+function DeleteSelectedUploadsConf(id) {
+    var uploadFileId = id;
+    $.ajax({
+        type: "GET",
+        url: "/MasterPages/ManageEmployees/DeleteSelectedFiles",
+        contentType: "application/json; charset=utf-8",
+        data: { docUploadId: uploadFileId },
+        dataType: "json",
+        async: false,
+        success: function (response) {
+            if (response != null) {
+                MessageBox('Deleted !', 'fa fa-times', 'Selected file has been deleted!', 'green', 'btn btn-success', 'Okey');
+
+            } else {
+            }
+        },
+        failure: function (response) {
+            MessageBox('Error!', 'fa fa-times', 'Something went wrong', 'red', 'btn btn-danger', 'Okey');
+
+        },
+        error: function (response) {
+            console.log(response.responseText);
+        }
+    });
+    GetConfidentialUploads();
+}
+function uploadDocuments_confidential(inputId) {
+
+    var docId = inputId.split("_")[1];
+    var input = document.getElementById(inputId);
+
+    var dpName = 'dp_' + docId;
+    if ($("#" + dpName + "").val().trim() == 'No Expiry Required' || $("#" + dpName + "").val().trim() != '') {
+        var files = input.files;
+        var formData = new FormData();
+        var empNo = $("#txtEmployeeNumber").val().trim();
+        for (var i = 0; i != files.length; i++) {
+            formData.append("files", files[i]);
+        }
+        formData.append("empNo", empNo);
+        formData.append("docId", parseInt(docId));
+        formData.append("expDate", $("#" + dpName + "").val().trim());
+        $.ajax(
+            {
+                url: "/MasterPages/ManageEmployees/UploadDocumentsRemaining",
+                data: formData,
+                processData: false,
+                contentType: false,
+                type: "POST",
+                async: false,
+                success: function (data) {
+                    ToastPopups('SUCCESS', 'Selected document has been uploaded!');
+                    GetConfidentialUploads();
+                }
+            }
+        );
+    }
+    else {
+        $("#" + inputId + "").val(null);
+        MessageBox('Required!', 'fa fa-times', 'Expiry date!', 'red', 'btn btn-danger', 'Okey');
+
+    }
 }

@@ -924,6 +924,40 @@ namespace ArisWorkforceManagementTool.Areas.MasterPages.Controllers
 
             }
         }
+        [HttpGet]
+        public JsonResult GetAllConfidentialUploads(string empId )
+        {
+            try
+            {
+
+                List<DocumentType> documents = UnitOfWork.DocumentTypeRepository.Get(x => x.IsActive == 1).ToList();
+                List<EmployeeFileUploads> files = UnitOfWork.EmployeeFileUploadsRepository.Get(x => x.IsActive == 1 && x.EmployeeReferenceNo == Convert.ToInt32(empId.Replace("ARIS-",""))).ToList();
+                var data = from d in documents
+                           join f in files
+                           on d.DocumentId equals f.DocumentId into eGroup
+                           where d.DocumentCategoryID == 4
+                           from f in eGroup.DefaultIfEmpty()
+                           select new
+                           {
+                               FileName = f == null ? "No Files" : f.ActualFileName,
+                               FilePath = f == null ? "No Path" : f.FileLocation + f.FileName,
+                               DocFileUploadId = f == null ? 0 : f.EmpFileUploadId,
+                               expiryDate = f == null ? null : Convert.ToDateTime(f.ExpiryDate).ToString("yyyy-MM-dd"),
+                               DocumentName = d.DocumentName,
+                               DocumentId = d.DocumentId,
+                               CompanyId = f == null ? 0 : f.EmployeeReferenceNo,
+                               isExpiryRequired = d.IsExpiryRequired,
+                               isMandatory = d == null ? 0 : d.IsMandatory,
+                           };
+
+                return Json(data);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.ToString());
+                return null;
+            }
+        }
 
     }
 

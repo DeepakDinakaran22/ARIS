@@ -219,6 +219,13 @@ function GetAllCompanies() {
 function populateCompanies(response) {
     table = $('#tblCompanies').DataTable(
         {
+            dom: 'Bfrtip',
+            buttons: [
+                'copyHtml5',
+                'excelHtml5',
+                'csvHtml5',
+
+            ],
             bLengthChange: false,
             bFilter: true,
             bSort: true,
@@ -463,7 +470,7 @@ $("#dpCompanyExpiry").change(function () {
 });
 
 
-
+//
 function GetAllUploads() {
 
     $.ajax({
@@ -763,7 +770,6 @@ function DeleteSelectedUploads(id) {
 $("#txtCompanyEmail").keyup(function () {
     checkEmail();
 });
-
 function checkEmail() {
     try {
         var email = $("#txtCompanyEmail").val().trim();

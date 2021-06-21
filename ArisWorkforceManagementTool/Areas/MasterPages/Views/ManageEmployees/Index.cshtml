@@ -8,6 +8,8 @@
 <link rel="stylesheet" href="~/plugins/loader/css/style.css" />
 @* Confirm Box *@
 <link rel="stylesheet" href="~/plugins/confirmBox/jquery-confirm.css" />
+<link rel="stylesheet" href="~/plugins/sweetalert2-theme-bootstrap-4/bootstrap-4.min.css" />
+
 
 <style>
 </style>
@@ -218,32 +220,10 @@
                                         <input type="button" width="100px" id="btnUploadRemainingFiles" name="Files" data-toggle="modal" data-target="#modal-lg" class="form-control btn btn-sm btn-info" value="Upload Files" />
 
                                     </div>
-                                    <!--<div class="card card-outline card-info">
-                                    <div class="card-header">
-                                        <h3 class="card-title">
-                                            <small>Documents to be uploaded</small>
-                                        </h3>-->
-                                    <!-- tools box -->
-                                    <!--<div class="card-tools">
-                                                <button type="button" class="btn btn-tool btn-sm" data-card-widget="collapse" data-toggle="tooltip"
-                                                        title="Collapse">
-                                                    <i class="btn-success fas fa-minus"></i>
-                                                </button>
 
-                                            </div>
-                                        </div>
-                                        <div class="card-body pad">
-                                            <div class="mb-3">
-
-                                                <div class="card-body table-responsive p-0" style="overflow:hidden">
-                                                    <table class="table table-head-fixed text-wrap" id="tblRemainingFiles"> </table>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>-->
                                 </div>
                                 <hr />
-                                <div class="col-md-12" id="div_confidential">
+                                <div class="col-md-12" id="div_confidential" style="margin-top:10px">
                                     <div class="input-group">
                                         <input type="button" width="100px" id="btnUploadConfidential" name="Files" data-toggle="modal" data-target="#modal-lg-confidential" class="form-control btn btn-sm btn-warning" value="Confidential Files" />
 
@@ -488,6 +468,7 @@
 <script src="~/plugins/countrypicker/js/jquery.countrySelector.js" type="text/javascript"></script>
 @* ConfirmBox *@
 <script src="~/plugins/confirmBox/jquery-confirm.js" type="text/javascript"></script>
+<script src="~/plugins/sweetalert2/sweetalert2.min.js"></script>
 
 @* Solution Specific files ends *@
 <script>
