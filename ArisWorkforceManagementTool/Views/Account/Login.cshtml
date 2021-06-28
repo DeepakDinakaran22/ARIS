@@ -7,7 +7,9 @@
 <link rel="stylesheet" href="~/plugins/login/css/materialdesignicons.min.css">
 <link rel="stylesheet" href="~/plugins/login/css/bootstrap.min.css">
 <link rel="stylesheet" href="~/plugins/login/css/login.css">
-
+<head>
+    <link rel="icon" href="~/img/Titlelogo.png">
+</head>
 <div class="container">
     <div class= "justify-content-center h-100">
 
@@ -18,11 +20,15 @@
                 </div>
                 <div class="col-md-7">
                     <div class="card-body">
-                        <div class="brand-wrapper">
-                            <img src="~/plugins/login/images/LogoAris.png" alt="logo" class="logo" style="width:200px;height:150px">
-                        </div>
+                       
+
 
                         <form method="post">
+                            <div class="brand-wrapper text-center">
+                                @*                            <img src="~/plugins/login/images/LogoAris.png" alt="logo" class="logo" style="width:200px;height:150px">*@
+                                <img src="~/img/aris.png" alt="logo" class="logo" style="width:115px;height:150px">
+
+                            </div>
                             <div>
 
                                 <label for="email" class="sr-only">Email</label>
@@ -32,16 +38,16 @@
                             </div>
                             @*<span asp-validation-for="UserName" class="text-danger"></span>*@
 
-                        <div>
+                            <div>
 
-                            <label for="password" class="sr-only">Password</label>
-                            <span asp-validation-for="Password" class="text-danger"> </span>
+                                <label for="password" class="sr-only">Password</label>
+                                <span asp-validation-for="Password" class="text-danger"> </span>
 
-                            <input asp-for="Password" class="form-control" placeholder="Password">
+                                <input asp-for="Password" class="form-control" placeholder="Password">
 
-                        </div>
+                            </div>
                             @*<span  asp-validation-for="Password" class="text-danger"> </span>*@
-                          @*  @Html.ValidationMessage("CustomError")*@
+                            @*  @Html.ValidationMessage("CustomError")*@
                             <div class="input-group form-group">
                                 <input asp-for="RememberMe" style="margin:6px">Remember Me
 

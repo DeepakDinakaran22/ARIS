@@ -38,7 +38,7 @@ namespace ArisWorkforceManagementTool.Areas.MasterPages.Controllers
         {
             try
             {
-                _logger.LogInformation("Came to controller view");
+               // _logger.LogInformation("Came to controller view");
                 return View();
             }
             catch(Exception ex)

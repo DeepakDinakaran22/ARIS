@@ -192,13 +192,13 @@ namespace ArisWorkforceManagementTool.Areas.MasterPages.Controllers
                 var randomPwd = GetRandomPassword();
                 var user = new Aris.Data.Entities.Users()
                 {
-                    UserName = userObj.UserName,
+                    UserName = new GenericMethods().ConvertToTitleCase(userObj.UserName),
                     MailAddress = userObj.MailAddress,
                     UserTypeID = userObj.UserTypeID,
                     IsActive = userObj.IsActive,
                     CreatedDate = DateTime.Now,
                     CreatedBy = Convert.ToInt32(TempData.Peek("UserId")),
-                    FullName = userObj.FullName,
+                    FullName = new GenericMethods().ConvertToTitleCase(userObj.FullName),
                     Password = new AuthHelper().HashPassword(randomPwd),
                     UserImage = userObj.ProfileImage
                 };
@@ -211,7 +211,7 @@ namespace ArisWorkforceManagementTool.Areas.MasterPages.Controllers
                                     where users.UserId == Convert.ToInt32(TempData.Peek("UserId"))
                                     select users).FirstOrDefault();
                 string strBody = EmailTemplateHelper.createAccount;
-                strBody=  strBody.Replace("[USER]", userObj.FullName).Replace("[USERNAME]", userObj.UserName).Replace("[APPLICATIONLINK]", "https://aris-amt.com/").Replace("[PASSWORD]", randomPwd);
+                strBody=  strBody.Replace("[USER]", new GenericMethods().ConvertToTitleCase(userObj.FullName)).Replace("[USERNAME]", new GenericMethods().ConvertToTitleCase(userObj.UserName)).Replace("[APPLICATIONLINK]", "https://aris-amt.com/").Replace("[PASSWORD]", randomPwd);
                 EmailService emailService = new EmailService(_appSettings);
                 emailService.Send( userObj.MailAddress, loggedInUser.MailAddress, "AMT User Account Created", strBody);
 

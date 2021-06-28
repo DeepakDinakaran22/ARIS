@@ -12,6 +12,7 @@ using Microsoft.AspNetCore.Authorization;
 using System.Net.Http.Headers;
 using System.IO;
 using Microsoft.AspNetCore.Hosting;
+using Aris.Models.Helper;
 
 namespace ArisWorkforceManagementTool.Areas.MasterPages.Controllers
 {
@@ -40,12 +41,13 @@ namespace ArisWorkforceManagementTool.Areas.MasterPages.Controllers
         {
             try
             {
-                var company = new Company() { CompanyName = companyObj.CompanyName, 
-                    CompanyServices = companyObj.CompanyServices, 
+                var company = new Company() { 
+                    CompanyName = new GenericMethods().ConvertToTitleCase(companyObj.CompanyName), 
+                    CompanyServices = new GenericMethods().ConvertToSingleUpperCase(companyObj.CompanyServices), 
                     IsActive = companyObj.IsActive, 
                     CreatedDate = DateTime.Now, 
                     CreatedBy = Convert.ToInt32(TempData.Peek("UserId")), 
-                    CompanyLocation=companyObj.CompanyLocation,
+                    CompanyLocation= new GenericMethods().ConvertToTitleCase(companyObj.CompanyLocation),
                     CompanyExpiry = companyObj.CompanyExpiry,
                     CompanyPhone = companyObj.CompanyPhone,
                     CompanyEmail=companyObj.CompanyEmail
@@ -67,13 +69,14 @@ namespace ArisWorkforceManagementTool.Areas.MasterPages.Controllers
         {
             try
             {
-                var company = new Company() { CompanyName=companyObj.CompanyName, 
-                    CompanyServices = companyObj.CompanyServices, 
+                var company = new Company() { 
+                    CompanyName= new GenericMethods().ConvertToTitleCase(companyObj.CompanyName), 
+                    CompanyServices = new GenericMethods().ConvertToSingleUpperCase(companyObj.CompanyServices), 
                     IsActive = companyObj.IsActive, 
                     ModifiedDate = DateTime.Now,
                     ModifiedBy  = Convert.ToInt32(TempData.Peek("UserId")),
                     CompanyId=companyObj.CompanyId,
-                    CompanyLocation=companyObj.CompanyLocation,
+                    CompanyLocation= new GenericMethods().ConvertToTitleCase(companyObj.CompanyLocation),
                     CompanyExpiry = companyObj.CompanyExpiry,
                     CompanyPhone = companyObj.CompanyPhone,
                     CompanyEmail = companyObj.CompanyEmail

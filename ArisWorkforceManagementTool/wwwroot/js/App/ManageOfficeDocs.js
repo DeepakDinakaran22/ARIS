@@ -12,7 +12,7 @@ $(document).ready(function () {
     userRole = $("#hdnUserRole").val();
     loggedInUserId = $("#hdnUserId").val();
     $("#divUploadFile").hide();
-    $("#dpDocIssueDate").datepicker({ minDate: 0 }); //maxDate: "+1M +15D" });
+    $("#dpDocIssueDate").datepicker({}); //minDate: 0 ,maxDate: "+1M +15D" });
     $("#dpDocExpiryDate").datepicker({ minDate: 0 });
     $("#btnUpdate").hide();
     $("#btnSubmit").show();
@@ -46,16 +46,23 @@ $('#tblOfficeDoc').on('click', 'td.edit', function(e) {
     
     $("#divUploadFile").show();
 
+    var isExpiryReq = table.row(this).data()['isExpiryRequired'];
     $("#ddlDocument").val(table.row(this).data()['documentId']).attr("disabled", "disabled");;
     CheckExpiryDateRequirement();// dependancy with ddlDocumentTypeId
     $("#txtOfficeDocDesc").val(table.row(this).data()['officeDocDesc']).attr("disabled", false);
     $("#dpDocIssueDate").datepicker("setDate", $.datepicker.parseDate("yy-mm-dd", table.row(this).data()['docIssueDate'].replace('T00:00:00', '')));
-    if (!isExp) {
-        $("#dpDocExpiryDate").val('');
+    //if (!isExp) {
+    //if (isExpiryReq != 1 && table.row(this).data()['docExpiryDate'] =='' ) {
+    //    $("#dpDocExpiryDate").val('');
+    //}
+    //else {
+    //    $("#dpDocExpiryDate").datepicker("setDate", $.datepicker.parseDate("yy-mm-dd", table.row(this).data()['docExpiryDate'].replace('T00:00:00', '')));
+    //}
+    if (isExpiryReq == 1 && (table.row(this).data()['docExpiryDate'] != '' && table.row(this).data()['docExpiryDate'] != null)) {
+        $("#dpDocExpiryDate").datepicker("setDate", $.datepicker.parseDate("yy-mm-dd", table.row(this).data()['docExpiryDate'].replace('T00:00:00', '')));
     }
     else {
-        $("#dpDocExpiryDate").datepicker("setDate", $.datepicker.parseDate("yy-mm-dd", table.row(this).data()['docExpiryDate'].replace('T00:00:00', '')));
-
+        $("#dpDocExpiryDate").val('');
     }
     if (table.row(this).data()['isActive'] == 1) {
         $("#ddlStatus").val(1);
@@ -97,6 +104,9 @@ function populateOfficeDocs(response) {
                     class: 'edit',
                     defaultContent: '<button type="button" class="btn btn-sm btn-success"><i class="fas fa-edit"></i></button>',
                     orderable: false
+                },
+                {
+                    data: 'isExpiryRequired', visible:false
                 },
                 {
                     data: 'officeDocId', title: 'Document ID', visible: false,
@@ -148,10 +158,10 @@ function populateOfficeDocs(response) {
             ],
             rowCallback: function (row, data) {
                 if (data.docExpiryDate != null) {
-                    var today = new Date();
-                    var edate = new Date(data.docExpiryDate.replace('T00:00:00', ''));
+                    var today = new Date().toLocaleDateString();
+                    var edate = new Date(data.docExpiryDate.replace('T00:00:00', '')).toLocaleDateString();
                     if (today > edate) {
-                        $('td:eq(3)', row).css('background-color', '#F83112');
+                        $('td:eq(3)', row).css('background-color', '#F55C57');
                     }
                     else {
 
@@ -296,7 +306,7 @@ function CheckNameExists() {
                         $("#dpDocExpiryDate").attr('disabled', false);
 
                        // showAlert({ title: "Warning!", message: 'Document name exists!', type: "WARNING" });
-                        MessageBox('Exists!', 'fa fa-file', 'Document is already added!', 'orange', 'btn btn-warning', 'Okey');
+                        MessageBox('Exists!', 'fa fa-file', 'Document is already added!', 'orange', 'btn btn-warning', 'Okay');
                         isValidName = false;
                     }
                     else {
@@ -469,7 +479,7 @@ function isValidEntry() {
     
 
     if (message != '') {
-        MessageBox('Required!', 'fa fa-warning', message, 'red', 'btn btn-danger', 'Okey');
+        MessageBox('Required!', 'fa fa-warning', message, 'red', 'btn btn-danger', 'Okay');
         valid = false;
         message = '';
         count = 0;
@@ -571,13 +581,13 @@ function DeleteSelectedUploads(id) {
         async: false,
         success: function (response) {
             if (response != null) {
-                MessageBox('Deleted !', 'fa fa-times', 'Selected file has been deleted!', 'green', 'btn btn-success', 'Okey');
+                MessageBox('Deleted !', 'fa fa-times', 'Selected file has been deleted!', 'green', 'btn btn-success', 'Okay');
 
             } else {
             }
         },
         failure: function (response) {
-            MessageBox('Error!', 'fa fa-times', 'Something went wrong', 'red', 'btn btn-danger', 'Okey');
+            MessageBox('Error!', 'fa fa-times', 'Something went wrong', 'red', 'btn btn-danger', 'Okay');
 
         },
         error: function (response) {
@@ -772,7 +782,7 @@ $('#btnAddRow').on('click', function () {
         'documentId': counter,
         'filePath': 'a',
         'documentName': 'b',
-        'fileName': 'No File',
+        'fileName': 'No Files',
         'isMandatory': 'No',
         '': '<input type="file" multiple id="upload_' + $("#ddlDocument option:selected").val() + '" onchange="uploadDocuments(\'upload_' + $("#ddlDocument option:selected").val() + '\');">',
 

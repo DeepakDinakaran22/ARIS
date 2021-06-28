@@ -62,6 +62,7 @@ namespace ArisWorkforceManagementTool.Areas.MasterPages.Controllers
                                    DocExpiryDate = od.DocExpiryDate,
                                    OfficeDocDesc = od.OfficeDocDesc,
                                    IsActive = od.IsActive,
+                                   isExpiryRequired = d.IsExpiryRequired
                                };
 
 

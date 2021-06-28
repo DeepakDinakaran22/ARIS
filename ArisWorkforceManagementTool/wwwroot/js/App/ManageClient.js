@@ -6,8 +6,10 @@ var isValidCompany = false;
 var counter = 1000;
 var tbl_docUpload;
 var isValidEmail = false;
+var isEditEnabled = false;
+var clientN = '', locN = '';
 $(document).ready(function () {
-    $("#dpCompanyExpiry").datepicker({ minDate: 0 }); //maxDate: "+1M +15D" });
+    $("#dpCompanyExpiry").datepicker({ minDate: 0}); // minDate: 0 ,maxDate: "+1M +15D" });
     $("#div_clientUploads").hide();
     getCompanies();
 
@@ -19,23 +21,39 @@ $(document).ready(function () {
         ResetClientFields();
 
     });
-    $("#txtCompanyName").focusout(function () {
-        if ($("#txtCompanyLocation").val().trim() != '' && $("#txtCompanyName").val().trim() != '') {
-            CheckNameExists();
+    $("#txtCompanyName").keyup(function () {
+        if ($("#txtCompanyLocation").val().trim() != '' && $("#txtCompanyName").val().trim()!= '') {
+            //if (!locN == $("#txtCompanyLocation").val().trim() && !clientN == $("#txtCompanyName").val().trim()) {
+            //alert(clientN + ' - ' + locN);
+            if ($("#txtCompanyLocation").val().trim() == locN && $("#txtCompanyName").val().trim() == clientN) {
+
+            }
+            else  {
+                CheckNameExists();
+            }
         }
     });
-    $("#txtCompanyLocation").focusout(function () {
+    $("#txtCompanyLocation").keyup(function () {
         if ($("#txtCompanyName").val().trim() != '' && $("#txtCompanyLocation").val().trim() != '') {
-            CheckNameExists();
+            if ($("#txtCompanyLocation").val().trim() == locN && $("#txtCompanyName").val().trim() == clientN) {
+
+            }
+            else {
+                CheckNameExists();
+            }
         }
     });
 
     $('#tblCompanies').on('click', 'td.edit', function (e) {
         e.preventDefault();
         ResetClientFields();
+        isEditEnabled = true;
+        clientN = table.row(this).data()['companyName'].trim();
+        locN = table.row(this).data()['companyLocation'].trim();
+
         $("#txtCompanyName").val(table.row(this).data()['companyName']);
-        $("#txtCompanyName").attr("disabled", "disabled");
-        $("#txtCompanyLocation").attr("disabled", "disabled");
+        //$("#txtCompanyName").attr("disabled", "disabled");
+        //$("#txtCompanyLocation").attr("disabled", "disabled");
         $("#txtCompanyServices").val(table.row(this).data()['companyServices']);
         if (table.row(this).data()['isActive'] == 1) {
             $("#ddlStatus").val(1);
@@ -73,7 +91,7 @@ $("#ddlCompany").change(function () {
 });
 function CheckNameExists() {
     try {
-        showLoader(true);
+        //showLoader(true);
         $.ajax({
             type: "GET",
             url: "/MasterPages/ManageCompany/IsCompanyNameExists",
@@ -85,8 +103,10 @@ function CheckNameExists() {
                     if (response.value == true) {
                         $('#txtCompanyName').css('border-color', 'red');
                         //showAlert({ title: "Warning!", message: 'Company Name is already added!', type: "WARNING" });
-                        MessageBox('Exists!', 'fa fa-map-marker', 'Client & Location is already added!', 'orange', 'btn btn-warning', 'Okey');
-                        isValidCompany = false;
+                        //if (!isEditEnabled) {
+                            MessageBox('Exists!', 'fa fa-map-marker', 'Client & Location is already added!', 'orange', 'btn btn-warning', 'Okay');
+                            isValidCompany = false;
+                        //}
                     }
                     else {
                         isValidCompany = true;
@@ -170,7 +190,7 @@ function UpdateRequest() {
             CompanyEmail: email
         };
 
-
+        //CheckNameExists();
         isValidCompany = true;
 
         if (isValidEntry()) {
@@ -310,8 +330,13 @@ function ResetClientFields() {
 
         $("#div_clientUploads").hide();
         $("#ddlCompany").val(0);
+        isEditEnabled = false;
+        clientN = '';
+        locN = '';  
 
         isValidCompany = false;
+        clientN = '';
+        locN = '';
     }
     catch (err) {
         console.log(err);
@@ -420,7 +445,7 @@ function isValidEntry() {
 
     }
     if (message != '') {
-        MessageBox('Required!', 'fa fa-warning', message, 'red', 'btn btn-danger', 'Okey');
+        MessageBox('Required!', 'fa fa-warning', message, 'red', 'btn btn-danger', 'Okay');
         valid = false;
         message = '';
         count = 0;
@@ -674,7 +699,7 @@ function uploadDocuments(inputId) {
     }
     else {
         $("#" + inputId + "").val(null);
-        MessageBox('Required!', 'fa fa-times', 'Expiry date!', 'red', 'btn btn-danger', 'Okey');
+        MessageBox('Required!', 'fa fa-times', 'Expiry date!', 'red', 'btn btn-danger', 'Okay');
 
     }
 }
@@ -751,13 +776,13 @@ function DeleteSelectedUploads(id) {
         async: false,
         success: function (response) {
             if (response != null) {
-                MessageBox('Deleted !', 'fa fa-times', 'Selected file has been deleted!', 'green', 'btn btn-success', 'Okey');
+                MessageBox('Deleted !', 'fa fa-times', 'Selected file has been deleted!', 'green', 'btn btn-success', 'Okay');
 
             } else {
             }
         },
         failure: function (response) {
-            MessageBox('Error!', 'fa fa-times', 'Something went wrong', 'red', 'btn btn-danger', 'Okey');
+            MessageBox('Error!', 'fa fa-times', 'Something went wrong', 'red', 'btn btn-danger', 'Okay');
 
         },
         error: function (response) {

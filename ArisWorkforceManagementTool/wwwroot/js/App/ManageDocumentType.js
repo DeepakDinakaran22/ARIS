@@ -73,7 +73,7 @@ function CheckNameExists() {
                         $('#txtDocumentName').css('border-color', 'red');
                         $('#ddlDocumentType').css('border-color', 'red');
                         //showAlert({ title: "Warning!", message: 'Document Name is already added!', type: "WARNING" });
-                        MessageBox('Exists!', 'fa fa-file', 'Document is already added!', 'orange', 'btn btn-warning', 'Okey');
+                        MessageBox('Exists!', 'fa fa-file', 'Document is already added!', 'orange', 'btn btn-warning', 'Okay');
                     }
                     else {
                         isValidDoc = true;
@@ -259,11 +259,14 @@ function populateDocuments(response) {
                         if (data == '1') {
                             return 'Employee Documents';
                         }
-                        else if(data=='2') {
+                        else if (data == '2') {
                             return 'Office Documents';
                         }
-                        else   {
+                        else if (data == '3') {
                             return 'Client Documents';
+                        }
+                        else if (data == '4') {
+                            return 'Confidential';
                         }
                     }
                 },
@@ -398,7 +401,7 @@ function isValidEntry() {
     }
 
     if (message != '') {
-        MessageBox('Required!', 'fa fa-warning', message, 'red', 'btn btn-danger', 'Okey');
+        MessageBox('Required!', 'fa fa-warning', message, 'red', 'btn btn-danger', 'Okay');
         valid = false;
         message = '';
         count = 0;

@@ -12,6 +12,7 @@ var isUploadAllowed = true;
 var cnt = 0;
 var today;
 var tbl_docUpload;
+var passportN = '';
 $(document).ready(function () {
     $("#div_confidential").hide();
     var d = new Date();
@@ -21,8 +22,8 @@ $(document).ready(function () {
     loggedInUserId = $("#hdnUserId").val();
   
     $("#dpContractEndDate").datepicker({ minDate: 0 }); //maxDate: "+1M +15D" });
-    $("#dpContractStartDate").datepicker({ minDate: 0 });
-    $("#dpJoiningDate").datepicker({ minDate: 0 });
+    $("#dpContractStartDate").datepicker({  });
+    $("#dpJoiningDate").datepicker({  });
     $("#dpResidentExpiryDate").datepicker({ minDate: 0 });
     $("#dpPassportExpiryDate").datepicker({ minDate: 0 });
     
@@ -43,7 +44,12 @@ $(document).ready(function () {
         DisableFileldsForManager();
     }
     $("#txtPassportNumber").focusout(function () {
-        CheckNameExists();
+        if ($("#txtPassportNumber").val().trim() == passportN) {
+
+        }
+        else {
+            CheckNameExists();
+        }
     });
     $("#btnUploadRemainingFiles").val("Upload Files/ Documents");
 });
@@ -137,7 +143,7 @@ function uploadDocuments_remaining(inputId) {
     }
     else {
         $("#" + inputId + "").val(null);
-        MessageBox('Required!', 'fa fa-times', 'Expiry date!', 'red', 'btn btn-danger', 'Okey');
+        MessageBox('Required!', 'fa fa-times', 'Expiry date!', 'red', 'btn btn-danger', 'Okay');
 
     }
 }
@@ -717,6 +723,8 @@ $('.example-p-2').on('click', function () {
                 btnClass: 'btn-blue',
                 action: function () {
                     //$.alert('you clicked on <strong>Yes</strong>');
+                    $(".btn-blue").attr('disabled', 'disabled');
+                    $(".btn-default").attr('disabled', 'disabled');
                     SubmitRequest();
                 }
             },
@@ -745,6 +753,8 @@ $('.example-p-1').on('click', function () {
                 text: 'Yes',
                 btnClass: 'btn-blue',
                 action: function () {
+                    $(".btn-blue").attr('disabled', 'disabled');
+                    $(".btn-default").attr('disabled', 'disabled');
                     UpdateRequest();
                 }
             },
@@ -769,7 +779,11 @@ $('.example-p-3').on('click', function () {
                     text: 'Yes',
                     btnClass: 'btn-blue',
                     action: function () {
-                        showLoader_employee(true);
+                        $(".btn-blue").attr('disabled', 'disabled');
+                        $(".btn-default").attr('disabled', 'disabled');
+
+                        //showLoader_employee(true);
+
                         SendBackRequest();
                     }
                 },
@@ -777,6 +791,8 @@ $('.example-p-3').on('click', function () {
                 },
             }
         });
+        
+
     }
 });
 $('.example-p-4').on('click', function () {
@@ -795,6 +811,8 @@ $('.example-p-4').on('click', function () {
                     text: 'Yes',
                     btnClass: 'btn-blue',
                     action: function () {
+                        $(".btn-blue").attr('disabled', 'disabled');
+                        $(".btn-default").attr('disabled', 'disabled');
                         ApproveRequest();
                     }
                 },
@@ -818,7 +836,7 @@ function CheckNameExists() {
                     if (response.value == true) {
                         //$('#txtCompanyName').css('border-color', 'red');
                         //showAlert({ title: "Warning!", message: 'An employee is exists with same passport number!', type: "WARNING" });
-                        MessageBox('Exists!', 'fa fa-user', 'An employee is exists with same passport number!', 'orange', 'btn btn-warning', 'Okey');
+                        MessageBox('Exists!', 'fa fa-user', 'An employee is exists with same passport number!', 'orange', 'btn btn-warning', 'Okay');
 
                     }
                     else {
@@ -1099,7 +1117,7 @@ function isValidEntry() {
     }
 
     if (message != '') {
-        MessageBox('Required!', 'fa fa-warning', message, 'red', 'btn btn-danger', 'Okey');
+        MessageBox('Required!', 'fa fa-warning', message, 'red', 'btn btn-danger', 'Okay');
         valid = false;
         message = '';
         count = 0;
@@ -1149,6 +1167,7 @@ function ClearFields() {
     $("#btnSubmit").show();
     GetEmployeeReferenceNo();
     clearValidationCSS();
+    passportN = '';
 
     if (userRole == '2') {
         $("#btnUpdate").hide();
@@ -1303,6 +1322,7 @@ $('#tblEmployees').on('click', 'td.edit', function (e) {
         $("#ddlCompany").val(table.row(this).data()['companyId']).attr('disabled', 'disabled');
         $("#ddlCountry").val(table.row(this).data()['nationality']).attr('disabled', 'disabled');
         $("#txtPassportNumber").val(table.row(this).data()['passportNumber']).attr('disabled', 'disabled');
+        passportN = table.row(this).data()['passportNumber'].trim();
         $("#dpPassportExpiryDate").datepicker("setDate", $.datepicker.parseDate("yy-mm-dd", table.row(this).data()['passportExpiryDate'].replace('T00:00:00', ''))).attr('disabled', 'disabled');
         $("#txtResidentNumber").val(table.row(this).data()['residentNumber']).attr('disabled', 'disabled');
         $("#dpResidentExpiryDate").datepicker("setDate", $.datepicker.parseDate("yy-mm-dd", table.row(this).data()['residentExpiryDate'].replace('T00:00:00', ''))).attr('disabled', 'disabled');
@@ -1317,6 +1337,7 @@ $('#tblEmployees').on('click', 'td.edit', function (e) {
         $("#txtBankName").val(table.row(this).data()['bankName']).attr('disabled', 'disabled');
         $("#txtAccountNumber").val(table.row(this).data()['bankAccountNumber']).attr('disabled', 'disabled');
         $("#txtConfirmAccountNumber").val(table.row(this).data()['bankAccountNumber']).attr('disabled', 'disabled');
+        $("#div_confirmAccNo").show();
         $("#txtRemarks").val(table.row(this).data()['remarks']).attr('disabled', 'disabled');
         //$("#imgUser").attr('src', "/Uploads/employeeUploads/" + $("#txtEmployeeNumber").val() + "/" + table.row(this).data()['employeeImage']).attr('disabled', 'disabled');
         if (table.row(this).data()['employeeImage'] != null) {
@@ -1344,6 +1365,7 @@ $('#tblEmployees').on('click', 'td.edit', function (e) {
         $("#ddlCompany").val(table.row(this).data()['companyId']).attr('disabled', false);
         $("#ddlCountry").val(table.row(this).data()['nationality']).attr('disabled', false);
         $("#txtPassportNumber").val(table.row(this).data()['passportNumber']).attr('disabled', false);
+        passportN = table.row(this).data()['passportNumber'].trim();
         $("#dpPassportExpiryDate").datepicker("setDate", $.datepicker.parseDate("yy-mm-dd", table.row(this).data()['passportExpiryDate'].replace('T00:00:00', ''))).attr('disabled', false);
         $("#txtResidentNumber").val(table.row(this).data()['residentNumber']).attr('disabled', false);
         $("#dpResidentExpiryDate").datepicker("setDate", $.datepicker.parseDate("yy-mm-dd", table.row(this).data()['residentExpiryDate'].replace('T00:00:00', ''))).attr('disabled', false);
@@ -1358,6 +1380,7 @@ $('#tblEmployees').on('click', 'td.edit', function (e) {
         $("#txtBankName").val(table.row(this).data()['bankName']).attr('disabled', false);
         $("#txtAccountNumber").val(table.row(this).data()['bankAccountNumber']).attr('disabled', false);
         $("#txtConfirmAccountNumber").val(table.row(this).data()['bankAccountNumber']).attr('disabled', false);
+        $("#div_confirmAccNo").show();
        // $("#txtRemarks").val(table.row(this).data()['remarks']).attr('disabled', false);
         $("#txtRemarks").val('').attr('disabled', false);
        // $("#imgUser").attr('src', "/Uploads/employeeUploads/" + $("#txtEmployeeNumber").val() + "/" + table.row(this).data()['employeeImage']).attr('disabled', false);
@@ -1407,7 +1430,8 @@ $('#tblEmployees').on('click', 'td.edit', function (e) {
         $("#txtDesignation").val(table.row(this).data()['designation']).attr('disabled', 'disabled');
         $("#txtBankName").val(table.row(this).data()['bankName']).attr('disabled', 'disabled');
         $("#txtAccountNumber").val(table.row(this).data()['bankAccountNumber']).attr('disabled', 'disabled');
-        $("#txtConfirmAccountNumber").val(table.row(this).data()['bankAccountNumber']).attr('disabled', 'disabled');
+        $("#txtConfirmAccountNumber").val(table.row(this).data()['bankAccountNumber']).attr('disabled', 'disabled').hide();
+        $("#div_confirmAccNo").hide();
        // $("#txtRemarks").val(table.row(this).data()['remarks']).attr('enabled', true);
         $("#txtRemarks").val('').attr('enabled', true);
         if (table.row(this).data()['employeeImage']!= null)
@@ -1456,6 +1480,7 @@ $('#tblEmployees').on('click', 'td.edit', function (e) {
         $("#txtBankName").val(table.row(this).data()['bankName']).attr('disabled', 'disabled');
         $("#txtAccountNumber").val(table.row(this).data()['bankAccountNumber']).attr('disabled', 'disabled');
         $("#txtConfirmAccountNumber").val(table.row(this).data()['bankAccountNumber']).attr('disabled', 'disabled');
+        $("#div_confirmAccNo").hide();
          $("#txtRemarks").val(table.row(this).data()['remarks']).attr('disabled', 'disabled');
         //$("#txtRemarks").val('').attr('enabled', true);
         //$("#imgUser").attr('src', "/Uploads/employeeUploads/" + $("#txtEmployeeNumber").val() + "/" + table.row(this).data()['employeeImage']).attr('disabled', 'disabled');
@@ -1533,22 +1558,45 @@ function SendBackRequest() {
         EmployeeNo: empNO,
         Remarks: remarks
     };
-        callAjax('POST', '/MasterPages/ManageEmployees/SendBackRequest', data);
-        showLoader_employee(false);
+    callAjax('POST', '/MasterPages/ManageEmployees/SendBackRequest', data);
+    
+
         GetAllEmployees();
         ClearFields();
    
 }
 function isValidEntryApproveOrSendBack() {
 
+    var valid = true;
+    var message = '';
+    var count = 0;
+
     if ($("#txtRemarks").val().trim() == '') {
         $("#txtRemarks").css('border-color', 'red');
-        return false;
+        valid = false;
+        count = count + 1;
+        message += count + '. Remarks </br>';
+
     }
     else {
         $("#txtRemarks").css('border-color', '');
-        return true;
+
     }
+    if (!CheckMandatoryUploadsConfidential()) {
+        valid = false;
+        count = count + 1;
+        message += count + '. Upload All Mandatory In Confidential Documents  </br>';
+    }
+    if (message != '') {
+        MessageBox('Required!', 'fa fa-warning', message, 'red', 'btn btn-danger', 'Okay');
+        valid = false;
+        message = '';
+        count = 0;
+    }
+    else {
+        valid = true;
+    }
+    return valid;
 }
 
 function CheckMandatoryUploads() {
@@ -1573,6 +1621,29 @@ function CheckMandatoryUploads() {
             var Row = this.data();//store every row data in a variable
             if (Row['isMandatory'] == 1 && Row['fileName'] == 'No Files') {
                 value = true;
+            }
+        });
+
+        if (value) {
+            return false;
+        }
+        else {
+            return true;
+        }
+
+    }
+    catch (err) {
+        console.log(err);
+    }
+}
+function CheckMandatoryUploadsConfidential() {
+    try {
+        var value = false;
+        tbl_docUpload.rows().every(function () {
+            var Row = this.data();//store every row data in a variable
+            if (Row['isMandatory'] == 1 && Row['fileName'] == 'No Files') {
+                value = true;
+                //return false
             }
         });
 
@@ -1753,13 +1824,13 @@ function DeleteSelectedUploads(id) {
         async: false,
         success: function (response) {
             if (response != null) {
-                MessageBox('Deleted !', 'fa fa-times', 'Selected file has been deleted!', 'green', 'btn btn-success', 'Okey');
+                MessageBox('Deleted !', 'fa fa-times', 'Selected file has been deleted!', 'green', 'btn btn-success', 'Okay');
 
             } else {
             }
         },
         failure: function (response) {
-            MessageBox('Error!', 'fa fa-times', 'Something went wrong', 'red', 'btn btn-danger', 'Okey');
+            MessageBox('Error!', 'fa fa-times', 'Something went wrong', 'red', 'btn btn-danger', 'Okay');
 
         },
         error: function (response) {
@@ -1799,7 +1870,7 @@ function pupulateUploadDocs(response) {
     var isExpReq = 0;
     var upldId = 0;
     var hasFile = false;
-    table_remaining = $("#tblConfidentialFiles").DataTable(
+    tbl_docUpload = $("#tblConfidentialFiles").DataTable(
         {
             bLengthChange: false,
             bFilter: false,
@@ -1984,13 +2055,13 @@ function DeleteSelectedUploadsConf(id) {
         async: false,
         success: function (response) {
             if (response != null) {
-                MessageBox('Deleted !', 'fa fa-times', 'Selected file has been deleted!', 'green', 'btn btn-success', 'Okey');
+                MessageBox('Deleted !', 'fa fa-times', 'Selected file has been deleted!', 'green', 'btn btn-success', 'Okay');
 
             } else {
             }
         },
         failure: function (response) {
-            MessageBox('Error!', 'fa fa-times', 'Something went wrong', 'red', 'btn btn-danger', 'Okey');
+            MessageBox('Error!', 'fa fa-times', 'Something went wrong', 'red', 'btn btn-danger', 'Okay');
 
         },
         error: function (response) {
@@ -2032,7 +2103,7 @@ function uploadDocuments_confidential(inputId) {
     }
     else {
         $("#" + inputId + "").val(null);
-        MessageBox('Required!', 'fa fa-times', 'Expiry date!', 'red', 'btn btn-danger', 'Okey');
+        MessageBox('Required!', 'fa fa-times', 'Expiry date!', 'red', 'btn btn-danger', 'Okay');
 
     }
 }

@@ -37,7 +37,7 @@ namespace Aris.Models
                             <p><table style = ""text-align:left;"">
                             <tr><th>Employee ID </th> <td>: Aris-[EMPID] </td></tr>
                             <tr><th>Employee Name </th> <td>: [EMPNAME]</td>
-                            <tr><th>Password Number</th> <td>: [PASSPORTNO]</td>
+                            <tr><th>Passport Number</th> <td>: [PASSPORTNO]</td>
                             <tr><th>Resident Number</th> <td>: [RESIDENTNO]</td>
                             <tr><th>Passport Expiry </th> <td>: [PASSPORTEXPIRY]</td>
                             <tr><th>Resident Expiry</th> <td>: [RESIDENTEXPIRY]</td>
@@ -82,7 +82,7 @@ namespace Aris.Models
                             <p><table style = ""text-align:left;"">
                             <tr><th>Employee ID </th> <td>: Aris-[EMPID] </td></tr>
                             <tr><th>Employee Name </th> <td>: [EMPNAME]</td>
-                            <tr><th>Password Number</th> <td>: [PASSPORTNO]</td>
+                            <tr><th>Passport Number</th> <td>: [PASSPORTNO]</td>
                             <tr><th>Resident Number</th> <td>: [RESIDENTNO]</td>
                             <tr><th>Passport Expiry </th> <td>: [PASSPORTEXPIRY]</td>
                             <tr><th>Resident Expiry</th> <td>: [RESIDENTEXPIRY]</td>
@@ -107,7 +107,7 @@ namespace Aris.Models
                             <p><table style = ""text-align:left;"">
                             <tr><th>Employee ID </th> <td>: Aris-[EMPID] </td></tr>
                             <tr><th>Employee Name </th> <td>: [EMPNAME]</td>
-                            <tr><th>Password Number</th> <td>: [PASSPORTNO]</td>
+                            <tr><th>Passport Number</th> <td>: [PASSPORTNO]</td>
                             <tr><th>Resident Number</th> <td>: [RESIDENTNO]</td>
                             <tr><th>Passport Expiry </th> <td>: [PASSPORTEXPIRY]</td>
                             <tr><th>Resident Expiry</th> <td>: [RESIDENTEXPIRY]</td>

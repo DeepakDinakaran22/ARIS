@@ -28,7 +28,7 @@ function CheckNameExists() {
                             isValidUser = false;
                             $('#txtUserName').css('border-color', 'red');
                            // showAlert({ title: "Warning!", message: 'User Name is already added!', type: "WARNING" });
-                            MessageBox('Exists!', 'fa fa-user', 'Username is already added!', 'orange', 'btn btn-warning', 'Okey');
+                            MessageBox('Exists!', 'fa fa-user', 'Username is already added!', 'orange', 'btn btn-warning', 'Okay');
 
                         }
                         else {
@@ -335,7 +335,7 @@ function isValidEntry() {
     }
    
     if (message != '') {
-        MessageBox('Required!','fa fa-warning',message,'red','btn btn-danger','Okey');
+        MessageBox('Required!', 'fa fa-warning', message, 'red', 'btn btn-danger','Okay');
         valid = false;
         message = '';
         count = 0;

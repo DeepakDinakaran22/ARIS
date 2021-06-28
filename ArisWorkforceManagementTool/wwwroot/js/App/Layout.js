@@ -154,14 +154,14 @@ function UpdateNewPassword() {
                     if (response.success == false) {
                         $('#modal-password').modal('hide');
                         //BackgoudnDismissAlert('Failed!', 'Something Went Wrong');
-                        MessageBox('Error!', 'fa fa-times', 'Something went wrong! Please try later', 'red', 'btn btn-danger', 'Okey');
+                        MessageBox('Error!', 'fa fa-times', 'Something went wrong! Please try later', 'red', 'btn btn-danger', 'OKAY');
 
 
                     }
                     else {
                         $('#modal-password').modal('hide');
                         //BackgoudnDismissAlert('Success!', 'Password has been changed');
-                        MessageBox('Success!', 'fa fa-check', 'Password has been changed', 'green', 'btn btn-success', 'Okey');
+                        MessageBox('Success!', 'fa fa-check', 'Password has been changed', 'green', 'btn btn-success', 'Okay');
 
                     }
 

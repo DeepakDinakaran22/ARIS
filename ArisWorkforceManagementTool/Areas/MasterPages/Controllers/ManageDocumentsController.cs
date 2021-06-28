@@ -9,7 +9,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Microsoft.AspNetCore.Authorization;
-
+using Aris.Models.Helper;
 
 namespace ArisWorkforceManagementTool.Areas.MasterPages.Controllers
 {
@@ -52,8 +52,8 @@ namespace ArisWorkforceManagementTool.Areas.MasterPages.Controllers
             try
             {
                 var doc = new DocumentType() { 
-                    DocumentName= obj.DocumentName, 
-                    DocumentDescription= obj.DocumentDescription,
+                    DocumentName=  new GenericMethods().ConvertToTitleCase(obj.DocumentName), 
+                    DocumentDescription= new GenericMethods().ConvertToSingleUpperCase(obj.DocumentDescription),
                     IsActive = obj.IsActive, 
                     CreatedDate = DateTime.Now, 
                     CreatedBy = Convert.ToInt32(TempData.Peek("UserId")), 
@@ -83,8 +83,8 @@ namespace ArisWorkforceManagementTool.Areas.MasterPages.Controllers
                 var docExists = UnitOfWorkExists.DocumentTypeRepository.Get(x => x.DocumentId==obj.DocumentId).ToList();
                 var doc = new DocumentType() {
                     DocumentId = obj.DocumentId,
-                    DocumentName = obj.DocumentName,
-                    DocumentDescription = obj.DocumentDescription,
+                    DocumentName = new GenericMethods().ConvertToTitleCase(obj.DocumentName),
+                    DocumentDescription = new GenericMethods().ConvertToSingleUpperCase(obj.DocumentDescription),
                     IsActive = obj.IsActive,
                     CreatedDate = docExists[0].CreatedDate,
                     CreatedBy = docExists[0].CreatedBy,

@@ -12,11 +12,12 @@
             dataType: dataType,
             async: bAsync,
             success: function (response) {
+
                 if (response.success == true) {
-                    MessageBox('Congratulations!', 'fa fa-check', response.responseText, 'green', 'btn btn-success','Okey');
+                    MessageBox('Congratulations!', 'fa fa-check', response.responseText, 'green', 'btn btn-success','Okay');
 
                 } else {
-                    MessageBox('Congratulations!', 'fa fa-times', response.responseText, 'red', 'btn btn-danger','Okey');
+                    MessageBox('Error!', 'fa fa-times', response.responseText, 'red', 'btn btn-danger','Okay');
                 }
                 
             },
@@ -26,7 +27,7 @@
             },
            
             error: function (exception) {
-                showAlert({ title: "ERROR!", message: response.responseText, type: "ERROR" });
+                MessageBox('Error!', 'fa fa-times', 'Something went wrong!', 'red', 'btn btn-danger', 'Okay');
             }
         });
     }
@@ -204,3 +205,5 @@ function showLoader(val) {
         console.log(err);
     }
 }
+
+

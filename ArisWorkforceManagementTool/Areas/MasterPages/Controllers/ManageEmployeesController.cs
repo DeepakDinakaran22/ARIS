@@ -94,7 +94,7 @@ namespace ArisWorkforceManagementTool.Areas.MasterPages.Controllers
             try
             {
                 var employee = new EmployeeDetails() {
-                    EmployeeName = obj.EmployeeName,
+                    EmployeeName = new GenericMethods().ConvertToTitleCase(obj.EmployeeName),
                     CompanyId = obj.CompanyId,
                     Nationality = obj.Nationality,
                     PassportNumber = obj.PassportNumber,
@@ -105,15 +105,15 @@ namespace ArisWorkforceManagementTool.Areas.MasterPages.Controllers
                     ContractStartDate = obj.ContractStartDate,
                     ContractEndDate = obj.ContractEndDate,
                     Gsm = obj.Gsm,
-                    AccomodationDetails = obj.AccomodationDetails,
+                    AccomodationDetails = new GenericMethods().ConvertToTitleCase(obj.AccomodationDetails),
                     MaritalStatus = obj.MaritalStatus,
-                    IDProfession = obj.IDProfession,
-                    Designation = obj.Designation,
+                    IDProfession = new GenericMethods().ConvertToTitleCase(obj.IDProfession),
+                    Designation = new GenericMethods().ConvertToTitleCase(obj.Designation),
                     BankName = obj.BankName,
                     BankAccountNumber = obj.BankAccountNumber,
                     ApprovalStatus = 0,
                     EmployeeReferenceNo = obj.EmployeeReferenceNo,
-                    Remarks=obj.Remarks,
+                    Remarks= new GenericMethods().ConvertToSingleUpperCase(obj.Remarks),
                     IsActive = 1,
                     CreatedDate = DateTime.Now,
                     CreatedBy = Convert.ToInt32(TempData.Peek("UserId")),
@@ -148,14 +148,14 @@ namespace ArisWorkforceManagementTool.Areas.MasterPages.Controllers
                                       select managers;
                     foreach (var item in managerUser)
                     {
-                        strManagerNames = strManagerNames == string.Empty ? item.FullName : strManagerNames + ", " + item.FullName;
+                        strManagerNames = strManagerNames == string.Empty ? new GenericMethods().ConvertToTitleCase(item.FullName) : strManagerNames + ", " + item.FullName;
                         strManagerMails = strManagerMails == string.Empty ? item.MailAddress : strManagerMails + ", " + item.MailAddress;
 
                     }
 
                     string strBody = EmailTemplateHelper.submitEmployeeDetails;
                     strBody = strBody.Replace("[USER]", strManagerNames)
-                        .Replace("[LOGGEDINUSER]",loggedInUser.FullName)
+                        .Replace("[LOGGEDINUSER]", new GenericMethods().ConvertToTitleCase(loggedInUser.FullName))
                         .Replace("[EMPID]", obj.EmployeeReferenceNo.ToString())
                         .Replace("[EMPNAME]", obj.EmployeeName)
                         .Replace("[PASSPORTNO]", obj.PassportNumber)
@@ -203,7 +203,7 @@ namespace ArisWorkforceManagementTool.Areas.MasterPages.Controllers
                 var employee = new EmployeeDetails()
                 {
                     EmployeeNo = obj.EmployeeNo,
-                    EmployeeName = obj.EmployeeName,
+                    EmployeeName = new GenericMethods().ConvertToTitleCase(obj.EmployeeName),
                     CompanyId = obj.CompanyId,
                     Nationality = obj.Nationality,
                     PassportNumber = obj.PassportNumber,
@@ -214,14 +214,14 @@ namespace ArisWorkforceManagementTool.Areas.MasterPages.Controllers
                     ContractStartDate = obj.ContractStartDate,
                     ContractEndDate = obj.ContractEndDate,
                     Gsm = obj.Gsm,
-                    AccomodationDetails = obj.AccomodationDetails,
+                    AccomodationDetails = new GenericMethods().ConvertToTitleCase(obj.AccomodationDetails),
                     MaritalStatus = obj.MaritalStatus,
-                    IDProfession = obj.IDProfession,
-                    Designation = obj.Designation,
+                    IDProfession = new GenericMethods().ConvertToTitleCase(obj.IDProfession),
+                    Designation = new GenericMethods().ConvertToTitleCase(obj.Designation),
                     BankName = obj.BankName,
                     BankAccountNumber = obj.BankAccountNumber,
                     ApprovalStatus = 0,
-                    Remarks = obj.Remarks,
+                    Remarks = new GenericMethods().ConvertToSingleUpperCase(obj.Remarks),
                     IsActive = 1,
                     ModifiedDate = DateTime.Now,
                     ModifiedBy = Convert.ToInt32(TempData.Peek("UserId")),
@@ -257,14 +257,14 @@ namespace ArisWorkforceManagementTool.Areas.MasterPages.Controllers
                                       select managers;
                     foreach (var item in managerUser)
                     {
-                        strManagerNames = strManagerNames == string.Empty ? item.FullName : strManagerNames + ", " + item.FullName;
+                        strManagerNames = strManagerNames == string.Empty ? new GenericMethods().ConvertToTitleCase(item.FullName) : strManagerNames + ", " + item.FullName;
                         strManagerMails = strManagerMails == string.Empty ? item.MailAddress : strManagerMails + ", " + item.MailAddress;
 
                     }
 
                     string strBody = EmailTemplateHelper.reSubmitEmployeeDetails;
                     strBody = strBody.Replace("[USER]", strManagerNames)
-                        .Replace("[LOGGEDINUSER]", loggedInUser.FullName)
+                        .Replace("[LOGGEDINUSER]", new GenericMethods().ConvertToTitleCase(loggedInUser.FullName))
                         .Replace("[EMPID]", obj.EmployeeReferenceNo.ToString())
                         .Replace("[EMPNAME]", obj.EmployeeName)
                         .Replace("[PASSPORTNO]", obj.PassportNumber)
@@ -317,7 +317,7 @@ namespace ArisWorkforceManagementTool.Areas.MasterPages.Controllers
                     BankName = empExistingData[0].BankName,
                     BankAccountNumber = empExistingData[0].BankAccountNumber,
                     ApprovalStatus = 2,
-                    Remarks = obj.Remarks,
+                    Remarks = new GenericMethods().ConvertToTitleCase(obj.Remarks),
                     IsActive = 1,
                     ModifiedDate = DateTime.Now,
                     ModifiedBy = Convert.ToInt32(TempData.Peek("UserId")),
@@ -344,7 +344,7 @@ namespace ArisWorkforceManagementTool.Areas.MasterPages.Controllers
                                       select managers;
                     foreach (var item in managerUser)
                     {
-                        strManagerNames = strManagerNames == string.Empty ? item.FullName : strManagerNames + ", " + item.FullName;
+                        strManagerNames = strManagerNames == string.Empty ? new GenericMethods().ConvertToTitleCase(item.FullName) : strManagerNames + ", " + item.FullName;
                         strManagerMails = strManagerMails == string.Empty ? item.MailAddress : strManagerMails + ", " + item.MailAddress;
 
                     }
@@ -359,7 +359,7 @@ namespace ArisWorkforceManagementTool.Areas.MasterPages.Controllers
 
                     string strBody = EmailTemplateHelper.approvedEmployeeDetails;
                     strBody = strBody.Replace("[USER]", strManagerNames)
-                        .Replace("[LOGGEDINUSER]", loggedInUser.FullName)
+                        .Replace("[LOGGEDINUSER]", new GenericMethods().ConvertToTitleCase(loggedInUser.FullName))
                         .Replace("[EMPID]", empExistingData[0].EmployeeReferenceNo.ToString())
                         .Replace("[EMPNAME]", empExistingData[0].EmployeeName)
                         .Replace("[PASSPORTNO]", empExistingData[0].PassportNumber)
@@ -413,7 +413,7 @@ namespace ArisWorkforceManagementTool.Areas.MasterPages.Controllers
                     BankName = empExistingData[0].BankName,
                     BankAccountNumber = empExistingData[0].BankAccountNumber,
                     ApprovalStatus = 1,
-                    Remarks = obj.Remarks,
+                    Remarks = new GenericMethods().ConvertToTitleCase(obj.Remarks),
                     IsActive = 1,
                     ModifiedDate = DateTime.Now,
                     ModifiedBy = Convert.ToInt32(TempData.Peek("UserId")),
@@ -442,17 +442,17 @@ namespace ArisWorkforceManagementTool.Areas.MasterPages.Controllers
                                       select managers;
                     foreach (var item in managerUser)
                     {
-                        strManagerNames = strManagerNames == string.Empty ? item.FullName : strManagerNames + ", " + item.FullName;
+                        strManagerNames = strManagerNames == string.Empty ? new GenericMethods().ConvertToTitleCase(item.FullName) : strManagerNames + ", " + item.FullName;
                         strManagerMails = strManagerMails == string.Empty ? item.MailAddress : strManagerMails + ", " + item.MailAddress;
 
                     }
 
                     string strBody = EmailTemplateHelper.sendBackEmployeeDetails;
-                    strBody = strBody.Replace("[USER]", createdUser.FullName.ToUpper())
-                        .Replace("[LOGGEDINUSER]", loggedInUser.FullName.ToUpper())
+                    strBody = strBody.Replace("[USER]", new GenericMethods().ConvertToTitleCase(createdUser.FullName))
+                        .Replace("[LOGGEDINUSER]", new GenericMethods().ConvertToTitleCase(loggedInUser.FullName))
                         .Replace("[EMPID]", empExistingData[0].EmployeeReferenceNo.ToString())
                         .Replace("[EMPNAME]", empExistingData[0].EmployeeName.ToString())
-                        .Replace("[REMARKS]", obj.Remarks)
+                        .Replace("[REMARKS]", new GenericMethods().ConvertToTitleCase(obj.Remarks))
                         .Replace("[APPLICATIONLINK]", "https://aris-amt.com/");
                     EmailService emailService = new EmailService(_appSettings);
                     emailService.Send(createdUser.MailAddress, strManagerMails, "An employee details have been Sent Back | Aris-" + empExistingData[0].EmployeeReferenceNo, strBody);
