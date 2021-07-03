@@ -5,7 +5,7 @@ $(document).ready(function () {
     $('body').addClass('text-sm');
     ResetPwd();
     $("#btnSavePassword").hide();
-
+    $(".elevation-2").css('height', '33.59px', 'width', '33.59px'); // this is for the logged in user image size
 });
 $("#btnChangePassword").click(function () {
 
