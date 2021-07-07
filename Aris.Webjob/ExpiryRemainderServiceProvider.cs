@@ -36,6 +36,37 @@ namespace Aris.Webjob
             GetRecepients();
             OfficeDocumentExpiryJob(emailService);
             EmployeeDocumentExpiryJob(emailService);
+            ComapanyDocumentExpiryJob(emailService);
+        }
+
+        private void ComapanyDocumentExpiryJob(EmailService emailService)
+        {
+            var expiryDate = DateTime.Today.AddDays(10);
+
+            var companyDocumentDetails = from cd in UnitOfWork.CompanyRepository.Get()
+                                         join cf in UnitOfWork.CompanyFileUploadsRepository.Get() on cd.CompanyId equals cf.CompanyId
+                                         join dt in UnitOfWork.DocumentTypeRepository.Get() on cf.DocumentId equals dt.DocumentId
+                                         where cf.CompanyExpiry < expiryDate
+                                         select new CompanyViewModel()
+                                         {
+                                             CompanyName = cd.CompanyName + "-" + cd.CompanyLocation,
+                                             DocumentName = dt.DocumentName,
+                                             CompanyExpiry = cf.CompanyExpiry
+
+                                         };
+
+            if (companyDocumentDetails != null)
+            {
+                string strBody = EmailTemplateHelper.CompanyDocumentDetails(companyDocumentDetails)
+                    .Replace("[APPLICATIONLINK]", "http://aris-amt.com");
+
+                emailService.Send(strManagerMails, "", "Company document expiry remainder", strBody);
+            }
+            else
+            {
+                Console.WriteLine("No mails to send");
+            }
+
         }
 
         private void EmployeeDocumentExpiryJob(EmailService emailService)

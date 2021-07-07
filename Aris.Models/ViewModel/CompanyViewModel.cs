@@ -25,5 +25,6 @@ namespace Aris.Models.ViewModel
         public DateTime? CompanyExpiry { get; set; }
         public string CompanyEmail { get; set; }
         public string CompanyPhone { get; set; }
+        public string DocumentName { get; set; }
     }
 }

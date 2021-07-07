@@ -161,6 +161,43 @@ namespace Aris.Models
             return email.ToString();
         }
 
+        public static string CompanyDocumentDetails(IEnumerable<CompanyViewModel> companies)
+        {
+            StringBuilder email = new StringBuilder(@"               
+                    <body>  
+                        <div>
+                            <p>Dear <span style=""font - weight: bold; "">All</span>,</p>
+                            </div>
+                            <div>
+                            <p>Please find the list of company documents going to expire soon.</p>
+                            <p><table style = ""text-align:left;"">
+                            <tr><th>Company Name</th>
+                            <th>Document Name </th>
+                            <th>Expiry Date</th></tr>");
+            foreach (var company in companies)
+            {
+                DateTime? dateOrNull = company.CompanyExpiry;
+                DateTime expDate = DateTime.MaxValue;
+
+                if (dateOrNull != null)
+                {
+                    expDate = dateOrNull.Value;
+                }
+                email.Append("<tr><td>" + company.CompanyName + "</td><td>" + company.DocumentName + "</td><td>" + expDate.ToString("dd/MM/yyyy") + "</td>");
+            };
+
+            email.Append(@"<tr><th>Application Link</th><td>: [APPLICATIONLINK]</td></tr></table></p>
+                          </div >
+                          <div>
+                          <table style = ""font - weight: bold; "">
+                          <tr><td rowspan = ""2""></td><td> Regards </td></tr>
+                          <tr><td> AMT Admin </td></tr>
+                          </table>
+                          </div>
+                          </body>");
+            return email.ToString();
+        }
+
         public static string UserDocumentDetails(IEnumerable<ExpiredDocuments> expiredDocuments)
         {
             StringBuilder email = new StringBuilder(@"               
