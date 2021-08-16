@@ -16,6 +16,7 @@ using Aris.Data;
 using Microsoft.EntityFrameworkCore;
 using Aris.Common;
 using Aris.Common.Interfaces;
+using Aris.Webjob.Filters;
 
 namespace Aris.Webjob
 {
@@ -60,8 +61,9 @@ namespace Aris.Webjob
                 app.UseDeveloperExceptionPage();
             }
 
+            
 
-            app.UseHangfireDashboard("");
+            app.UseHangfireDashboard(string.Empty,new DashboardOptions { Authorization = new[] { new CustomAuthorizationFilter() } });
             BackgroundJob.Enqueue(() => Console.WriteLine("Hello world from Hangfire!"));
             RecurringJob.AddOrUpdate("remainderJob", () => Console.WriteLine("Hello world from Hangfire add or update!"),
                Cron.Hourly);

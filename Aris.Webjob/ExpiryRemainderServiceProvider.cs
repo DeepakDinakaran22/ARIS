@@ -58,9 +58,9 @@ namespace Aris.Webjob
             if (companyDocumentDetails != null)
             {
                 string strBody = EmailTemplateHelper.CompanyDocumentDetails(companyDocumentDetails)
-                    .Replace("[APPLICATIONLINK]", "http://aris-amt.com");
+                    .Replace("[APPLICATIONLINK]", "https://aris-amt.com");
 
-                emailService.Send(strManagerMails, "", "Company document expiry remainder", strBody);
+                emailService.Send(strManagerMails, "", "Company Document Expiry Reminder", strBody);
             }
             else
             {
@@ -123,7 +123,7 @@ namespace Aris.Webjob
                 string strBody = EmailTemplateHelper.UserDocumentDetails(expireds)
                   .Replace("[APPLICATIONLINK]", "https://aris-amt.com");
 
-                emailService.Send(strManagerMails, "", "Employee document expiry remainder", strBody);
+                emailService.Send(strManagerMails, "", "Employee Document Expiry Reminder", strBody);
             }
             else
             {
@@ -149,9 +149,9 @@ namespace Aris.Webjob
             if (officeDocumentDetails != null)
             {
                 string strBody = EmailTemplateHelper.OfficeDocumentDetails(officeDocumentDetails)
-                    .Replace("[APPLICATIONLINK]", "http://aris-amt.com");
+                    .Replace("[APPLICATIONLINK]", "https://aris-amt.com");
 
-                emailService.Send(strManagerMails, "", "Office document expiry remainder", strBody);
+                emailService.Send(strManagerMails, "", "Office Document Expiry Reminder", strBody);
             }
             else
             {

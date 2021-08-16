@@ -132,7 +132,7 @@ namespace Aris.Models
                             <p>Dear <span style=""font - weight: bold; "">All</span>,</p>
                             </div>
                             <div>
-                            <p>Please find the list of documents going to expire soon.</p>
+                            <p>Please find the list of documents going to expire soon or expired.</p>
                             <p><table style = ""text-align:left;"">
                             <tr><th>Document Name</th>
                             <th>Isuue Date </th>
@@ -169,7 +169,7 @@ namespace Aris.Models
                             <p>Dear <span style=""font - weight: bold; "">All</span>,</p>
                             </div>
                             <div>
-                            <p>Please find the list of company documents going to expire soon.</p>
+                            <p>Please find the list of client related documents are going to expire soon or expired.</p>
                             <p><table style = ""text-align:left;"">
                             <tr><th>Company Name</th>
                             <th>Document Name </th>
@@ -206,7 +206,7 @@ namespace Aris.Models
                             <p>Dear <span style=""font - weight: bold; "">All</span>,</p>
                             </div>
                             <div>
-                            <p>Please find the list of documents going to expire soon.</p>
+                            <p>Please find the list of documents are going to expire soon or expired.</p>
                             <p><table style = ""text-align:left;border-collapse:collapse;"">
                             <tr><th>Document Name</th>
                             <th>Employee Name </th>
