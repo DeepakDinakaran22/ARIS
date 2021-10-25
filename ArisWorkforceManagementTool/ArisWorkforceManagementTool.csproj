@@ -47,8 +47,14 @@
 
 
   <ItemGroup>
+    <Folder Include="Areas\Attendance\Controllers\" />
+    <Folder Include="Areas\Attendance\Data\" />
+    <Folder Include="Areas\Attendance\Models\" />
+    <Folder Include="Areas\Attendance\Views\" />
     <Folder Include="Areas\MasterPages\Data\" />
     <Folder Include="Areas\MasterPages\Models\" />
+    <Folder Include="Areas\Salary\Data\" />
+    <Folder Include="Areas\Salary\Models\" />
     <Folder Include="wwwroot\dist\" />
     <Folder Include="wwwroot\lib\" />
     <Folder Include="wwwroot\plugins\loader\img\" />

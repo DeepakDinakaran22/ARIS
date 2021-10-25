@@ -95,10 +95,19 @@
                                         <input type="text" class="form-control" id="txtPassportNumber" placeholder="Enter Passport Number">
                                     </div>
                                 </div>
-                                <div class="col-md-4">
-                                    <div class="form-group">
-                                        <label>Passport Expiry Date</label>
-                                        <input type="text" class="form-control date" id="dpPassportExpiryDate" placeholder="Passport Expiry Date">
+                                @*<div class="col-md-4">
+            <div class="form-group">
+                <label>Passport Expiry Date</label>
+                <input type="text" class="form-control date" id="dpPassportExpiryDate" placeholder="Passport Expiry Date">
+            </div>
+        </div>*@
+                                <div class="form-group col-md-4">
+                                    <label>Passport Expiry Date</label>
+                                    <div class="input-group date" id="passportDate" data-target-input="nearest">
+                                        <input type="text" id="dpPassportExpiryDate" class="form-control datetimepicker-input" data-target="#passportDate" />
+                                        <div class="input-group-append" data-target="#passportDate" data-toggle="datetimepicker">
+                                            <div class="input-group-text"><i class="fa fa-calendar"></i></div>
+                                        </div>
                                     </div>
                                 </div>
                                 <div class="col-md-2">
@@ -116,10 +125,19 @@
                                         <input type="text" class="form-control" id="txtResidentNumber" placeholder="Enter Resident No">
                                     </div>
                                 </div>
-                                <div class="col-md-4">
-                                    <div class="form-group">
-                                        <label>Resident Expiry Date</label>
-                                        <input type="text" class="form-control date" id="dpResidentExpiryDate" placeholder="Resident Expiry Date">
+                                @*<div class="col-md-4">
+            <div class="form-group">
+                <label>Resident Expiry Date</label>
+                <input type="text" class="form-control date" id="dpResidentExpiryDate" placeholder="Resident Expiry Date">
+            </div>
+        </div>*@
+                                <div class="form-group col-md-4">
+                                    <label>Resident Expiry Date</label>
+                                    <div class="input-group date" id="residentExpiryDate" data-target-input="nearest">
+                                        <input type="text" id="dpResidentExpiryDate" class="form-control datetimepicker-input" data-target="#residentExpiryDate" />
+                                        <div class="input-group-append" data-target="#residentExpiryDate" data-toggle="datetimepicker">
+                                            <div class="input-group-text"><i class="fa fa-calendar"></i></div>
+                                        </div>
                                     </div>
                                 </div>
                                 <div class="col-md-2">
@@ -134,21 +152,38 @@
                                 <div class="col-md-6">
                                     <div class="form-group">
                                         <label>Joining Date</label>
-                                        <input type="text" class="form-control date" id="dpJoiningDate" placeholder="Joining Date">
+                                        @*<input type="text" class="form-control date" id="dpJoiningDate" placeholder="Joining Date">*@
+                                        <div class="input-group date" id="joiningDate" data-target-input="nearest">
+                                            <input type="text" id="dpJoiningDate" class="form-control datetimepicker-input" data-target="#joiningDate" />
+                                            <div class="input-group-append" data-target="#joiningDate" data-toggle="datetimepicker">
+                                                <div class="input-group-text"><i class="fa fa-calendar"></i></div>
+                                            </div>
+                                        </div>
 
                                     </div>
                                 </div>
                                 <div class="col-md-6">
                                     <div class="form-group">
                                         <label>Contract Start Date</label>
-                                        <input type="text" class="form-control date" id="dpContractStartDate" placeholder="Contract Start Date">
-
+                                        @*<input type="text" class="form-control date" id="dpContractStartDate" placeholder="Contract Start Date">*@
+                                        <div class="input-group date" id="contractStartDate" data-target-input="nearest">
+                                            <input type="text" id="dpContractStartDate" class="form-control datetimepicker-input" data-target="#contractStartDate" />
+                                            <div class="input-group-append" data-target="#contractStartDate" data-toggle="datetimepicker">
+                                                <div class="input-group-text"><i class="fa fa-calendar"></i></div>
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
                                 <div class="col-md-6">
                                     <div class="form-group">
                                         <label>Contract End Date</label>
-                                        <input type="text" class="form-control date" id="dpContractEndDate" placeholder="Contract End Date">
+                                        @*<input type="text" class="form-control date" id="dpContractEndDate" placeholder="Contract End Date">*@
+                                        <div class="input-group date" id="contractEndDate" data-target-input="nearest">
+                                            <input type="text" id="dpContractEndDate" class="form-control datetimepicker-input" data-target="#contractEndDate" />
+                                            <div class="input-group-append" data-target="#contractEndDate" data-toggle="datetimepicker">
+                                                <div class="input-group-text"><i class="fa fa-calendar"></i></div>
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
                                 <div class="col-md-6">
@@ -278,11 +313,6 @@
                     </div>
                     <!-- /.card-body -->
                 </div>
-
-
-
-
-
 
             </div>
             <!--/.col (right) -->
@@ -449,9 +479,6 @@
 @* hidden Variables *@
 <input type="hidden" id="hdnUserRole" value="@TempData.Peek("UserRole")" />
 <input type="hidden" id="hdnUserId" value="@TempData.Peek("UserId")" />
-
-
-
 
 
 @* Common files Starts*@

@@ -21,7 +21,7 @@ namespace Aris.Models.Helper
 
         public enum SendMailNotification
         {
-            Status = 1,
+            Status = 0,
         }
     }
 }

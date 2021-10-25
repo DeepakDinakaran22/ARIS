@@ -21,11 +21,11 @@ $(document).ready(function () {
     userRole = $("#hdnUserRole").val();
     loggedInUserId = $("#hdnUserId").val();
   
-    $("#dpContractEndDate").datepicker({ minDate: 0 }); //maxDate: "+1M +15D" });
-    $("#dpContractStartDate").datepicker({  });
-    $("#dpJoiningDate").datepicker({  });
-    $("#dpResidentExpiryDate").datepicker({ minDate: 0 });
-    $("#dpPassportExpiryDate").datepicker({ minDate: 0 });
+    $("#contractEndDate").datetimepicker({ minDate: 0, format: 'L' }); //maxDate: "+1M +15D" });
+    $("#contractStartDate").datetimepicker({ minDate: 0, format: 'L'   });
+    $("#joiningDate").datetimepicker({ minDate: 0, format: 'L'   });
+    $("#residentExpiryDate").datetimepicker({ minDate: 0, format: 'L' });
+    $("#passportDate").datetimepicker({ minDate: 0, format: 'L' });
     
 
     $("#btnUpdate").hide();
@@ -567,12 +567,18 @@ function UpdateRequest() {
     var companyId = $("#ddlCompany option:selected").val();
     var nationality = $("#ddlCountry option:selected").val();
     var passportNumber = $("#txtPassportNumber").val();
-    var passportExpiryDate = $("#dpPassportExpiryDate").val() != '' ? $("#dpPassportExpiryDate").datepicker('getDate').toLocaleString() : '';
+    //var passportExpiryDate = $("#dpPassportExpiryDate").val() != '' ? $("#dpPassportExpiryDate").datepicker('getDate').toLocaleString() : '';
+    var passportExpiryDate = moment(new Date($("#dpPassportExpiryDate").val())).format('YYYY-MM-DD');
+    console.log(moment(new Date(passportExpiryDate)).format('YYYY-MM-DD'));
     var residentNumber = $("#txtResidentNumber").val();
-    var residentExpiryDate = $("#dpResidentExpiryDate").val() != '' ? $("#dpResidentExpiryDate").datepicker('getDate').toLocaleString() : '';
-    var joiningDate = $("#dpJoiningDate").val() != '' ? $("#dpJoiningDate").datepicker('getDate').toLocaleString() : '';
-    var contractStartDate = $("#dpContractStartDate").val() != '' ? $("#dpContractStartDate").datepicker('getDate').toLocaleString() : '';
-    var contractEndDate = $("#dpContractEndDate").val() != '' ? $("#dpContractEndDate").datepicker('getDate').toLocaleString() : '';
+    //var residentExpiryDate = $("#dpResidentExpiryDate").val() != '' ? $("#dpResidentExpiryDate").datepicker('getDate').toLocaleString() : '';
+    var residentExpiryDate = $("#dpResidentExpiryDate").val();
+    //var joiningDate = $("#dpJoiningDate").val() != '' ? $("#dpJoiningDate").datepicker('getDate').toLocaleString() : '';
+    var joiningDate = $("#dpJoiningDate").val();
+   //var contractStartDate = $("#dpContractStartDate").val() != '' ? $("#dpContractStartDate").datepicker('getDate').toLocaleString() : '';
+    var contractStartDate = $("#dpContractStartDate").val();
+    //var contractEndDate = $("#dpContractEndDate").val() != '' ? $("#dpContractEndDate").datepicker('getDate').toLocaleString() : '';
+    var contractEndDate = $("#dpContractEndDate").val();
     var gsm = $("#txtGsm").val();
     var accomodationDetails = $("#txtAccomodationDetails").val();
     var maritalStatus = $("input[name='radioMarital']:checked").val();
@@ -1323,12 +1329,20 @@ $('#tblEmployees').on('click', 'td.edit', function (e) {
         $("#ddlCountry").val(table.row(this).data()['nationality']).attr('disabled', 'disabled');
         $("#txtPassportNumber").val(table.row(this).data()['passportNumber']).attr('disabled', 'disabled');
         passportN = table.row(this).data()['passportNumber'].trim();
-        $("#dpPassportExpiryDate").datepicker("setDate", $.datepicker.parseDate("yy-mm-dd", table.row(this).data()['passportExpiryDate'].replace('T00:00:00', ''))).attr('disabled', 'disabled');
+        //$("#dpPassportExpiryDate").datepicker("setDate", $.datepicker.parseDate("yy-mm-dd", table.row(this).data()['passportExpiryDate'].replace('T00:00:00', ''))).attr('disabled', 'disabled');
+        $("#dpPassportExpiryDate").val(moment(table.row(this).data()['passportExpiryDate']).format('DD/MM/YYYY').replace('T00:00:00', '')).attr('disabled', 'disabled');
+
         $("#txtResidentNumber").val(table.row(this).data()['residentNumber']).attr('disabled', 'disabled');
-        $("#dpResidentExpiryDate").datepicker("setDate", $.datepicker.parseDate("yy-mm-dd", table.row(this).data()['residentExpiryDate'].replace('T00:00:00', ''))).attr('disabled', 'disabled');
-        $("#dpJoiningDate").datepicker("setDate", $.datepicker.parseDate("yy-mm-dd", table.row(this).data()['joiningDate'].replace('T00:00:00', ''))).attr('disabled', 'disabled');
-        $("#dpContractStartDate").datepicker("setDate", $.datepicker.parseDate("yy-mm-dd", table.row(this).data()['contractStartDate'].replace('T00:00:00', ''))).attr('disabled', 'disabled');
-        $("#dpContractEndDate").datepicker("setDate", $.datepicker.parseDate("yy-mm-dd", table.row(this).data()['contractEndDate'].replace('T00:00:00', ''))).attr('disabled', 'disabled');
+        //$("#dpResidentExpiryDate").datepicker("setDate", $.datepicker.parseDate("yy-mm-dd", table.row(this).data()['residentExpiryDate'].replace('T00:00:00', ''))).attr('disabled', 'disabled');
+        $("#dpResidentExpiryDate").val(moment(table.row(this).data()['residentExpiryDate']).format('DD/MM/YYYY').replace('T00:00:00', '')).attr('disabled', 'disabled');
+
+        //$("#dpJoiningDate").datepicker("setDate", $.datepicker.parseDate("yy-mm-dd", table.row(this).data()['joiningDate'].replace('T00:00:00', ''))).attr('disabled', 'disabled');
+        $("#dpJoiningDate").val(moment(table.row(this).data()['joiningDate']).format('DD/MM/YYYY').replace('T00:00:00', '')).attr('disabled', 'disabled');
+        $("#dpContractStartDate").val(moment(table.row(this).data()['contractStartDate']).format('DD/MM/YYYY').replace('T00:00:00', '')).attr('disabled', 'disabled');
+
+//        $("#dpContractEndDate").datepicker("setDate", $.datepicker.parseDate("yy-mm-dd", table.row(this).data()['contractEndDate'].replace('T00:00:00', ''))).attr('disabled', 'disabled');
+        $("#dpContractEndDate").val(moment(table.row(this).data()['contractEndDate']).format('DD/MM/YYYY').replace('T00:00:00', '')).attr('disabled', 'disabled');
+
         $("#txtGsm").val(parseInt(table.row(this).data()['gsm'])).attr('disabled', 'disabled');
         $("#txtAccomodationDetails").val(table.row(this).data()['accomodationDetails']).attr('disabled', 'disabled');
         $("input[name='radioMarital'][value='" + table.row(this).data()['maritalStatus'] + "']").prop('checked', true).attr('disabled', 'disabled');
@@ -1366,12 +1380,22 @@ $('#tblEmployees').on('click', 'td.edit', function (e) {
         $("#ddlCountry").val(table.row(this).data()['nationality']).attr('disabled', false);
         $("#txtPassportNumber").val(table.row(this).data()['passportNumber']).attr('disabled', false);
         passportN = table.row(this).data()['passportNumber'].trim();
-        $("#dpPassportExpiryDate").datepicker("setDate", $.datepicker.parseDate("yy-mm-dd", table.row(this).data()['passportExpiryDate'].replace('T00:00:00', ''))).attr('disabled', false);
+        //$("#dpPassportExpiryDate").datepicker("setDate", $.datepicker.parseDate("yyyy-mm-dd", table.row(this).data()['passportExpiryDate'].replace('T00:00:00', ''))).attr('disabled', false);
+        $("#dpPassportExpiryDate").val(moment(table.row(this).data()['passportExpiryDate']).format('DD/MM/YYYY').replace('T00:00:00', '')).attr('disabled', false);
         $("#txtResidentNumber").val(table.row(this).data()['residentNumber']).attr('disabled', false);
-        $("#dpResidentExpiryDate").datepicker("setDate", $.datepicker.parseDate("yy-mm-dd", table.row(this).data()['residentExpiryDate'].replace('T00:00:00', ''))).attr('disabled', false);
-        $("#dpJoiningDate").datepicker("setDate", $.datepicker.parseDate("yy-mm-dd", table.row(this).data()['joiningDate'].replace('T00:00:00', ''))).attr('disabled', false);
-        $("#dpContractStartDate").datepicker("setDate", $.datepicker.parseDate("yy-mm-dd", table.row(this).data()['contractStartDate'].replace('T00:00:00', ''))).attr('disabled', false);
-        $("#dpContractEndDate").datepicker("setDate", $.datepicker.parseDate("yy-mm-dd", table.row(this).data()['contractEndDate'].replace('T00:00:00', ''))).attr('disabled', false);
+
+       // $("#dpResidentExpiryDate").datepicker("setDate", $.datepicker.parseDate("yy-mm-dd", table.row(this).data()['residentExpiryDate'].replace('T00:00:00', ''))).attr('disabled', false);
+        $("#dpResidentExpiryDate").val(moment(table.row(this).data()['residentExpiryDate']).format('DD/MM/YYYY').replace('T00:00:00', '')).attr('disabled', false);
+
+        //$("#dpJoiningDate").datepicker("setDate", $.datepicker.parseDate("yy-mm-dd", table.row(this).data()['joiningDate'].replace('T00:00:00', ''))).attr('disabled', false);
+        $("#dpJoiningDate").val(moment(table.row(this).data()['joiningDate']).format('DD/MM/YYYY').replace('T00:00:00', '')).attr('disabled', false);
+
+        //$("#dpContractStartDate").datepicker("setDate", $.datepicker.parseDate("yy-mm-dd", table.row(this).data()['contractStartDate'].replace('T00:00:00', ''))).attr('disabled', false);
+        $("#dpContractStartDate").val(moment(table.row(this).data()['contractStartDate']).format('DD/MM/YYYY').replace('T00:00:00', '')).attr('disabled', false);
+
+       // $("#dpContractEndDate").datepicker("setDate", $.datepicker.parseDate("yy-mm-dd", table.row(this).data()['contractEndDate'].replace('T00:00:00', ''))).attr('disabled', false);
+        $("#dpContractEndDate").val(moment(table.row(this).data()['contractEndDate']).format('DD/MM/YYYY').replace('T00:00:00', '')).attr('disabled', false);
+
         $("#txtGsm").val(parseInt(table.row(this).data()['gsm'])).attr('disabled', false);
         $("#txtAccomodationDetails").val(table.row(this).data()['accomodationDetails']).attr('disabled', false);
         $("input[name='radioMarital'][value='" + table.row(this).data()['maritalStatus'] + "']").prop('checked', true).attr('disabled', false);
@@ -1417,12 +1441,21 @@ $('#tblEmployees').on('click', 'td.edit', function (e) {
         $("#ddlCompany").val(table.row(this).data()['companyId']).attr('disabled', 'disabled');
         $("#ddlCountry").val(table.row(this).data()['nationality']).attr('disabled', 'disabled');
         $("#txtPassportNumber").val(table.row(this).data()['passportNumber']).attr('disabled', 'disabled');
-        $("#dpPassportExpiryDate").datepicker("setDate", $.datepicker.parseDate("yy-mm-dd", table.row(this).data()['passportExpiryDate'].replace('T00:00:00', ''))).attr('disabled', 'disabled');
+        //$("#dpPassportExpiryDate").datepicker("setDate", $.datepicker.parseDate("yy-mm-dd", table.row(this).data()['passportExpiryDate'].replace('T00:00:00', ''))).attr('disabled', 'disabled');
+        $("#dpPassportExpiryDate").val(moment(table.row(this).data()['passportExpiryDate']).format('DD/MM/YYYY').replace('T00:00:00', '')).attr('disabled', 'disabled');
         $("#txtResidentNumber").val(table.row(this).data()['residentNumber']).attr('disabled', 'disabled');
-        $("#dpResidentExpiryDate").datepicker("setDate", $.datepicker.parseDate("yy-mm-dd", table.row(this).data()['residentExpiryDate'].replace('T00:00:00', ''))).attr('disabled', 'disabled');
-        $("#dpJoiningDate").datepicker("setDate", $.datepicker.parseDate("yy-mm-dd", table.row(this).data()['joiningDate'].replace('T00:00:00', ''))).attr('disabled', 'disabled');
-        $("#dpContractStartDate").datepicker("setDate", $.datepicker.parseDate("yy-mm-dd", table.row(this).data()['contractStartDate'].replace('T00:00:00', ''))).attr('disabled', 'disabled');
-        $("#dpContractEndDate").datepicker("setDate", $.datepicker.parseDate("yy-mm-dd", table.row(this).data()['contractEndDate'].replace('T00:00:00', ''))).attr('disabled', 'disabled');
+        //$("#dpResidentExpiryDate").datepicker("setDate", $.datepicker.parseDate("yy-mm-dd", table.row(this).data()['residentExpiryDate'].replace('T00:00:00', ''))).attr('disabled', 'disabled');
+        $("#dpResidentExpiryDate").val(moment(table.row(this).data()['residentExpiryDate']).format('DD/MM/YYYY').replace('T00:00:00', '')).attr('disabled', 'disabled');
+
+        //$("#dpJoiningDate").datepicker("setDate", $.datepicker.parseDate("yy-mm-dd", table.row(this).data()['joiningDate'].replace('T00:00:00', ''))).attr('disabled', 'disabled');
+        $("#dpJoiningDate").val(moment(table.row(this).data()['joiningDate']).format('DD/MM/YYYY').replace('T00:00:00', '')).attr('disabled', 'disabled');
+
+        //$("#dpContractStartDate").datepicker("setDate", $.datepicker.parseDate("yy-mm-dd", table.row(this).data()['contractStartDate'].replace('T00:00:00', ''))).attr('disabled', 'disabled');
+        $("#dpContractStartDate").val(moment(table.row(this).data()['contractStartDate']).format('DD/MM/YYYY').replace('T00:00:00', '')).attr('disabled', 'disabled');
+
+        //$("#dpContractEndDate").datepicker("setDate", $.datepicker.parseDate("yy-mm-dd", table.row(this).data()['contractEndDate'].replace('T00:00:00', ''))).attr('disabled', 'disabled');
+        $("#dpContractEndDate").val(moment(table.row(this).data()['contractEndDate']).format('DD/MM/YYYY').replace('T00:00:00', '')).attr('disabled', 'disabled');
+
         $("#txtGsm").val(parseInt(table.row(this).data()['gsm'])).attr('disabled', 'disabled');
         $("#txtAccomodationDetails").val(table.row(this).data()['accomodationDetails']).attr('disabled', 'disabled');
         $("input[name='radioMarital'][value='" + table.row(this).data()['maritalStatus'] + "']").prop('checked', true).attr('disabled', 'disabled');
@@ -1466,12 +1499,22 @@ $('#tblEmployees').on('click', 'td.edit', function (e) {
         $("#ddlCompany").val(table.row(this).data()['companyId']).attr('disabled', 'disabled');
         $("#ddlCountry").val(table.row(this).data()['nationality']).attr('disabled', 'disabled');
         $("#txtPassportNumber").val(table.row(this).data()['passportNumber']).attr('disabled', 'disabled');
-        $("#dpPassportExpiryDate").datepicker("setDate", $.datepicker.parseDate("yy-mm-dd", table.row(this).data()['passportExpiryDate'].replace('T00:00:00', ''))).attr('disabled', 'disabled');
+        //$("#dpPassportExpiryDate").datepicker("setDate", $.datepicker.parseDate("yy-mm-dd", table.row(this).data()['passportExpiryDate'].replace('T00:00:00', ''))).attr('disabled', 'disabled');
+        $("#dpPassportExpiryDate").val(moment(table.row(this).data()['passportExpiryDate']).format('DD/MM/YYYY').replace('T00:00:00', '')).attr('disabled', 'disabled');
+
         $("#txtResidentNumber").val(table.row(this).data()['residentNumber']).attr('disabled', 'disabled');
-        $("#dpResidentExpiryDate").datepicker("setDate", $.datepicker.parseDate("yy-mm-dd", table.row(this).data()['residentExpiryDate'].replace('T00:00:00', ''))).attr('disabled', 'disabled');
-        $("#dpJoiningDate").datepicker("setDate", $.datepicker.parseDate("yy-mm-dd", table.row(this).data()['joiningDate'].replace('T00:00:00', ''))).attr('disabled', 'disabled');
-        $("#dpContractStartDate").datepicker("setDate", $.datepicker.parseDate("yy-mm-dd", table.row(this).data()['contractStartDate'].replace('T00:00:00', ''))).attr('disabled', 'disabled');
-        $("#dpContractEndDate").datepicker("setDate", $.datepicker.parseDate("yy-mm-dd", table.row(this).data()['contractEndDate'].replace('T00:00:00', ''))).attr('disabled', 'disabled');
+        //$("#dpResidentExpiryDate").datepicker("setDate", $.datepicker.parseDate("yy-mm-dd", table.row(this).data()['residentExpiryDate'].replace('T00:00:00', ''))).attr('disabled', 'disabled');
+        $("#dpResidentExpiryDate").val(moment(table.row(this).data()['residentExpiryDate']).format('DD/MM/YYYY').replace('T00:00:00', '')).attr('disabled', 'disabled');
+
+        //$("#dpJoiningDate").datepicker("setDate", $.datepicker.parseDate("yy-mm-dd", table.row(this).data()['joiningDate'].replace('T00:00:00', ''))).attr('disabled', 'disabled');
+        $("#dpJoiningDate").val(moment(table.row(this).data()['joiningDate']).format('DD/MM/YYYY').replace('T00:00:00', '')).attr('disabled', 'disabled');
+
+        //$("#dpContractStartDate").datepicker("setDate", $.datepicker.parseDate("yy-mm-dd", table.row(this).data()['contractStartDate'].replace('T00:00:00', ''))).attr('disabled', 'disabled');
+        $("#dpContractStartDate").val(moment(table.row(this).data()['contractStartDate']).format('DD/MM/YYYY').replace('T00:00:00', '')).attr('disabled', 'disabled');
+
+        //$("#dpContractEndDate").datepicker("setDate", $.datepicker.parseDate("yy-mm-dd", table.row(this).data()['contractEndDate'].replace('T00:00:00', ''))).attr('disabled', 'disabled');
+        $("#dpContractEndDate").val(moment(table.row(this).data()['contractEndDate']).format('DD/MM/YYYY').replace('T00:00:00', '')).attr('disabled', 'disabled');
+
         $("#txtGsm").val(parseInt(table.row(this).data()['gsm'])).attr('disabled', 'disabled');
         $("#txtAccomodationDetails").val(table.row(this).data()['accomodationDetails']).attr('disabled', 'disabled');
         $("input[name='radioMarital'][value='" + table.row(this).data()['maritalStatus'] + "']").prop('checked', true).attr('disabled', 'disabled');
@@ -2106,4 +2149,9 @@ function uploadDocuments_confidential(inputId) {
         MessageBox('Required!', 'fa fa-times', 'Expiry date!', 'red', 'btn btn-danger', 'Okay');
 
     }
+}
+function FormatDate(strDate) {
+    var dateParts = strDate.split("/");
+    var ActualDate = new Date(+dateParts[0], dateParts[1] - 1, +dateParts[2]);
+    return ActualDate;
 }
