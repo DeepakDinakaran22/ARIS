@@ -27,6 +27,8 @@ namespace Aris.Data
         public virtual DbSet<OfficeDocDetails> OfficeDocDetails { get; set; }
         public virtual DbSet<OfficeDocsFileUploads> OfficeDocsFileUploads { get; set; }
         public virtual DbSet<OfficeDocsFileUploads> CompanyFileUploads { get; set; }
+        public virtual DbSet<Salary> Salary { get; set; }
+
         public virtual DbSet<ErrorLog> ErrorLog { get; set; }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -465,6 +467,100 @@ namespace Aris.Data
                 .HasColumnName("ErrorDate");
 
             });
+            modelBuilder.Entity<Salary>(entity => {
+                entity.HasKey(e => e.SalaryId);
+
+                entity.Property(e => e.SalaryId)
+                .HasColumnName("SalaryId");
+
+                entity.Property(e => e.EmployeeNo)
+                .HasColumnName("EmployeeNo");
+
+                entity.Property(e => e.OvertimeOrExtraDuties)
+                .HasColumnName("OvertimeOrExtraDuties");
+
+                entity.Property(e => e.TranspotationAllowance)
+              .HasColumnName("TranspotationAllowance");
+
+                entity.Property(e => e.OtherAllowance)
+                .HasColumnName("OtherAllowance");
+
+                entity.Property(e => e.TelephoneAllowance)
+                .HasColumnName("TelephoneAllowance");
+
+                entity.Property(e => e.FoodAllowance)
+               .HasColumnName("FoodAllowance");
+                
+                entity.Property(e => e.TaxiCharges)
+               .HasColumnName("TaxiCharges");
+
+                entity.Property(e => e.RoomRent)
+               .HasColumnName("RoomRent");
+
+                entity.Property(e => e.GrossSalary)
+               .HasColumnName("GrossSalary");
+
+                entity.Property(e => e.SocialInsurance)
+               .HasColumnName("SocialInsurance");
+
+                entity.Property(e => e.LeaveDeduction)
+               .HasColumnName("LeaveDeduction");
+
+
+                entity.Property(e => e.AdvanceDeduction)
+                .HasColumnName("AdvanceDeduction");
+
+                entity.Property(e => e.OtherDeduction)
+                .HasColumnName("OtherDeduction");
+
+                entity.Property(e => e.TotalDeduction)
+              .HasColumnName("TotalDeduction");
+
+                entity.Property(e => e.NetSalary)
+                .HasColumnName("NetSalary");
+
+                entity.Property(e => e.Remarks)
+                .HasColumnName("Remarks");
+
+                entity.Property(e => e.Basic)
+               .HasColumnName("Basic");
+
+                entity.Property(e => e.TotalSalaryPAyment)
+               .HasColumnName("TotalSalaryPAyment");
+
+                entity.Property(e => e.ModeOfPayment)
+               .HasColumnName("ModeOfPayment");
+
+                entity.Property(e => e.SalaryApprovalStatusId)
+               .HasColumnName("SalaryApprovalStatusId");
+
+                entity.Property(e => e.NextActionId)
+               .HasColumnName("NextActionId");
+
+                entity.Property(e => e.ApprovedBy)
+               .HasColumnName("ApprovedBy");
+
+                entity.Property(e => e.CheckedBy)
+               .HasColumnName("CheckedBy");
+
+
+                entity.Property(e => e.PreparedBy)
+                .HasColumnName("PreparedBy");
+
+                entity.Property(e => e.CreatedDate)
+                .HasColumnName("CreatedDate");
+
+                entity.Property(e => e.CreatedBy)
+               .HasColumnName("CreatedBy");
+
+                entity.Property(e => e.ModifiedBy)
+               .HasColumnName("ModifiedBy");
+
+                entity.Property(e => e.ModifiedDate)
+               .HasColumnName("ModifiedDate");
+
+            });
+
 
         }
     }

@@ -6,14 +6,14 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace ArisWorkforceManagementTool.Areas.Salary.Controllers
+namespace ArisWorkforceManagementTool.Areas.Attendance.Controllers
 {
-    [Area("Salary")]
-    public class SalaryController : Controller
+    [Area("Attendance")]
+    public class AttendanceController : Controller
     {
 
         UnitOfWork unitOfWork = new UnitOfWork();
-        private readonly ILogger<SalaryController> _logger;
+        private readonly ILogger<AttendanceController> _logger;
         public ActionResult Index()
         {
             return View();

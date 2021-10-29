@@ -16,6 +16,7 @@ namespace Aris.Data
         private GenericRepository<OfficeDocDetails> officeDocDetailsRepository;
         private GenericRepository<OfficeDocsFileUploads> officeDocsFileUploadsRepository;
         private GenericRepository<CompanyFileUploads> companyFileUploadsRepository;
+        private GenericRepository<Salary> salaryRepository;
 
         public GenericRepository<Users> UserRepository
 
@@ -130,6 +131,15 @@ namespace Aris.Data
                 return this.companyFileUploadsRepository;
             }
 
+        }
+        public GenericRepository<Salary> SalaryRepository
+        {
+            get
+            {
+                if (this.salaryRepository == null)
+                    this.salaryRepository = new GenericRepository<Salary>(context);
+                return this.salaryRepository;
+            }
         }
 
 

@@ -47,10 +47,8 @@
 
 
   <ItemGroup>
-    <Folder Include="Areas\Attendance\Controllers\" />
     <Folder Include="Areas\Attendance\Data\" />
     <Folder Include="Areas\Attendance\Models\" />
-    <Folder Include="Areas\Attendance\Views\" />
     <Folder Include="Areas\MasterPages\Data\" />
     <Folder Include="Areas\MasterPages\Models\" />
     <Folder Include="Areas\Salary\Data\" />
