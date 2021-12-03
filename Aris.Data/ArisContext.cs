@@ -525,8 +525,8 @@ namespace Aris.Data
                 entity.Property(e => e.Basic)
                .HasColumnName("Basic");
 
-                entity.Property(e => e.TotalSalaryPAyment)
-               .HasColumnName("TotalSalaryPAyment");
+                entity.Property(e => e.TotalSalaryPayment)
+               .HasColumnName("TotalSalaryPayment");
 
                 entity.Property(e => e.ModeOfPayment)
                .HasColumnName("ModeOfPayment");
@@ -558,6 +558,10 @@ namespace Aris.Data
 
                 entity.Property(e => e.ModifiedDate)
                .HasColumnName("ModifiedDate");
+
+                entity.Property(e => e.ServiceBenefits)
+               .HasColumnName("ServiceBenefits" +
+               "");
 
             });
 

@@ -17,7 +17,7 @@
             </div>
             <div class="col-sm-6">
                 <ol class="breadcrumb float-sm-right">
-                    <li class="breadcrumb-item"><a href="#">Home</a></li>
+                    <li class="breadcrumb-item"><a href="">Home</a></li>
                     <li class="breadcrumb-item active">Manage Salary Details</li>
                 </ol>
             </div>
@@ -75,6 +75,11 @@
                             </div>
                         </div>
 
+                        <div class="card-footer" style="text-align:right">
+                            <button type="reset" id="btnReset" class="btn btn-sm btn-primary">Reset</button>
+                            <button type="button" id="btnSubmit" onclick="GetEmployeesSalaryBySearch()" class="btn btn-sm btn-success">Search</button>
+                        </div>
+
                     </form>
 
                 </div>
@@ -88,52 +93,52 @@
                         <div class="row">
                             <div class="col-md-3">
                                 <div class="form-group">
-                                    <label for="EmployeeNumber">Overtime/Extra Time</label>
+                                    <label for="txtOvertime">Overtime/Extra Time</label>
                                     <input type="number" class="form-control" id="txtOvertime" placeholder="Overtime/extratime">
                                 </div>
                             </div>
                             <div class="col-md-3">
                                 <div class="form-group">
-                                    <label for="txtEmployeeName">Transpotation Allowance</label>
+                                    <label for="txtTranspotationallowance">Transpotation Allowance</label>
                                     <input type="number" class="form-control" id="txtTranspotationallowance" placeholder="Transpotation Allowance">
                                 </div>
                             </div>
                             <div class="col-md-3">
                                 <div class="form-group">
-                                    <label for="txtEmployeeName">Food Allowance</label>
+                                    <label for="txtFoodallowance">Food Allowance</label>
                                     <input type="number" class="form-control date" id="txtFoodallowance" placeholder="food Allowance">
 
                                 </div>
                             </div>
                             <div class="col-md-3">
                                 <div class="form-group">
-                                    <label for="EmployeeNumber">Telephone Allowance</label>
+                                    <label for="txtTelephoneallowance">Telephone Allowance</label>
                                     <input type="number" class="form-control" id="txtTelephoneallowance" placeholder="Telephone Allowance">
                                 </div>
                             </div>
                             <div class="col-md-3">
                                 <div class="form-group">
-                                    <label for="txtEmployeeName">Other Allowance</label>
+                                    <label for="txtOtherallowance">Other Allowance</label>
                                     <input type="number" class="form-control" id="txtOtherallowance" placeholder="Other Allowance">
                                 </div>
                             </div>
                             <div class="col-md-3">
                                 <div class="form-group">
-                                    <label for="txtEmployeeName">Taxi Charges</label>
+                                    <label for="txtTaxicharges">Taxi Charges</label>
                                     <input type="number" class="form-control date" id="txtTaxicharges" placeholder="Taxi Charges">
 
                                 </div>
                             </div>
                             <div class="col-md-3">
                                 <div class="form-group">
-                                    <label for="txtEmployeeName">Room Rent</label>
+                                    <label for="txtRoomrent">Room Rent</label>
                                     <input type="number" class="form-control date" id="txtRoomrent" placeholder="Room Rent">
 
                                 </div>
                             </div>
                             <div class="col-md-3">
                                 <div class="form-group">
-                                    <label for="txtotherDeductions">Service Benefits</label>
+                                    <label for="txtServiceBenefits">Service Benefits</label>
                                     <input type="text" class="form-control date" id="txtServiceBenefits" placeholder="Service Benefits">
 
                                 </div>
@@ -158,26 +163,26 @@
                         <div class="row">
                             <div class="col-md-6">
                                 <div class="form-group">
-                                    <label for="EmployeeNumber"> Social Insurance 7%  </label>
+                                    <label for="socialInsurance"> Social Insurance 7%  </label>
                                     <input type="number" class="form-control" id="txtSocialInsurance" placeholder="Social Insurance">
                                 </div>
                             </div>
                             <div class="col-md-6">
                                 <div class="form-group">
-                                    <label for="txtEmployeeName">Leave  Deductions</label>
+                                    <label for="txtleaveDeductions">Leave  Deductions</label>
                                     <input type="text" class="form-control" id="txtLeaveDeductions" placeholder="Leave  Deductions">
                                 </div>
                             </div>
                             <div class="col-md-6">
                                 <div class="form-group">
-                                    <label for="txtLeaveDeductions">Advance Deductions</label>
+                                    <label for="advanceDeductions">Advance Deductions</label>
                                     <input type="text" class="form-control date" id="txtAdvanceDeductions" placeholder="Advance Deductions">
 
                                 </div>
                             </div>
                             <div class="col-md-6">
                                 <div class="form-group">
-                                    <label for="txtotherDeductions">Other Deductions</label>
+                                    <label for="otherDeductions">Other Deductions</label>
                                     <input type="text" class="form-control date" id="txtOtherDeductions" placeholder="Other Deductions">
 
                                 </div>
@@ -199,20 +204,20 @@
                             <div class="col-md-2">
                                 <div class="form-group">
                                     <label for="txtTotalallowance">Total Allowance</label>
-                                    <input type="text" class="form-control date" id="txtTotalallowance" placeholder="Total Allowance">
+                                    <input type="text" class="form-control date" id="txtTotalallowance" placeholder="Total Allowance" readonly>
 
                                 </div>
                             </div>
                             <div class="col-md-2">
                                 <div class="form-group">
                                     <label for="txtTotalGrossSalary">Total Gross Salary</label>
-                                    <input type="number" class="form-control" id="txtTotalGrossSalary" placeholder="Total Gross Salary">
+                                    <input type="number" class="form-control" id="txtTotalGrossSalary" placeholder="Total Gross Salary" readonly>
                                 </div>
                             </div>
                             <div class="col-md-2">
                                 <div class="form-group">
                                     <label for="txtTotalDeductions">Total Deductions</label>
-                                    <input type="text" class="form-control date" id="txtTotalDeductions" placeholder="Total Deductions">
+                                    <input type="text" class="form-control date" id="txtTotalDeductions" placeholder="Total Deductions" readonly>
 
                                 </div>
                             </div>
@@ -220,7 +225,7 @@
                             <div class="col-md-2">
                                 <div class="form-group">
                                     <label for="txtNet Salary">Net Salary [RO] </label>
-                                    <input type="text" class="form-control date" id="txtNetSalary" placeholder="Net Salary [RO]">
+                                    <input type="text" class="form-control date" id="txtNetSalary" placeholder="Net Salary [RO]" readonly>
 
                                 </div>
                             </div>
@@ -228,7 +233,7 @@
                             <div class="col-md-2">
                                 <div class="form-group">
                                     <label for="txtTotalSalaryPayment">Total Salary Payment</label>
-                                    <input type="text" class="form-control date" id="txtTotalSalaryPayment" placeholder="Total Salary Payment">
+                                    <input type="text" class="form-control date" id="txtTotalSalaryPayment" placeholder="Total Salary Payment" readonly>
 
                                 </div>
                             </div>

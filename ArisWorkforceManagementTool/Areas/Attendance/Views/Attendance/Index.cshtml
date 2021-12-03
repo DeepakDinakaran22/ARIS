@@ -60,10 +60,15 @@
                                 <div class="col-md-3">
                                     <div class="form-group">
                                         <label>Joining Date <span class="text-red text-bold">*</span></label>
-                                        <input type="text" class="form-control date" id="dpDocJoiningDate" placeholder="Select Joining Date">
+                                        <input type="text" class="form-control date" id="dpDocJoiningDate" placeholder="Select Joining Date" readonly>
 
                                     </div>
                                 </div>
+                                <div class="col-md-3">
+                                    <button type="button" id="btnSearch" class="btn btn-sm btn-success example-p-2"onclick="GetEmployeesAttendanceBySearch()" style="margin-top:30px">Search</button>
+
+                                </div>
+
 
                             </div>
                         </div>
@@ -72,109 +77,112 @@
 
                 </div>
             </div>
-        </div>
 
 
-        <div class="col-md-12">
-            <div class="card card-success">
-                <div class="card-header">
-                    <h3 class="card-title">
-                        Leave Till End Of <span id="spnHeader"></span>
-                       
-                    </h3>
-                </div>
-                <div class="card-body">
-                    <div class="row">
-                        <div class="col-md-3">
-                            <div class="form-group">
-                                <label for="txtannualLeave">
-                                    Annual Leave<span id="spnAnnualLeave"></span> </label>
-                                <input type="number" class="form-control" id="txtAnnualLeave" placeholder="Annual Leave">
-                            </div>
-                        </div>
-                        <div class="col-md-3">
-                            <div class="form-group">
-                                <label for="txtbalanceLeave">
-                                    Balance Leave From
-                                      <span id="spnBalanceLv"></span> </label>
-                                <input type="number" class="form-control" id="txtBalanceLeave" placeholder="Balance Leave">
-                            </div>
-                        </div>
-                        <div class="col-md-3">
-                            <div class="form-group">
-                                <label for="txtTotalLeave">
-                                    Total Leave days for
-                                    <span id="spnTotallev"></span>
-                                </label>
-                                <input type="number" class="form-control date" id="txtTotalLeave" placeholder="Total Leave">
+            <div class="col-md-12">
+                <div class="card card-success">
+                    <div class="card-header">
+                        <h3 class="card-title">
+                            Leave Till End Of <span id="spnHeader"></span>
 
+                        </h3>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-3">
+                                <div class="form-group">
+                                    <label for="txtannualLeave">
+                                        Annual Leave<span id="spnAnnualLeave"></span>
+                                    </label>
+                                    <input type="number" class="form-control" id="txtAnnualLeave" placeholder="Annual Leave">
+                                </div>
                             </div>
-                        </div>
-                        <div class="col-md-3">
-                            <div class="form-group">
-                                <label for="txtLeavTaken">
-                                    Leave Taken in
-                                    <span id="spnLevTake"></span>
-                                </label>
-                                <input type="number" class="form-control" id="txtLeaveTaken" placeholder="Leave Taken">
+                            <div class="col-md-3">
+                                <div class="form-group">
+                                    <label for="txtbalanceLeave">
+                                        Balance Leave From
+                                        <span id="spnBalanceLv"></span>
+                                    </label>
+                                    <input type="number" class="form-control" id="txtBalanceLeave" placeholder="Balance Leave">
+                                </div>
                             </div>
-                        </div>
-                        <div class="col-md-3">
-                            <div class="form-group">
-                                <label for="txtSickLeaveJustified">Sick Leave Justified</label>
-                                <input type="number" class="form-control" id="txtSickLeaveJustified" placeholder="Sick Leave Justified">
-                            </div>
-                        </div>
-                        <div class="col-md-3">
-                            <div class="form-group">
-                                <label for="txtNonJustifiedLeave">Non Justified Leave</label>
-                                <input type="number" class="form-control date" id="txtNonJustifiedLeave" placeholder="Non Justified Leave">
+                            <div class="col-md-3">
+                                <div class="form-group">
+                                    <label for="txtTotalLeave">
+                                        Total Leave days for
+                                        <span id="spnTotallev"></span>
+                                    </label>
+                                    <input type="number" class="form-control date" id="txtTotalLeave" placeholder="Total Leave">
 
+                                </div>
                             </div>
-                        </div>
-                        <div class="col-md-3">
-                            <div class="form-group">
-                                <label for="txtUnpaidLeave">Unpaid Leave</label>
-                                <input type="number" class="form-control date" id="txtUnpaidLeave" placeholder="Unpaid Leave">
+                            <div class="col-md-3">
+                                <div class="form-group">
+                                    <label for="txtLeavTaken">
+                                        Leave Taken in
+                                        <span id="spnLevTake"></span>
+                                    </label>
+                                    <input type="number" class="form-control" id="txtLeaveTaken" placeholder="Leave Taken">
+                                </div>
                             </div>
-                        </div>
-                        <div class="col-md-3">
-                            <div class="form-group">
-                                <label for="txtSickLeaveBalance">Sick Leave Balance</label>
-                                <input type="number" class="form-control date" id="txtSickLeaveBalance" placeholder="Sick Leave Balance">
+                            <div class="col-md-3">
+                                <div class="form-group">
+                                    <label for="txtSickLeaveJustified">Sick Leave Justified</label>
+                                    <input type="number" class="form-control" id="txtSickLeaveJustified" placeholder="Sick Leave Justified">
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="form-group">
+                                    <label for="txtNonJustifiedLeave">Non Justified Leave</label>
+                                    <input type="number" class="form-control date" id="txtNonJustifiedLeave" placeholder="Non Justified Leave">
 
+                                </div>
                             </div>
-                        </div>
-                        <div class="col-md-3">
-                            <div class="form-group">
-                                <label for="txtLeaveBalance">
-                                    Leave Balance Till End of
-                                    <span id="spnLevBalance"></span>
-                                </label>
-                                <input type="text" class="form-control date" id="txtLeaveBalance" placeholder="Leave Balance">
+                            <div class="col-md-3">
+                                <div class="form-group">
+                                    <label for="txtUnpaidLeave">Unpaid Leave</label>
+                                    <input type="number" class="form-control date" id="txtUnpaidLeave" placeholder="Unpaid Leave">
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="form-group">
+                                    <label for="txtSickLeaveBalance">Sick Leave Balance</label>
+                                    <input type="number" class="form-control date" id="txtSickLeaveBalance" placeholder="Sick Leave Balance">
 
+                                </div>
                             </div>
+                            <div class="col-md-3">
+                                <div class="form-group">
+                                    <label for="txtLeaveBalance">
+                                        Leave Balance Till End of
+                                        <span id="spnLevBalance"></span>
+                                    </label>
+                                    <input type="text" class="form-control date" id="txtLeaveBalance" placeholder="Leave Balance">
+
+                                </div>
+                            </div>
+
+
                         </div>
 
 
                     </div>
+                </div>
+
+            </div>
+            <div class="col-md-12 text-right">
+                <div class="right">
+                    <button type="button" id="btnReset" class="btn btn-sm btn-warning"><i class="fa fa-recycle"></i>  Reset</button>
+                    <button type="button" id="btnSubmit" class="btn btn-sm btn-success"><i class="fas fa-check"></i>  Submit</button>
+                    <button type="button" id="btnApprove" class="btn btn-sm btn-dark"><i class="fa fa-check"></i>  Approve</button>
+                    <button type="button" id="btnReject" class="btn btn-sm btn-danger"><i class="fa fa-times"></i>  Reject</button>
+                    <button type="button" id="btnPrint" class="btn btn-sm btn-primary"><i class="fa fa-print"></i>  Print</button>
 
 
                 </div>
             </div>
-
         </div>
-        <div class="col-md-12 text-right">
-            <div class="right">
-                <button type="button" id="btnReset" class="btn btn-sm btn-warning"><i class="fa fa-recycle"></i>  Reset</button>
-                <button type="button" id="btnSubmit" class="btn btn-sm btn-success"><i class="fas fa-check"></i>  Submit</button>
-                <button type="button" id="btnApprove" class="btn btn-sm btn-dark"><i class="fa fa-check"></i>  Approve</button>
-                <button type="button" id="btnReject" class="btn btn-sm btn-danger"><i class="fa fa-times"></i>  Reject</button>
-                <button type="button" id="btnPrint" class="btn btn-sm btn-primary"><i class="fa fa-print"></i>  Print</button>
 
-
-            </div>
-        </div>
     </div>
 </section>
 
