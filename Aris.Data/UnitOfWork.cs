@@ -17,6 +17,7 @@ namespace Aris.Data
         private GenericRepository<OfficeDocsFileUploads> officeDocsFileUploadsRepository;
         private GenericRepository<CompanyFileUploads> companyFileUploadsRepository;
         private GenericRepository<Salary> salaryRepository;
+        private GenericRepository<Attendance> attendanceRepository;
 
         public GenericRepository<Users> UserRepository
 
@@ -141,13 +142,22 @@ namespace Aris.Data
                 return this.salaryRepository;
             }
         }
-
+        public GenericRepository<Attendance> AttendanceRepository
+        {
+            get
+            {
+                if (this.attendanceRepository == null)
+                    this.attendanceRepository = new GenericRepository<Attendance>(context);
+                return this.attendanceRepository;
+            }
+        }
 
         public void Save()
         {
             context.SaveChanges();
         }
         private bool disposed = false;
+
         protected virtual void Dispose(bool disposing)
         {
             if (!this.disposed)

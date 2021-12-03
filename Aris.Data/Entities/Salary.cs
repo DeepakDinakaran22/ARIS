@@ -42,7 +42,7 @@ namespace Aris.Data.Entities
 
         public string Basic { get; set; }
 
-        public string TotalSalaryPAyment { get; set; }
+        public string TotalSalaryPayment { get; set; }
 
         public string ModeOfPayment { get; set; }
 
@@ -63,6 +63,8 @@ namespace Aris.Data.Entities
         public int? ModifiedBy { get; set; }
 
         public DateTime? ModifiedDate { get; set; }
+
+        public string ServiceBenefits { get; set; }
 
     }
 

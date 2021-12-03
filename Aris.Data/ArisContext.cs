@@ -28,7 +28,7 @@ namespace Aris.Data
         public virtual DbSet<OfficeDocsFileUploads> OfficeDocsFileUploads { get; set; }
         public virtual DbSet<OfficeDocsFileUploads> CompanyFileUploads { get; set; }
         public virtual DbSet<Salary> Salary { get; set; }
-
+        public virtual DbSet<Attendance> Attendance { get; set; }
         public virtual DbSet<ErrorLog> ErrorLog { get; set; }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -525,8 +525,8 @@ namespace Aris.Data
                 entity.Property(e => e.Basic)
                .HasColumnName("Basic");
 
-                entity.Property(e => e.TotalSalaryPAyment)
-               .HasColumnName("TotalSalaryPAyment");
+                entity.Property(e => e.TotalSalaryPayment)
+               .HasColumnName("TotalSalaryPayment");
 
                 entity.Property(e => e.ModeOfPayment)
                .HasColumnName("ModeOfPayment");
@@ -559,7 +559,69 @@ namespace Aris.Data
                 entity.Property(e => e.ModifiedDate)
                .HasColumnName("ModifiedDate");
 
+                entity.Property(e => e.ServiceBenefits)
+               .HasColumnName("ServiceBenefits" +
+               "");
+
             });
+            modelBuilder.Entity<Attendance>(entity =>
+            {
+                entity.HasKey(e => e.AttendanceId);
+
+                entity.Property(e => e.AttendanceId)
+                .HasColumnName("AttendanceId");
+
+                entity.Property(e => e.EmployeeNo)
+                .HasColumnName("EmployeeNo");
+
+                entity.Property(e => e.AnnualLeave)
+                .HasColumnName("AnnualLeave");
+
+                entity.Property(e => e.BalanceLeave)
+                .HasColumnName("BalanceLeave");
+
+                entity.Property(e => e.TotalLeave)
+                .HasColumnName("TotalLeave");
+
+
+                entity.Property(e => e.LeaveTaken)
+                .HasColumnName("LeaveTaken");
+
+                entity.Property(e => e.SickLeaveJustified)
+                .HasColumnName("SickLeaveJustified");
+
+                entity.Property(e => e.NonJustifiedLeave)
+                .HasColumnName("NonJustifiedLeave");
+
+                entity.Property(e => e.UnpaidLeave)
+                .HasColumnName("UnpaidLeave");
+
+                entity.Property(e => e.SickLeaveBalance)
+               .HasColumnName("SickLeaveBalance");
+
+                entity.Property(e => e.LeaveBalance)
+                .HasColumnName("LeaveBalance");
+
+                entity.Property(e => e.CreatedBy)
+                .HasColumnName("CreatedBy");
+
+                entity.Property(e => e.CreatedDate)
+                .HasColumnName("CreatedDate");
+
+                entity.Property(e => e.ModifiedBy)
+               .HasColumnName("ModifiedBy");
+
+                entity.Property(e => e.ModifiedDate)
+               .HasColumnName("ModifiedDate");
+               
+                entity.Property(e => e.IsActive)
+               .HasColumnName("IsActive");
+
+
+                entity.Property(e => e.Remarks)
+               .HasColumnName("Remarks");
+            });
+
 
 
         }
