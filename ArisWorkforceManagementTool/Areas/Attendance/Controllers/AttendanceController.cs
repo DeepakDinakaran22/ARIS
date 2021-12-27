@@ -1,12 +1,9 @@
 ﻿using Aris.Data;
-<<<<<<< HEAD
 using Aris.Data.Entities;
 using Aris.Models.Helper;
 using Aris.Models.ViewModel;
 using Microsoft.AspNetCore.Hosting;
-=======
 using Aris.Models.ViewModel;
->>>>>>> 85d87dd62744d90aa86f9b4f1185e78b3ebb5418
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using System;
@@ -85,17 +82,13 @@ namespace ArisWorkforceManagementTool.Areas.Attendance.Controllers
             return null;
         }
     }
-        [HttpGet]
-<<<<<<< HEAD
-        public JsonResult GetEmployeeAttendance(AttendanceViewModel obj)
-        
+    [HttpGet]
+    public JsonResult GetEmployeeAttendance(AttendanceViewModel obj)
         {
             try
             {
-
-
-                List<EmployeeDetails> employees= unitOfWork.EmployeeDetailsRepository.Get(x => x.IsActive == 1).ToList();
-                List <Aris.Data.Entities.Attendance> attendances = unitOfWork.AttendanceRepository.Get(null, x => x.OrderBy(id => id.EmployeeNo)).ToList();
+                List<EmployeeDetails> employees = unitOfWork.EmployeeDetailsRepository.Get(x => x.IsActive == 1).ToList();
+                List<Aris.Data.Entities.Attendance> attendances = unitOfWork.AttendanceRepository.Get(null, x => x.OrderBy(id => id.EmployeeNo)).ToList();
                 var result = from emp in employees
                              join att in attendances
                              on emp.EmployeeReferenceNo equals att.EmployeeNo into eGroup
@@ -118,7 +111,14 @@ namespace ArisWorkforceManagementTool.Areas.Attendance.Controllers
                                  leaveBalance = att == null ? 0 : att.LeaveBalance,
                                  createdDate = att == null ? null : att.CreatedDate,
                                  attendanceId = att == null ? 0 : att.AttendanceId
-=======
+                             };
+                return Json(result);
+            }
+            catch (Exception ex)
+            {
+                return null;
+            }
+        }
         public JsonResult GetEmployeeAttendance(EmployeeDetailsViewModel obj)
         {
             try
@@ -156,7 +156,6 @@ namespace ArisWorkforceManagementTool.Areas.Attendance.Controllers
                                  bankAccountNumber = emps.BankAccountNumber,
                                  remarks = emps.Remarks
 
->>>>>>> 85d87dd62744d90aa86f9b4f1185e78b3ebb5418
 
                              };
                 return Json(result);
@@ -168,7 +167,6 @@ namespace ArisWorkforceManagementTool.Areas.Attendance.Controllers
             }
 
         }
-<<<<<<< HEAD
         [HttpPost]
         public JsonResult SubmitAttendance(AttendanceViewModel obj)
         {
@@ -219,8 +217,6 @@ namespace ArisWorkforceManagementTool.Areas.Attendance.Controllers
             }
         }
 
-=======
->>>>>>> 85d87dd62744d90aa86f9b4f1185e78b3ebb5418
 
     }
 }
