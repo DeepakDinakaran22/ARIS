@@ -51,7 +51,6 @@ $(function () {
     });
 });
 function GetEmployeesAttendanceBySearch() {
-<<<<<<< HEAD
     if ($("#txtEmployeeNumber").val().trim() == '') {
         MessageBox('Required!', 'fa fa-warning', 'You must enter an employee number to continue!', 'red', 'btn btn-danger', 'Okay');
     }
@@ -305,9 +304,6 @@ function isValidEntry() {
 }
 
 
-
-
-=======
     //var employeeName = $("#txtEmployeeName").val().trim().toLowerCase();
     var employeeReferenceNo = $("#txtEmployeeNumber").val().trim() == '' ? null : parseInt($("#txtEmployeeNumber").val().trim());
        var data = {
@@ -336,7 +332,5 @@ function isValidEntry() {
             console.log(response.responseText);
         }
     });
-}
->>>>>>> 85d87dd62744d90aa86f9b4f1185e78b3ebb5418
 
 

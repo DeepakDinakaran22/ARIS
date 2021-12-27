@@ -83,11 +83,8 @@ function GetEmployeesSalaryBySearch() {
 function populateSalary(response) {
     $("#txtEmployeeNumber").val(response[0]["employeeNo"]);
     $("#txtEmployeeName").val(response[0]["employeeName"]);
-<<<<<<< HEAD
     $("#dpDocJoiningDate").val(response[0]["joiningDate"].replace('T00:00:00', ''));
-=======
     $("#dpDocJoiningDate").val(response[0]["joiningDate"]);
->>>>>>> 85d87dd62744d90aa86f9b4f1185e78b3ebb5418
     $("#txtBankAccountNumber").val(response[0]["bankAccountNumber"]);
     $("#txtOvertime").val(response[0]["overtimeOrExtraduty"]);
     $("#txtTranspotationallowance").val(response[0]["transpotationAllowance"]);
@@ -118,7 +115,6 @@ function CalculateTotals(response) {
     var totalAllowance = overTime + transpotationalAllowance + foodAllowance + telephoneallowance + otherallowance + taxicharges + roomrent + serviceBenefits;
     console.log(totalAllowance);
     $("#txtTotalallowance").val(totalAllowance);
-<<<<<<< HEAD
     var socialInsurance = parseInt(response[0]["socialInsurance"] == null ? 0 : response[0]["socialInsurance"]);
     var leaveDeduction = parseInt(response[0]["leaveDeduction"] == null ? 0 : response[0]["leaveDeduction"]);
     var advanceDeduction = parseInt(response[0]["advanceDeduction"] == null ? 0 : response[0]["advanceDeduction"]);
@@ -135,16 +131,4 @@ function CalculateTotals(response) {
 
 
     $("#txtTotalSalaryPayment").val(netSalary);
-
-
-=======
->>>>>>> 85d87dd62744d90aa86f9b4f1185e78b3ebb5418
 }
-
-
-
-
-<<<<<<< HEAD
-
-=======
->>>>>>> 85d87dd62744d90aa86f9b4f1185e78b3ebb5418
