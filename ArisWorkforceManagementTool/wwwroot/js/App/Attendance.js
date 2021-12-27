@@ -51,6 +51,7 @@ $(function () {
     });
 });
 function GetEmployeesAttendanceBySearch() {
+<<<<<<< HEAD
     if ($("#txtEmployeeNumber").val().trim() == '') {
         MessageBox('Required!', 'fa fa-warning', 'You must enter an employee number to continue!', 'red', 'btn btn-danger', 'Okay');
     }
@@ -306,5 +307,36 @@ function isValidEntry() {
 
 
 
+=======
+    //var employeeName = $("#txtEmployeeName").val().trim().toLowerCase();
+    var employeeReferenceNo = $("#txtEmployeeNumber").val().trim() == '' ? null : parseInt($("#txtEmployeeNumber").val().trim());
+       var data = {
+       // EmployeeName: employeeName,
+        EmployeeReferenceNo: employeeReferenceNo,
+           };
+
+    //isValid = isValidEntry();
+    $.ajax({
+        type: "GET",
+        url: "/Attendance/Attendance/GetEmployeeAttendance",
+        contentType: "application/json; charset=utf-8",
+        dataType: "json",
+        data: data,
+        success: function (response) {
+            if (response != null) {
+               // populateEmployees(response);
+            } else {
+                console.log("Something went wrong");
+            }
+        },
+        failure: function (response) {
+            console.log(response.responseText);
+        },
+        error: function (response) {
+            console.log(response.responseText);
+        }
+    });
+}
+>>>>>>> 85d87dd62744d90aa86f9b4f1185e78b3ebb5418
 
 

@@ -1,8 +1,12 @@
 ﻿using Aris.Data;
+<<<<<<< HEAD
 using Aris.Data.Entities;
 using Aris.Models.Helper;
 using Aris.Models.ViewModel;
 using Microsoft.AspNetCore.Hosting;
+=======
+using Aris.Models.ViewModel;
+>>>>>>> 85d87dd62744d90aa86f9b4f1185e78b3ebb5418
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using System;
@@ -82,6 +86,7 @@ namespace ArisWorkforceManagementTool.Areas.Attendance.Controllers
         }
     }
         [HttpGet]
+<<<<<<< HEAD
         public JsonResult GetEmployeeAttendance(AttendanceViewModel obj)
         
         {
@@ -113,6 +118,45 @@ namespace ArisWorkforceManagementTool.Areas.Attendance.Controllers
                                  leaveBalance = att == null ? 0 : att.LeaveBalance,
                                  createdDate = att == null ? null : att.CreatedDate,
                                  attendanceId = att == null ? 0 : att.AttendanceId
+=======
+        public JsonResult GetEmployeeAttendance(EmployeeDetailsViewModel obj)
+        {
+            try
+            {
+                var employees = unitOfWork.EmployeeDetailsRepository.Get(null, x => x.OrderBy(id => id.EmployeeNo));
+                var clients = unitOfWork.CompanyRepository.Get(null);
+                var result = from emps in employees
+                             join comp in clients
+                             on emps.CompanyId equals comp.CompanyId into eGroup
+                             where (obj.EmployeeName is null || emps.EmployeeName.ToLower() == obj.EmployeeName) &&
+                             (obj.EmployeeReferenceNo is null || emps.EmployeeReferenceNo == obj.EmployeeReferenceNo) &&
+                             (obj.ApprovalStatus is null || emps.ApprovalStatus == obj.ApprovalStatus) &&
+                             (obj.CompanyId is null || emps.CompanyId == obj.CompanyId)
+                             from comp in eGroup.DefaultIfEmpty()
+                             select new
+                             {
+                                 CompanyName = comp.CompanyName + "-" + comp.CompanyLocation,
+                                 employeeNo = emps.EmployeeNo,
+                                 employeeReferenceNo = emps.EmployeeReferenceNo,
+                                 approvalStatus = emps.ApprovalStatus,
+                                 employeeName = emps.EmployeeName,
+                                 passportNumber = emps.PassportNumber,
+                                 passportExpiryDate = emps.PassportExpiryDate,
+                                 residentNumber = emps.ResidentNumber,
+                                 residentExpiryDate = emps.ResidentExpiryDate,
+                                 joiningDate = emps.JoiningDate,
+                                 contractStartDate = emps.ContractStartDate,
+                                 contractEndDate = emps.ContractEndDate,
+                                 gsm = emps.Gsm,
+                                 accomodationDetails = emps.AccomodationDetails,
+                                 maritalStatus = emps.MaritalStatus,
+                                 idProfession = emps.IDProfession,
+                                 designation = emps.Designation,
+                                 bankName = emps.BankName,
+                                 bankAccountNumber = emps.BankAccountNumber,
+                                 remarks = emps.Remarks
+
+>>>>>>> 85d87dd62744d90aa86f9b4f1185e78b3ebb5418
 
                              };
                 return Json(result);
@@ -124,6 +168,7 @@ namespace ArisWorkforceManagementTool.Areas.Attendance.Controllers
             }
 
         }
+<<<<<<< HEAD
         [HttpPost]
         public JsonResult SubmitAttendance(AttendanceViewModel obj)
         {
@@ -174,6 +219,8 @@ namespace ArisWorkforceManagementTool.Areas.Attendance.Controllers
             }
         }
 
+=======
+>>>>>>> 85d87dd62744d90aa86f9b4f1185e78b3ebb5418
 
     }
 }
