@@ -102,6 +102,31 @@ function populateSalary(response) {
 
     CalculateTotals(response);
 }
+function ResetSalaryFields() {
+    $("#txtEmployeeNumber").val('');
+    $("#txtEmployeeName").val('');
+    $("#dpDocJoiningDate").val('');
+    $("#dpDocJoiningDate").val('');
+    $("#txtBankAccountNumber").val('');
+    $("#txtOvertime").val('');
+    $("#txtTranspotationallowance").val('');
+    $("#txtFoodallowance").val('');
+    $("#txtTelephoneallowance").val('');
+    $("#txtOtherallowance").val('');
+    $("#txtTaxicharges").val('');
+    $("#txtRoomrent").val('');
+    $("#txtServiceBenefits").val('');
+    $("#txtSocialInsurance").val('');
+    $("#txtLeaveDeductions").val('');
+    $("#txtAdvanceDeductions").val('');
+    $("#txtOtherDeductions").val('');
+    $("#txtTotalallowance").val('');
+    $("#txtTotalDeductions").val('');
+    $("#txtTotalGrossSalary").val('');
+    $("#txtNetSalary").val('');
+    $("#txtTotalSalaryPayment").val('');
+    $("#txtRemarks").val('');
+};
 function CalculateTotals(response) {
     var overTime = parseInt($("#txtOvertime").val() == '' ? 0 : response[0]["overtimeOrExtraduty"]);
     var transpotationalAllowance = parseInt($("#txtTranspotationallowance").val() == '' ? 0 : $("#txtTranspotationallowance").val().trim());

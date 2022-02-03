@@ -11,32 +11,36 @@
 <div class="content-header">
     <div class="container-fluid">
         <div class="row mb-2">
-            <div class="col-sm-6">
+            <div class="col-sm-10">
                 <h1 class="m-0 text-dark">Manage Salary Details </h1>
 
             </div>
-            <div class="col-sm-6">
-                <ol class="breadcrumb float-sm-right">
-                    <li class="breadcrumb-item"><a href="">Home</a></li>
-                    <li class="breadcrumb-item active">Manage Salary Details</li>
-                </ol>
+            <div class="col-md-2 float-right right">
+                <label>Year</label>
+                <select class="form-control select2 select2-hidden-accessible" style="width: 100%;" data-select2-id="1" tabindex="-1" aria-hidden="true">
+                    <option selected="selected" data-select2-id="75">2021</option>
+                    <option data-select2-id="74">2021</option>
+                    <option data-select2-id="75">2022</option>
+                    <option data-select2-id="76">2023</option>
+                    <option data-select2-id="77">2024</option>
+                    <option data-select2-id="78">2025</option>
+                    <option data-select2-id="79">2026</option>
+                </select>
             </div>
         </div>
-    </div>
 </div>
+    </div>
 <section class="content">
     <div class="container-fluid">
        
         <div class="row">
             <!-- left column -->
-            <div class="col-md-12">
+            <div class="col-md-7">
                 <!-- general form elements -->
-                <div class="card card-primary">
+                <div class="card card-secondary">
                     <div class="card-header">
                         <h3 class="card-title">
-                            <span><i class="fa fa-chec "></i>Details</span>
-                           
-
+                            <span>  <i class="fas fa-user"></i>  Search</span>
                         </h3>
                     </div>
                     <!-- /.card-header -->
@@ -47,27 +51,27 @@
                             <div class="row">
                                 <div class="col-md-3">
                                     <div class="form-group">
-                                        <label for="EmployeeNumber">Employee Number</label>
+                                        <label for="EmployeeNumber">Employee No</label>
                                         <input type="number" class="form-control" id="txtEmployeeNumber" placeholder="Employee Number">
                                     </div>
                                 </div>
-                                <div class="col-md-3">
+                                <div class="col-md-4">
                                     <div class="form-group">
                                         <label for="txtEmployeeName">Employee Name </label>
-                                        <input type="text" class="form-control" id="txtEmployeeName" placeholder="Enter Name">
+                                        <input type="text" class="form-control" id="txtEmployeeName" placeholder="Enter Name" readonly>
                                     </div>
                                 </div>
-                                <div class="col-md-3">
+                                <div class="col-md-2">
                                     <div class="form-group">
                                         <label>Joining Date <span class="text-red text-bold">*</span></label>
-                                        <input type="text" class="form-control date" id="dpDocJoiningDate" placeholder="Select Joining Date">
+                                        <input type="text" class="form-control date" id="dpDocJoiningDate" placeholder="Select Joining Date" readonly>
 
                                     </div>
                                 </div>
                                 <div class="col-md-3">
                                     <div class="form-group">
-                                        <label>Bank Account Number <span class="text-red text-bold">*</span></label>
-                                        <input type="number" class="form-control date" id="txtBankAccountNumber" placeholder="Bank Account Number">
+                                        <label> Account Number <span class="text-red text-bold">*</span></label>
+                                        <input type="number" class="form-control date" id="txtBankAccountNumber" placeholder="Bank Account Number" readonly>
 
                                     </div>
                                 </div>
@@ -76,7 +80,7 @@
                         </div>
 
                         <div class="card-footer" style="text-align:right">
-                            <button type="reset" id="btnReset" class="btn btn-sm btn-primary">Reset</button>
+                            <button type="reset" id="btnReset" class="btn btn-sm btn-primary" onclick="ResetSalaryFields()">Reset</button>
                             <button type="button" id="btnSubmit" onclick="GetEmployeesSalaryBySearch()" class="btn btn-sm btn-success">Search</button>
                         </div>
 
@@ -84,6 +88,45 @@
 
                 </div>
             </div>
+            <div class="col-md-5">
+                <!-- general form elements -->
+                <div class="card card-secondary">
+                    <div class="card-header">
+                        <h3 class="card-title">
+                            <span class="text-bold">  <i class="fas fa-check"></i>  Current Status & Next Status  </span>
+                        </h3>
+                    </div>
+                    <!-- /.card-header -->
+                    <!-- form start -->
+
+                    <form role="form" id="companyForm">
+                        <div class="card-body" >
+                            <div class="row">
+                              
+                               
+                                <div class="info-box mb-3 bg-warning">
+                                    <span class="info-box-icon"><i class="fas fa-tag"></i></span>
+
+                                    <div class="info-box-content">
+                                        <span class="info-box-text">Inventory<br /><b>234234 werwer wr wef sdfs</b></span>
+                                        <span class="info-box-text">Inventory<br /><b>234234 werwer wr wef sdfs</b></span>
+                                    </div>
+                                    <!-- /.info-box-content -->
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="card-footer" style="text-align:right">
+                            <button type="button" id="btnSubmit" onclick="GetEmployeesSalaryBySearch()" class="btn btn-sm btn-success">Bypass Next Approval </button>
+
+                        </div>
+
+                    </form>
+
+                </div>
+            </div>
+            </div>
+        <div class="row">
             <div class="col-md-8">
                 <div class="card card-success">
                     <div class="card-header">
